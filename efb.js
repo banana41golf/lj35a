@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  let n1Data, f8ToData, f8DisData, vrData, v2Data;
   const zfwSlider = document.getElementById("zfw-slider");
   const zfwInput = document.getElementById("zfw");
   const fobSlider = document.getElementById("fob-slider");
@@ -14,6 +15,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const maxFOB = 6240;
   const maxGW = 18300;
   const minGW = 0;
+
+  // Function to load the JSON data
+  async function loadData() {
+    n1Data = await fetch("N1_flat.json").then((res) => res.json());
+    f8ToData = await fetch("F8-TO_flat.json").then((res) => res.json());
+    f8DisData = await fetch("F8-DIS_flat.json").then((res) => res.json());
+    vrData = await fetch("VR_flat.json").then((res) => res.json());
+    v2Data = await fetch("V2_flat.json").then((res) => res.json());
+  }
 
   // Function to update the Gross Weight (GW) based on ZFW and FOB values
   const updateGW = () => {
@@ -35,12 +45,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Set initial values for sliders
+  // Set initial values for sliders and input fields
   const setInitialValues = () => {
-    zfwSlider.value = zfwSlider.min;
-    zfwInput.value = zfwSlider.min;
-    fobSlider.value = fobSlider.min;
-    fobInput.value = fobSlider.min;
+    zfwSlider.value = minZFW;
+    zfwInput.value = minZFW;
+    fobSlider.value = minFOB;
+    fobInput.value = minFOB;
     updateGW(); // Make sure the GW field is updated on load
   };
 
@@ -76,8 +86,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Call setInitialValues to set sliders to minimum on page load
-  setInitialValues(); // Ensure it's run after everything else
+  // Initialize sliders and input values
+  setInitialValues();
 
   // Bilinear Interpolation Logic (used for both V1 and takeoff distance)
   function bilinearInterpolation(data, targetOAT, targetElevation) {
