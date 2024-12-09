@@ -6,142 +6,7 @@
   <title>Learjet 35A Performance Calculator</title>
   <link rel="stylesheet" href="styles.css">
 
-  <script>
-    // Function to handle linear interpolation
-    function interpolate(data, criteria, targetKey) {
-      const { xKey, yKey, xValue } = criteria;
 
-      // Sort the data by the interpolation axis
-      const sortedData = data.sort((a, b) => a[xKey] - b[xKey]);
-
-      // Find the two closest points
-      let lower = null;
-      let upper = null;
-
-      for (let i = 0; i < sortedData.length; i++) {
-        const point = sortedData[i];
-        if (point[xKey] <= xValue) lower = point;
-        if (point[xKey] >= xValue) {
-          upper = point;
-          break;
-        }
-      }
-
-      // Handle cases where interpolation isn't possible
-      if (!lower || !upper || lower[xKey] === upper[xKey]) {
-        return lower ? lower[yKey] : upper ? upper[yKey] : null; // Fallback to nearest match
-      }
-
-      // Perform linear interpolation
-      const x1 = lower[xKey], y1 = lower[yKey];
-      const x2 = upper[xKey], y2 = upper[yKey];
-      const y = y1 + ((xValue - x1) * (y2 - y1)) / (x2 - x1);
-
-      return y;
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      let n1Data, f8ToData, f8DisData, vrData, v2Data;
-      const maxGW = 18300; // Maximum allowed GW
-      const minGW = 0; // Minimum allowed GW
-      const maxFOB = 6240; // Maximum allowed FOB
-      const minFOB = 0; // Minimum allowed FOB
-      const maxZFW = 18300; // Maximum allowed ZFW
-      const minZFW = 10360; // Minimum allowed ZFW
-
-      // Load JSON files
-      async function loadData() {
-        n1Data = await fetch("N1_flat.json").then((res) => res.json());
-        f8ToData = await fetch("F8-TO_flat.json").then((res) => res.json());
-        f8DisData = await fetch("F8-DIS_flat.json").then((res) => res.json());
-        vrData = await fetch("VR_flat.json").then((res) => res.json());
-        v2Data = await fetch("V2_flat.json").then((res) => res.json());
-      }
-
-      const zfwSlider = document.getElementById("zfw-slider");
-      const zfwInput = document.getElementById("zfw");
-      const fobSlider = document.getElementById("fob-slider");
-      const fobInput = document.getElementById("fob");
-      const gwInput = document.getElementById("gw");
-      const calculateButton = document.querySelector("button[type='submit']");
-      const gwWarning = document.getElementById("gw-warning");
-
-      // Update Gross Weight (GW)
-      const updateGW = () => {
-        const zfw = parseFloat(zfwInput.value) || 0;
-        const fob = parseFloat(fobInput.value) || 0;
-        const gw = zfw + fob;
-
-        if (gw > maxGW || gw < minGW) {
-          gwInput.value = gw > maxGW ? `OUT OF LIMIT` : `Below min (${minGW})!`;
-          calculateButton.disabled = true;
-          gwWarning.style.display = "block";
-          gwWarning.textContent = gw > maxGW
-            ? `Gross Weight exceeds MTOW of ${maxGW} lbs!`
-            : `Gross Weight is below the minimum limit of ${minGW} lbs!`;
-        } else {
-          gwInput.value = gw.toFixed(1);
-          calculateButton.disabled = false;
-          gwWarning.style.display = "none";
-        }
-      };
-
-      // Sync ZFW slider and input
-      zfwSlider.addEventListener("input", () => {
-        zfwInput.value = zfwSlider.value;
-        updateGW();
-      });
-
-      zfwInput.addEventListener("input", () => {
-        const value = parseFloat(zfwInput.value);
-        if (value >= minZFW && value <= maxZFW) {
-          zfwSlider.value = zfwInput.value;
-          updateGW();
-        } else {
-          zfwInput.value = zfwSlider.value; // Reset to slider value if out of range
-        }
-      });
-
-      // Sync FOB slider and input
-      fobSlider.addEventListener("input", () => {
-        fobInput.value = fobSlider.value;
-        updateGW();
-      });
-
-      fobInput.addEventListener("input", () => {
-        const value = parseFloat(fobInput.value);
-        if (value >= minFOB && value <= maxFOB) {
-          fobSlider.value = fobInput.value;
-          updateGW();
-        } else {
-          fobInput.value = fobSlider.value; // Reset to slider value if out of range
-        }
-      });
-
-      calculateButton.addEventListener("click", (event) => {
-        event.preventDefault();
-
-        const elevation = parseInt(document.getElementById("elevation").value, 10);
-        const oat = parseInt(document.getElementById("oat").value, 10);
-        const gw = parseInt(gwInput.value, 10);
-
-        // Interpolated outputs
-        const n1 = interpolate(n1Data, { xKey: "OAT", yKey: "N1", xValue: oat });
-        const v1 = interpolate(f8ToData, { xKey: "OAT", yKey: "V1", xValue: oat });
-        const distance = interpolate(f8DisData, { xKey: "Elevation", yKey: "Distance", xValue: elevation });
-        const vr = interpolate(vrData, { xKey: "GW", yKey: "VR", xValue: gw });
-        const v2 = interpolate(v2Data, { xKey: "GW", yKey: "V2", xValue: gw });
-
-        document.getElementById("n1-output").innerText = n1 ? n1.toFixed(2) : "N/A";
-        document.getElementById("distance-output").innerText = distance !== "N/A" ? `${Math.round(distance)} ft` : "N/A";
-document.getElementById("vr-output").innerText = vr !== undefined && vr !== null ? `${Math.round(vr)} knots` : "N/A";
-document.getElementById("v2-output").innerText = v2 !== undefined && v2 !== null ? `${Math.round(v2)} knots` : "N/A";
-
-      });
-
-      loadData();
-    });
-  </script>
 </head>
 <body>
   <div class="container">
@@ -165,10 +30,21 @@ document.getElementById("v2-output").innerText = v2 !== undefined && v2 !== null
           <!-- Warning messages will appear here dynamically -->
         </small>
       </div>
-      <div class="form-group">
-        <label for="elevation">Airport Elevation:</label>
-        <input type="number" id="elevation" name="elevation" placeholder="ft above sea level" required />
-      </div>
+<!-- New Departure Airport (ICAO) Input Field and Dropdown -->
+<div class="form-group">
+    <label for="departure-airport">Departure Airport (ICAO):</label>
+    <input type="text" id="departure-airport" name="departure-airport" placeholder="Enter ICAO code" autocomplete="off" required />
+    <select id="airport-suggestions" size="5" style="display:none;">
+        <!-- Dropdown will populate here -->
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="elevation">Airport Elevation:</label>
+    <span id="elevation" style="color: #ffffff; font-size: 1rem; font-weight: normal;"></span>
+</div>
+
+
       <div class="form-group">
         <label for="oat">Outside Air Temperature (OAT):</label>
         <input type="number" id="oat" name="oat" placeholder="°C" required />
@@ -178,14 +54,18 @@ document.getElementById("v2-output").innerText = v2 !== undefined && v2 !== null
       <div class="form-output">
         <p><strong>N1 Power Setting:</strong> <span id="n1-output">-</span>%</p>
         <p><strong>Takeoff Distance:</strong> <span id="distance-output">-</span></p>
+<p><strong>V1 Speed:</strong> <span id="v1-output">-</span></p>
+
         <p><strong>VR Speed:</strong> <span id="vr-output">-</span></p>
         <p><strong>V2 Speed:</strong> <span id="v2-output">-</span></p>
+<p><strong>**Flaps 8 Assumed**</strong> 
       </div>
 
       <!-- Button -->
       <button type="submit">Calculate</button>
     </form>
-    <p><strong>***Flaps 8 Assumed***</strong>
   </div>
+<script src="efb.js"></script>
+<script src="airport-search.js"></script>
 </body>
 </html>
