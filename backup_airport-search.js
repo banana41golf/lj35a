@@ -45,7 +45,7 @@ async function fetchMETAR(iata) {
       const humidityPercentage = humidity ? humidity.value : 'N/A'; // Humidity as percentage
 
       //Extract RawData (METAR)
-      const rawMETAR = rawMessage ? rawMessage.value : 'N/A' ; // RAW METAR to console test.
+      const rawMETAR = rawMessage ? rawMessage.textContent : 'N/A' ; // RAW METAR to console test.
 
       // Print the full weather report to the console
       console.log(`Weather Report for ${iata}:`);
