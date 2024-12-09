@@ -1,5 +1,18 @@
+const setInitialValues = () => {
+  const zfwSlider = document.getElementById("zfw-slider");
+  const zfwInput = document.getElementById("zfw");
+  const fobSlider = document.getElementById("fob-slider");
+  const fobInput = document.getElementById("fob");
+
+  zfwSlider.value = zfwSlider.min;
+  zfwInput.value = zfwSlider.min;
+  fobSlider.value = fobSlider.min;
+  fobInput.value = fobSlider.min;
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   let n1Data, f8ToData, f8DisData, vrData, v2Data;
+  setInitialValues(); 
 
   async function loadData() {
     n1Data = await fetch("N1_flat.json").then((res) => res.json());
@@ -9,13 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     v2Data = await fetch("V2_flat.json").then((res) => res.json());
   }
 
-  const zfwSlider = document.getElementById("zfw-slider");
-  const zfwInput = document.getElementById("zfw");
-  const fobSlider = document.getElementById("fob-slider");
-  const fobInput = document.getElementById("fob");
-  const gwInput = document.getElementById("gw");
-  const calculateButton = document.querySelector("button[type='submit']");
-  const gwWarning = document.getElementById("gw-warning");
 
   const updateGW = () => {
     const zfw = parseFloat(zfwInput.value) || 0;
