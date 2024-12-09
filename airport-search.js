@@ -25,10 +25,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const data = await response.json();  // Parse the JSON response
-
+    
       // Check if we received valid data
-      if (data && data.properties) {
-        const { temperature, windSpeed, windDirection, pressure, humidity } = data.properties;
+    if (data && data.properties) {
+      const { rawMessage, temperature, windSpeed, windDirection, pressure, humidity } = data.properties;
+
+       // Log rawMessage to inspect its structure
+  console.log('Raw Message:', rawMessage); // Log rawMessage to check if it's an object or string
 
         // Extract temperature in Celsius
         const temperatureCelsius = temperature ? temperature.value : 'N/A';
