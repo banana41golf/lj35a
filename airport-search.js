@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Function to fetch METAR data from AviationWeather Center's HTML API for a given IATA code
   async function fetchMETAR(iata) {
-    const apiUrl = `https://aviationweather.gov/cgi-bin/data/metar.php?ids=${iata}&hours=0&order=id%2C-obs&sep=true&format=html`;
+    const apiUrl = `https://cors-anywhere.herokuapp.com/https://aviationweather.gov/cgi-bin/data/metar.php?ids=${iata}&hours=0&order=id%2C-obs&sep=true&format=html`;
     try {
       const response = await fetch(apiUrl);
       const data = await response.text();
