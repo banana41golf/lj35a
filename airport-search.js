@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const elevationField = document.getElementById("elevation");
   const metarReport = document.getElementById("metar-report"); // New METAR report div
   const oatInput = document.getElementById("oat"); // OAT (temperature) input field
+  const depName = document.getElementById("depName"); // Airport name field
 
   // Load airport data from the airports.json file
   async function loadAirportData() {
@@ -118,6 +119,9 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Populate the elevation field with the airport's elevation
         elevationField.textContent = selectedAirport.Altitude || "N/A"; // Fallback if Altitude is undefined
+
+        //Populate the airport name
+        depName.textContent = selectedAirport.Name || "N/A"; //Fallback if name is undefined
         
         // Fetch the METAR data for the selected airport using the cleaned IATA
         fetchMETAR(cleanedIATA);
