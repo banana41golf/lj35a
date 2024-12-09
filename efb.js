@@ -233,8 +233,8 @@ function interpolate(data, field, oat, elevation, gw) {
       return;
     }
 
-    const v1 = trilinearInterpolation(dataSet, oat, elevation, gw, 'V1'); // V1 Speed (uses F8-TO_flat.json)
-    const distance = trilinearInterpolation(dataSet, oat, elevation, gw, 'Distance'); // Takeoff Distance (uses F8-DIS_flat.json)
+    const v1 = trilinearInterpolation(f8ToData, oat, elevation, gw, 'V1'); // V1 Speed (uses F8-TO_flat.json)
+    const distance = trilinearInterpolation(f8DisData, oat, elevation, gw, 'Distance'); // Takeoff Distance (uses F8-DIS_flat.json)
     const n1 = bilinearInterpolation(n1Data, oat, elevation); // N1
     const vr = interpolateByGW(vrData, gw, "VR");
     const v2 = interpolateByGW(v2Data, gw, "V2");
