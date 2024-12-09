@@ -120,8 +120,12 @@ document.addEventListener("DOMContentLoaded", () => {
         // Populate the elevation field with the airport's elevation
         elevationField.textContent = selectedAirport.Altitude || "N/A"; // Fallback if Altitude is undefined
 
-        //Populate the airport name
-        depName.textContent = selectedAirport.Name || "N/A"; //Fallback if name is undefined
+   
+// Remove the quotes from the airport name if present
+const cleanedAirportName = selectedAirport.Name.replace(/"/g, '').trim();
+
+// Populate the airport name without quotes
+depName.textContent = cleanedAirportName || "N/A";  // Fallback if name is undefined
         
         // Fetch the METAR data for the selected airport using the cleaned IATA
         fetchMETAR(cleanedIATA);
