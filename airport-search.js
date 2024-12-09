@@ -52,7 +52,9 @@ async function fetchMETAR(iata) {
       console.log(`Humidity: ${humidityPercentage}%`);
 
       // Optionally, update the OAT field or any other fields you want in the UI
-      oatInput.value = temperatureCelsius;  // Populate the OAT input field with the temperature
+      const oatSpan = document.getElementById("oat");
+      oatSpan.textContent = temperatureCelsius;  // Populate the OAT span with the temperature
+
 
     } else {
       console.log("Weather data not available");
