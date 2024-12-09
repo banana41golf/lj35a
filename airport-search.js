@@ -27,15 +27,35 @@ async function fetchMETAR(iata) {
 
     const data = await response.json();  // Parse the JSON response
 
-    // Check if we received valid data and extract temperature
-    if (data && data.properties && data.properties.temperature) {
-      const temperatureCelsius = data.properties.temperature.value;  // Temperature in Celsius
-      oatInput.value = temperatureCelsius;  // Populate the OAT input field with the temperature
-      console.log(`Temperature at ${iata}: ${temperatureCelsius}°C`);
+    // Check if we received valid data
+    if (data && data.properties) {
+      const { temperature, windSpeed, windDirection, pressure, humidity } = data.properties;
 
-      // You can also display the full METAR report or any other relevant info here
+      // Extract temperature in Celsius
+      const temperatureCelsius = temperature ? temperature.value : 'N/A';
+
+      // Extract wind data (Speed and Direction)
+      const windSpeedKph = windSpeed ? windSpeed.value : 'N/A'; // Speed in meters per second
+      const windDirectionDegrees = windDirection ? windDirection.value : 'N/A';
+
+      // Extract atmospheric pressure
+      const pressureMb = pressure ? pressure.value : 'N/A'; // Pressure in millibars
+
+      // Extract humidity
+      const humidityPercentage = humidity ? humidity.value : 'N/A'; // Humidity as percentage
+
+      // Print the full weather report to the console
+      console.log(`Weather Report for ${iata}:`);
+      console.log(`Temperature: ${temperatureCelsius}°C`);
+      console.log(`Wind: ${windSpeedKph} m/s, Direction: ${windDirectionDegrees}°`);
+      console.log(`Pressure: ${pressureMb} mb`);
+      console.log(`Humidity: ${humidityPercentage}%`);
+
+      // Optionally, update the OAT field or any other fields you want in the UI
+      oatInput.value = temperatureCelsius;  // Populate the OAT input field with the temperature
+
     } else {
-      console.log("Temperature data not available");
+      console.log("Weather data not available");
     }
   } catch (error) {
     console.error("Failed to fetch METAR data:", error);
