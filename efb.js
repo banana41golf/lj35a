@@ -170,126 +170,38 @@ document.addEventListener("DOMContentLoaded", () => {
     return y1 + ((targetGW - x1) * (y2 - y1)) / (x2 - x1);
   }
 
- // Update for Takeoff Distance calculation
-function trilinearInterpolation(data, oat, elevation, gw) {
-  // Sort by Elevation
-  const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
-
-  let lowerElevation = null, upperElevation = null;
-  for (const elevationLevel of elevationLevels) {
-    if (elevationLevel <= elevation) lowerElevation = elevationLevel;
-    if (elevationLevel >= elevation) {
-      upperElevation = elevationLevel;
-      break;
-    }
-  }
-
-  if (lowerElevation === null || upperElevation === null) {
-    console.error("Elevation out of range:", elevation);
-    return null;
-  }
-
-  // Filter data based on the elevation range
-  const lowerElevationData = data.filter(item => item.Elevation === lowerElevation);
-  const upperElevationData = data.filter(item => item.Elevation === upperElevation);
-
-  // Perform interpolation for Gross Weight (GW) and OAT (temperature)
-  const interpolateGWandOAT = (dataSet, gw, oat) => {
-    const gwRange = [...new Set(dataSet.map(item => item.GW))].sort((a, b) => a - b);
-    const oatRange = [...new Set(dataSet.map(item => item.OAT))].sort((a, b) => a - b);
-
-    // Find lower and upper bounds for GW
-    let lowerGW = null, upperGW = null;
-    for (let i = 0; i < gwRange.length; i++) {
-      if (gwRange[i] <= gw) lowerGW = gwRange[i];
-      if (gwRange[i] >= gw) {
-        upperGW = gwRange[i];
-        break;
-      }
-    }
-
-    // Find lower and upper bounds for OAT
-    let lowerOAT = null, upperOAT = null;
-    for (let i = 0; i < oatRange.length; i++) {
-      if (oatRange[i] <= oat) lowerOAT = oatRange[i];
-      if (oatRange[i] >= oat) {
-        upperOAT = oatRange[i];
-        break;
-      }
-    }
-
-    // Ensure we have the lower and upper bounds for GW and OAT
-    if (!lowerGW || !upperGW || !lowerOAT || !upperOAT) {
-      console.error("Out of range for GW or OAT");
-      return null;
-    }
-
-    // Filter data based on the GW and OAT bounds
-    const lowerGWandOATData = dataSet.filter(item => item.GW === lowerGW && item.OAT === lowerOAT);
-    const upperGWandOATData = dataSet.filter(item => item.GW === upperGW && item.OAT === upperOAT);
-
-    // Interpolate between the values
-    const lowerValue = lowerGWandOATData[0].Distance;  // Takeoff Distance at lower bounds
-    const upperValue = upperGWandOATData[0].Distance;  // Takeoff Distance at upper bounds
-    const interpolatedValue = lowerValue + ((gw - lowerGW) * (upperValue - lowerValue)) / (upperGW - lowerGW);
-
-    return interpolatedValue;
-  }
-
-  const lowerData = lowerElevationData[0];  // Get the first match for lower elevation
-  const upperData = upperElevationData[0];  // Get the first match for upper elevation
-
-  const lowerValue = interpolateGWandOAT(lowerData, gw, oat);
-  const upperValue = interpolateGWandOAT(upperData, gw, oat);
-
-  if (lowerValue === null || upperValue === null) {
-    console.error("Unable to compute interpolation");
-    return null;
-  }
-
-  // Perform the final interpolation for the takeoff distance
-  const finalValue = lowerValue + ((elevation - lowerElevation) * (upperValue - lowerValue)) / (upperElevation - lowerElevation);
-
-  return finalValue;
-}
-
-  
   calculateButton.addEventListener("click", (event) => {
     event.preventDefault();
-  
+
     const oat = parseInt(document.getElementById("oat").textContent, 10);
     const gw = parseInt(gwInput.value, 10);
-  
+
     // Get the elevation from the #elevation span (not input)
     const elevationText = document.getElementById("elevation").textContent;
     const elevation = parseInt(elevationText, 10); // Convert to number
-  
-    console.log("V1 and Distance Calculation Inputs:", { oat, elevation, gw });
-  
+
+    console.log("V1 Calculation Inputs:", { oat, elevation, gw });
+
     // Check if elevation is valid
     if (isNaN(elevation)) {
       console.error("Elevation is not valid:", elevation);
       return;
     }
-  
-    // V1 and takeoff distance calculations using trilinear interpolation
-    const v1 = trilinearInterpolation(f8ToData, oat, elevation, gw); // V1 Speed (uses F8-TO_flat.json)
-    const distance = trilinearInterpolation(f8DisData, oat, elevation, gw);  // Use trilinear interpolation for takeoff distance
-    const n1 = bilinearInterpolation(n1Data, oat, elevation); // N1 (bilinear interpolation, as before)
+
+    const v1 = bilinearInterpolation(f8ToData, oat, elevation); // V1 Speed (uses F8-TO_flat.json)
+    const distance = bilinearInterpolation(f8DisData, oat, elevation); // Takeoff Distance (uses F8-DIS_flat.json)
+    const n1 = bilinearInterpolation(n1Data, oat, elevation); // N1
     const vr = interpolateByGW(vrData, gw, "VR");
     const v2 = interpolateByGW(v2Data, gw, "V2");
-  
-    console.log("V1 Speed:", v1);
-    console.log(`Calculated Takeoff Distance: ${distance} feet`);
 
-    // Update the output fields
+    console.log("V1 Speed:", v1);
+
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(2) : "N/A";
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
     document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
     document.getElementById("vr-output").innerText = vr ? `${Math.round(vr)} knots` : "N/A";
     document.getElementById("v2-output").innerText = v2 ? `${Math.round(v2)} knots` : "N/A";
   });
-  
 
   loadData();
 });
