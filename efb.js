@@ -198,7 +198,7 @@ calculateButton.addEventListener("click", (event) => {
   // Trilinear Interpolation for V1 Speed (uses F8-TO_flat.json) and Takeoff Distance (uses F8-DIS_flat.json)
   const v1 = trilinearInterpolation(f8ToData, oat, elevation, gw); // V1 Speed
   const distance = trilinearInterpolation(f8DisData, oat, elevation, gw); // Takeoff Distance
-  const n1 = trilinearInterpolation(n1Data, oat, elevation, gw); // N1
+  const n1 = bilinearInterpolation(n1Data, oat, elevation); // N1
   const vr = interpolateByGW(vrData, gw, "VR");
   const v2 = interpolateByGW(v2Data, gw, "V2");
 
