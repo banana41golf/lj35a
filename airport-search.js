@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const { rawMessage, temperature, windSpeed, windDirection, pressure, humidity } = data.properties;
 
        // Log rawMessage to inspect its structure
-  console.log('Raw Message:', rawMessage); // Log rawMessage to check if it's an object or string
+  console.log('Raw Message:', typeof rawMessage); // Log rawMessage to check if it's an object or string
 
         // Extract temperature in Celsius
         const temperatureCelsius = temperature ? temperature.value : 'N/A';
