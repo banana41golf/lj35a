@@ -29,7 +29,7 @@ async function fetchMETAR(iata) {
 
     // Check if we received valid data
     if (data && data.properties) {
-      const { temperature, windSpeed, windDirection, pressure, humidity } = data.properties;
+      const { rawMessage, temperature, windSpeed, windDirection, pressure, humidity } = data.properties;
 
       // Extract temperature in Celsius
       const temperatureCelsius = temperature ? temperature.value : 'N/A';
@@ -43,6 +43,9 @@ async function fetchMETAR(iata) {
 
       // Extract humidity
       const humidityPercentage = humidity ? humidity.value : 'N/A'; // Humidity as percentage
+
+      //Extract RawData (METAR)
+      const rawMETAR = rawMessage ? rawMessage.value : 'N/A' ; // RAW METAR to console test.
 
       // Print the full weather report to the console
       console.log(`Weather Report for ${iata}:`);
