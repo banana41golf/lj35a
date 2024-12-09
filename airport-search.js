@@ -56,6 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Optionally, update the OAT field or any other fields you want in the UI
         const oatSpan = document.getElementById("oat");
         oatSpan.textContent = temperatureCelsius;  // Populate the OAT span with the temperature
+        const metarSPAN = document.getElementById("rawMETAR")
+        metarSPAN.textContent = rawMessage // Populate with RAW Metar Data
       } else {
         console.log("Weather data not available");
       }
