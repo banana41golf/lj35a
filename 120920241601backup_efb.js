@@ -89,44 +89,85 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize sliders and input values
   setInitialValues();
 
-  // Trilinear Interpolation Logic (used for both V1 and takeoff distance)
-  function trilinearInterpolation(data, targetOAT, targetElevation, targetGW) {
-    // Sort data by OAT, elevation, and GW
-    const sortedData = data.sort((a, b) => a.Elevation - b.Elevation || a.GW - b.GW || a.OAT - b.OAT);
+  // Bilinear Interpolation Logic (used for both V1 and takeoff distance)
+  function bilinearInterpolation(data, targetOAT, targetElevation) {
+    const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
 
     let lowerElevation = null, upperElevation = null;
-    let lowerGW = null, upperGW = null;
-    let lowerOAT = null, upperOAT = null;
 
-    // Finding the bounds for elevation, GW, and OAT
-    for (let i = 0; i < sortedData.length; i++) {
-      const point = sortedData[i];
-      if (point.Elevation <= targetElevation) lowerElevation = point.Elevation;
-      if (point.Elevation >= targetElevation) upperElevation = point.Elevation;
-
-      if (point.GW <= targetGW) lowerGW = point.GW;
-      if (point.GW >= targetGW) upperGW = point.GW;
-
-      if (point.OAT <= targetOAT) lowerOAT = point.OAT;
-      if (point.OAT >= targetOAT) upperOAT = point.OAT;
+    // Adjusting elevation logic to find the closest bounds
+    for (let i = 0; i < elevationLevels.length; i++) {
+      if (elevationLevels[i] <= targetElevation) lowerElevation = elevationLevels[i];
+      if (elevationLevels[i] >= targetElevation) {
+        upperElevation = elevationLevels[i];
+        break;
+      }
     }
 
-    // Now, interpolate for the exact value using trilinear interpolation
-    const lowerData = data.filter(
-      (item) => item.Elevation === lowerElevation && item.GW === lowerGW && item.OAT === lowerOAT
-    );
-    const upperData = data.filter(
-      (item) => item.Elevation === upperElevation && item.GW === upperGW && item.OAT === upperOAT
-    );
+    // Adjust if the elevation falls outside known levels (like targetElevation = 15)
+    if (!lowerElevation) lowerElevation = elevationLevels[0];
+    if (!upperElevation) upperElevation = elevationLevels[elevationLevels.length - 1];
 
-    const lowerValue = lowerData[0]?.V1 || lowerData[0]?.Distance;
-    const upperValue = upperData[0]?.V1 || upperData[0]?.Distance;
+    console.log("Elevation Range:", { lowerElevation, upperElevation });
 
-    if (lowerValue !== undefined && upperValue !== undefined) {
-      return lowerValue + (upperValue - lowerValue) * (targetElevation - lowerElevation);
+    const lowerData = data.filter((item) => item.Elevation === lowerElevation);
+    const upperData = data.filter((item) => item.Elevation === upperElevation);
+
+    function interpolateOAT(dataSet, oat) {
+      const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
+
+      let lower = null, upper = null;
+      for (const point of sortedData) {
+        if (point.OAT <= oat) lower = point;
+        if (point.OAT >= oat) {
+          upper = point;
+          break;
+        }
+      }
+
+      if (!lower || !upper || lower.OAT === upper.OAT) {
+        return lower ? lower.N1 || lower.V1 || lower.Distance : upper ? upper.N1 || upper.V1 || upper.Distance : null;
+      }
+
+      const x1 = lower.OAT, y1 = lower.N1 || lower.V1 || lower.Distance;
+      const x2 = upper.OAT, y2 = upper.N1 || upper.V1 || upper.Distance;
+      return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
     }
 
-    return null; // Return null if unable to find values
+    const valueAtLowerElevation = interpolateOAT(lowerData, targetOAT);
+    const valueAtUpperElevation = interpolateOAT(upperData, targetOAT);
+
+    console.log("Interpolated Values:", { valueAtLowerElevation, valueAtUpperElevation });
+
+    if (valueAtLowerElevation === null || valueAtUpperElevation === null) {
+      return null;
+    }
+
+    const x1 = lowerElevation, y1 = valueAtLowerElevation;
+    const x2 = upperElevation, y2 = valueAtUpperElevation;
+
+    return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
+  }
+
+  function interpolateByGW(data, targetGW, key) {
+    const sortedData = data.sort((a, b) => a.GW - b.GW);
+
+    let lower = null, upper = null;
+    for (const point of sortedData) {
+      if (point.GW <= targetGW) lower = point;
+      if (point.GW >= targetGW) {
+        upper = point;
+        break;
+      }
+    }
+
+    if (!lower || !upper || lower.GW === upper.GW) {
+      return lower ? lower[key] : upper ? upper[key] : null;
+    }
+
+    const x1 = lower.GW, y1 = lower[key];
+    const x2 = upper.GW, y2 = upper[key];
+    return y1 + ((targetGW - x1) * (y2 - y1)) / (x2 - x1);
   }
 
   calculateButton.addEventListener("click", (event) => {
@@ -147,14 +188,19 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const v1 = trilinearInterpolation(f8ToData, oat, elevation, gw); // V1 Speed (uses F8-TO_flat.json)
-    const distance = trilinearInterpolation(f8DisData, oat, elevation, gw); // Takeoff Distance (uses F8-DIS_flat.json)
+    const v1 = bilinearInterpolation(f8ToData, oat, elevation); // V1 Speed (uses F8-TO_flat.json)
+    const distance = bilinearInterpolation(f8DisData, oat, elevation); // Takeoff Distance (uses F8-DIS_flat.json)
+    const n1 = bilinearInterpolation(n1Data, oat, elevation); // N1
+    const vr = interpolateByGW(vrData, gw, "VR");
+    const v2 = interpolateByGW(v2Data, gw, "V2");
 
     console.log("V1 Speed:", v1);
-    console.log("Takeoff Distance:", distance);
 
-    document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
+    document.getElementById("n1-output").innerText = n1 ? n1.toFixed(2) : "N/A";
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
+    document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
+    document.getElementById("vr-output").innerText = vr ? `${Math.round(vr)} knots` : "N/A";
+    document.getElementById("v2-output").innerText = v2 ? `${Math.round(v2)} knots` : "N/A";
   });
 
   loadData();
