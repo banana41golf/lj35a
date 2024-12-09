@@ -128,12 +128,13 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
 calculateButton.addEventListener("click", (event) => {
     event.preventDefault();
 
-    const oat = parseInt(document.getElementById("oat").value, 10);
+    const oat = parseInt(document.getElementById("oat").textContent, 10);
     const gw = parseInt(gwInput.value, 10);
 
     // Get the elevation from the #elevation span (not input)
     const elevationText = document.getElementById("elevation").textContent;
     const elevation = parseInt(elevationText, 10); // Convert to number
+
 
     console.log("V1 Calculation Inputs:", { oat, elevation, gw });
 
