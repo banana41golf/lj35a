@@ -49,6 +49,7 @@ async function fetchMETAR(iata) {
 
       // Print the full weather report to the console
       console.log(`Weather Report for ${iata}:`);
+      console.log(`RAW Metar: ${rawMETAR}`);
       console.log(`Temperature: ${temperatureCelsius}°C`);
       console.log(`Wind: ${windSpeedKph} m/s, Direction: ${windDirectionDegrees}°`);
       console.log(`Pressure: ${pressureMb} mb`);
