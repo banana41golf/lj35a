@@ -13,54 +13,58 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Loaded airports data:", airportsData); // Log loaded airport data for inspection
   }
 
-  // Function to fetch the latest METAR data for a given IATA code
-  async function fetchMETAR(iata) {
-    const apiUrl = `https://api.weather.gov/stations/${iata}/observations/latest`;
 
-    try {
-      const response = await fetch(apiUrl);
+// Function to fetch the latest METAR data for a given IATA code
+async function fetchMETAR(iata) {
+  const apiUrl = `https://api.weather.gov/stations/${iata}/observations/latest`;
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch data from NOAA API");
-      }
+  try {
+    const response = await fetch(apiUrl);
 
-      const data = await response.json();  // Parse the JSON response
-
-      // Check if we received valid data
-      if (data && data.properties) {
-        const { temperature, windSpeed, windDirection, pressure, humidity } = data.properties;
-
-        // Extract temperature in Celsius
-        const temperatureCelsius = temperature ? temperature.value : 'N/A';
-
-        // Extract wind data (Speed and Direction)
-        const windSpeedKph = windSpeed ? windSpeed.value : 'N/A'; // Speed in meters per second
-        const windDirectionDegrees = windDirection ? windDirection.value : 'N/A';
-
-        // Extract atmospheric pressure
-        const pressureMb = pressure ? pressure.value : 'N/A'; // Pressure in millibars
-
-        // Extract humidity
-        const humidityPercentage = humidity ? humidity.value : 'N/A'; // Humidity as percentage
-
-        // Print the full weather report to the console
-        console.log(`Weather Report for ${iata}:`);
-        console.log(`Temperature: ${temperatureCelsius}°C`);
-        console.log(`Wind: ${windSpeedKph} m/s, Direction: ${windDirectionDegrees}°`);
-        console.log(`Pressure: ${pressureMb} mb`);
-        console.log(`Humidity: ${humidityPercentage}%`);
-
-        // Optionally, update the OAT field or any other fields you want in the UI
-        const oatSpan = document.getElementById("oat");
-        oatSpan.textContent = temperatureCelsius;  // Populate the OAT span with the temperature
-      } else {
-        console.log("Weather data not available");
-      }
-    } catch (error) {
-      console.error("Failed to fetch METAR data:", error);
-      metarReport.textContent = "Unable to fetch METAR data.";
+    if (!response.ok) {
+      throw new Error("Failed to fetch data from NOAA API");
     }
+
+    const data = await response.json();  // Parse the JSON response
+
+    // Check if we received valid data
+    if (data && data.properties) {
+      const { temperature, windSpeed, windDirection, pressure, humidity } = data.properties;
+
+      // Extract temperature in Celsius
+      const temperatureCelsius = temperature ? temperature.value : 'N/A';
+
+      // Extract wind data (Speed and Direction)
+      const windSpeedKph = windSpeed ? windSpeed.value : 'N/A'; // Speed in meters per second
+      const windDirectionDegrees = windDirection ? windDirection.value : 'N/A';
+
+      // Extract atmospheric pressure
+      const pressureMb = pressure ? pressure.value : 'N/A'; // Pressure in millibars
+
+      // Extract humidity
+      const humidityPercentage = humidity ? humidity.value : 'N/A'; // Humidity as percentage
+
+      // Print the full weather report to the console
+      console.log(`Weather Report for ${iata}:`);
+      console.log(`Temperature: ${temperatureCelsius}°C`);
+      console.log(`Wind: ${windSpeedKph} m/s, Direction: ${windDirectionDegrees}°`);
+      console.log(`Pressure: ${pressureMb} mb`);
+      console.log(`Humidity: ${humidityPercentage}%`);
+
+      // Optionally, update the OAT field or any other fields you want in the UI
+      const oatSpan = document.getElementById("oat");
+      oatSpan.textContent = temperatureCelsius;  // Populate the OAT span with the temperature
+
+
+    } else {
+      console.log("Weather data not available");
+    }
+  } catch (error) {
+    console.error("Failed to fetch METAR data:", error);
+    metarReport.textContent = "Unable to fetch METAR data.";
   }
+}
+
 
   // Filter airports based on IATA code and show suggestions
   function filterAirports(query) {
@@ -80,9 +84,8 @@ document.addEventListener("DOMContentLoaded", () => {
       airportSuggestions.innerHTML = "";
       matchingAirports.forEach(airport => {
         const option = document.createElement("option");
-        const cleanedIATA = airport.IATA.replace(/^"|"$/g, '');  // Clean IATA code before setting value
-        option.value = cleanedIATA;  // Set IATA code as value
-        option.textContent = `${cleanedIATA} - ${airport.Name} (${airport.City}, ${airport.Country})`; 
+        option.value = airport.IATA.replace(/^"|"$/g, '');  // Remove quotes when setting value
+        option.textContent = `${airport.IATA.replace(/^"|"$/g, '')} - ${airport.Name} (${airport.City}, ${airport.Country})`; 
         airportSuggestions.appendChild(option);
       });
 
@@ -99,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Log the selected IATA code before the search
     console.log("Selected IATA Code:", selectedIATA);
 
-    // Clean up the IATA code for the search
+    // Remove quotes from the selected IATA code for the search
     const cleanedIATA = selectedIATA.replace(/^"|"$/g, '').trim();
 
     // Look for the IATA code without quotes in the data (search without quotes)
