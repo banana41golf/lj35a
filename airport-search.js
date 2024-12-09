@@ -47,12 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // Extract humidity
         const humidityPercentage = humidity ? humidity.value : 'N/A'; // Humidity as percentage
 
-        // Print the full weather report to the console
-        console.log(`Weather Report for ${iata}:`);
-        console.log(`Temperature: ${temperatureCelsius}°C`);
-        console.log(`Wind: ${windSpeedKph} m/s, Direction: ${windDirectionDegrees}°`);
-        console.log(`Pressure: ${pressureMb} mb`);
-        console.log(`Humidity: ${humidityPercentage}%`);
 
         // Optionally, update the OAT field or any other fields you want in the UI
         const oatSpan = document.getElementById("oat");
