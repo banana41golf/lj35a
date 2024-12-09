@@ -240,6 +240,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // V1 and takeoff distance calculations using trilinear interpolation
     const v1 = trilinearInterpolation(f8ToData, oat, elevation, gw); // V1 Speed (uses F8-TO_flat.json)
     const distance = trilinearInterpolation(f8DisData, oat, elevation, gw); // Takeoff Distance (uses F8-DIS_flat.json)
+
+    console.log("Takeoff Distance Calculation Debug: ", {
+      oat: oat,
+      elevation: elevation,
+      gw: gw,
+      distance: distance
+    });
+
     const n1 = bilinearInterpolation(n1Data, oat, elevation); // N1 (bilinear interpolation, as before)
     const vr = interpolateByGW(vrData, gw, "VR");
     const v2 = interpolateByGW(v2Data, gw, "V2");
