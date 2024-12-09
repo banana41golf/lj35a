@@ -13,27 +13,36 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Loaded airports data:", airportsData); // Log loaded airport data for inspection
   }
 
-  // Function to fetch METAR data from AviationWeather Center's HTML API for a given IATA code
-  async function fetchMETAR(iata) {
-    const apiUrl = `https://cors-anywhere.herokuapp.com/https://aviationweather.gov/cgi-bin/data/metar.php?ids=${iata}&hours=0&order=id%2C-obs&sep=true&format=html`;
-    try {
-      const response = await fetch(apiUrl);
-      const data = await response.text();
 
-      // Parse the HTML response to extract the temperature and METAR report
-      const tempMatch = data.match(/Temperature: (\d+)&deg;C/); // Extract temperature in Celsius
-      if (tempMatch) {
-        const temperatureCelsius = parseInt(tempMatch[1], 10);
-        oatInput.value = temperatureCelsius; // Populate the OAT field with temperature
-      }
+// Function to fetch the latest METAR data for a given IATA code
+async function fetchMETAR(iata) {
+  const apiUrl = `https://api.weather.gov/stations/${iata}/observations/latest`;
 
-      // Display the full METAR report
-      metarReport.textContent = data;
-    } catch (error) {
-      console.error("Failed to fetch METAR data:", error);
-      metarReport.textContent = "Unable to fetch METAR data.";
+  try {
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch data from NOAA API");
     }
+
+    const data = await response.json();  // Parse the JSON response
+
+    // Check if we received valid data and extract temperature
+    if (data && data.properties && data.properties.temperature) {
+      const temperatureCelsius = data.properties.temperature.value;  // Temperature in Celsius
+      oatInput.value = temperatureCelsius;  // Populate the OAT input field with the temperature
+      console.log(`Temperature at ${iata}: ${temperatureCelsius}°C`);
+
+      // You can also display the full METAR report or any other relevant info here
+    } else {
+      console.log("Temperature data not available");
+    }
+  } catch (error) {
+    console.error("Failed to fetch METAR data:", error);
+    metarReport.textContent = "Unable to fetch METAR data.";
   }
+}
+
 
   // Filter airports based on IATA code and show suggestions
   function filterAirports(query) {
