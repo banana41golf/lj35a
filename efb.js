@@ -170,38 +170,90 @@ document.addEventListener("DOMContentLoaded", () => {
     return y1 + ((targetGW - x1) * (y2 - y1)) / (x2 - x1);
   }
 
+  function trilinearInterpolation(data, oat, elevation, gw) {
+    // Sort by elevation, OAT, and GW (gross weight)
+    const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
+    const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
+    const gwLevels = [...new Set(data.map((item) => item.GW))].sort((a, b) => a - b);
+  
+    let lowerElevation = null, upperElevation = null;
+    let lowerOAT = null, upperOAT = null;
+    let lowerGW = null, upperGW = null;
+  
+    // Find the closest lower and upper bounds for elevation, OAT, and GW
+    for (let i = 0; i < elevationLevels.length; i++) {
+      if (elevationLevels[i] <= elevation) lowerElevation = elevationLevels[i];
+      if (elevationLevels[i] >= elevation) {
+        upperElevation = elevationLevels[i];
+        break;
+      }
+    }
+  
+    for (let i = 0; i < oatLevels.length; i++) {
+      if (oatLevels[i] <= oat) lowerOAT = oatLevels[i];
+      if (oatLevels[i] >= oat) {
+        upperOAT = oatLevels[i];
+        break;
+      }
+    }
+  
+    for (let i = 0; i < gwLevels.length; i++) {
+      if (gwLevels[i] <= gw) lowerGW = gwLevels[i];
+      if (gwLevels[i] >= gw) {
+        upperGW = gwLevels[i];
+        break;
+      }
+    }
+  
+    // Extract the relevant data for interpolation
+    const lowerData = data.filter(item => item.Elevation === lowerElevation && item.OAT === lowerOAT && item.GW === lowerGW);
+    const upperData = data.filter(item => item.Elevation === upperElevation && item.OAT === upperOAT && item.GW === upperGW);
+  
+    // Perform trilinear interpolation using the found bounds
+    const interpolate = (low, high, x, x1, x2) => low + ((x - x1) * (high - low)) / (x2 - x1);
+  
+    const lowerValue = interpolate(lowerData[0].V1, upperData[0].V1, oat, lowerOAT, upperOAT);  // Interpolate V1 based on OAT
+    const upperValue = interpolate(lowerData[0].V1, upperData[0].V1, gw, lowerGW, upperGW);  // Interpolate V1 based on GW
+  
+    return interpolate(lowerValue, upperValue, elevation, lowerElevation, upperElevation);  // Final interpolation based on elevation
+  }
+
+  
   calculateButton.addEventListener("click", (event) => {
     event.preventDefault();
-
+  
     const oat = parseInt(document.getElementById("oat").textContent, 10);
     const gw = parseInt(gwInput.value, 10);
-
+  
     // Get the elevation from the #elevation span (not input)
     const elevationText = document.getElementById("elevation").textContent;
     const elevation = parseInt(elevationText, 10); // Convert to number
-
-    console.log("V1 Calculation Inputs:", { oat, elevation, gw });
-
+  
+    console.log("V1 and Distance Calculation Inputs:", { oat, elevation, gw });
+  
     // Check if elevation is valid
     if (isNaN(elevation)) {
       console.error("Elevation is not valid:", elevation);
       return;
     }
-
-    const v1 = bilinearInterpolation(f8ToData, oat, elevation); // V1 Speed (uses F8-TO_flat.json)
-    const distance = bilinearInterpolation(f8DisData, oat, elevation); // Takeoff Distance (uses F8-DIS_flat.json)
-    const n1 = bilinearInterpolation(n1Data, oat, elevation); // N1
+  
+    // V1 and takeoff distance calculations using trilinear interpolation
+    const v1 = trilinearInterpolation(f8ToData, oat, elevation, gw); // V1 Speed (uses F8-TO_flat.json)
+    const distance = trilinearInterpolation(f8DisData, oat, elevation, gw); // Takeoff Distance (uses F8-DIS_flat.json)
+    const n1 = bilinearInterpolation(n1Data, oat, elevation); // N1 (bilinear interpolation, as before)
     const vr = interpolateByGW(vrData, gw, "VR");
     const v2 = interpolateByGW(v2Data, gw, "V2");
-
+  
     console.log("V1 Speed:", v1);
-
+  
+    // Update the output fields
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(2) : "N/A";
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
     document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
     document.getElementById("vr-output").innerText = vr ? `${Math.round(vr)} knots` : "N/A";
     document.getElementById("v2-output").innerText = v2 ? `${Math.round(v2)} knots` : "N/A";
   });
+  
 
   loadData();
 });
