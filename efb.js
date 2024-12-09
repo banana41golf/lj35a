@@ -75,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
     fobInput.value = fobSlider.value;
     updateGW();
   });
-
   fobInput.addEventListener("input", () => {
     const value = parseFloat(fobInput.value);
     if (value >= minFOB && value <= maxFOB) {
@@ -89,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize sliders and input values
   setInitialValues();
 
+  // Trilinear Interpolation Function - V1 and TO DIST
   function trilinearInterpolation(data, targetOAT, targetElevation, targetGW) {
     const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
     const gwLevels = [...new Set(data.map((item) => item.GW))].sort((a, b) => a - b);
@@ -153,6 +153,60 @@ document.addEventListener("DOMContentLoaded", () => {
     return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
   }
   
+  // Bilinear Interpolation Function - N1 Calculation
+  function bilinearInterpolation(data, targetOAT, targetElevation) {
+    const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
+    const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
+
+    let lowerElevation = null, upperElevation = null;
+    let lowerOAT = null, upperOAT = null;
+
+    // Find closest bounds for each dimension (Elevation, OAT)
+    for (let i = 0; i < elevationLevels.length; i++) {
+        if (elevationLevels[i] <= targetElevation) lowerElevation = elevationLevels[i];
+        if (elevationLevels[i] >= targetElevation) {
+            upperElevation = elevationLevels[i];
+            break;
+        }
+    }
+
+    for (let i = 0; i < oatLevels.length; i++) {
+        if (oatLevels[i] <= targetOAT) lowerOAT = oatLevels[i];
+        if (oatLevels[i] >= targetOAT) {
+            upperOAT = oatLevels[i];
+            break;
+        }
+    }
+
+    // Get data points for interpolation
+    const lowerData = data.filter((item) => item.Elevation === lowerElevation && item.OAT === lowerOAT);
+    const upperData = data.filter((item) => item.Elevation === upperElevation && item.OAT === upperOAT);
+
+    // Interpolate between the points for N1
+    function interpolate(dataSet, oat, elevation) {
+        const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
+        let lower = null, upper = null;
+        for (const point of sortedData) {
+            if (point.OAT <= oat) lower = point;
+            if (point.OAT >= oat) {
+                upper = point;
+                break;
+            }
+        }
+
+        const x1 = lower ? lower.OAT : 0, y1 = lower ? lower.N1 : 0;
+        const x2 = upper ? upper.OAT : 0, y2 = upper ? upper.N1 : 0;
+        return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
+    }
+
+    const valueAtLower = interpolate(lowerData, targetOAT, targetElevation);
+    const valueAtUpper = interpolate(upperData, targetOAT, targetElevation);
+
+    // Final interpolation based on Elevation
+    const x1 = lowerElevation, y1 = valueAtLower;
+    const x2 = upperElevation, y2 = valueAtUpper;
+    return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
+}
 
   // Interpolate by GW used by VR and V2
   function interpolateByGW(data, targetGW, key) {
@@ -189,16 +243,10 @@ calculateButton.addEventListener("click", (event) => {
 
   console.log("V1 Calculation Inputs:", { oat, elevation, gw });
 
-  // Check if elevation is valid
-  if (isNaN(elevation)) {
-    console.error("Elevation is not valid:", elevation);
-    return;
-  }
-
   // Trilinear Interpolation for V1 Speed (uses F8-TO_flat.json) and Takeoff Distance (uses F8-DIS_flat.json)
   const v1 = trilinearInterpolation(f8ToData, oat, elevation, gw); // V1 Speed
   const distance = trilinearInterpolation(f8DisData, oat, elevation, gw); // Takeoff Distance
-  const n1 = bilinearInterpolation(n1Data, oat, elevation); // N1
+  const n1 = bilinearInterpolation(n1Data, oat, elevation); // N1 (Bilinear)
   const vr = interpolateByGW(vrData, gw, "VR");
   const v2 = interpolateByGW(v2Data, gw, "V2");
 
