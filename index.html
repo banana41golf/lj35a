@@ -56,18 +56,32 @@
         <label for="oat">Outside Air Temperature (OAT):</label>
         <span id="oat" style="color: #ffffff; font-size: 1rem; font-weight: normal;"></span>°C
       </div>
-
       <!-- Outputs -->
       <div class="form-output">
-        <p><strong>Flaps:</strong> <span id="flaps">8</span></p>
-        <p><strong>N1 Power Setting:</strong> <span id="n1-output">-</span>%</p>
-        <p><strong>Takeoff Distance:</strong> <span id="distance-output">-</span></p>
-<p><strong>V1 Speed:</strong> <span id="v1-output">-</span></p>
+        <div class ="output-column">
+        <strong>Takeoff Performance</strong>
+                <p><strong>Flaps:</strong> <span id="flaps">8</span></p>
+                <p><strong>N1 Power Setting:</strong> <span id="n1-output">-</span>%</p>
+                <p><strong>Takeoff Distance:</strong> <span id="distance-output">-</span></p>
+        <p><strong>V1 Speed:</strong> <span id="v1-output">-</span></p>
+        
+                <p><strong>VR Speed:</strong> <span id="vr-output">-</span></p>
+                <p><strong>V2 Speed:</strong> <span id="v2-output">-</span></p>
+        
+              </div>
+        <div class ="output-column">
+        <strong>Landing Performance</strong>
+                <p><strong>Flaps:</strong> <span id="landingflaps">40</span></p>
+                <p><strong>Vref:</strong> <span id="vref">-</span></p>
+                <p><strong>Wind Corr:</strong> <span id="windcorr">-</span></p>
+        <p><strong>Vapp:</strong> <span id="vapp">-</span></p>
+        
+                <p><strong>LACT:</strong> <span id="lact">-</span></p>
+                <p><strong>FACT:</strong> <span id="fact">-</span></p>
+        
+              </div>
+        </div>
 
-        <p><strong>VR Speed:</strong> <span id="vr-output">-</span></p>
-        <p><strong>V2 Speed:</strong> <span id="v2-output">-</span></p>
-
-      </div>
 
       <!-- Button -->
       <button type="submit">Calculate</button>
