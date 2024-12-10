@@ -150,8 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
   }
 
-  /// Debug VREF data
-  console.log("vrefData: ", vrefData);
+
 
   function interpolateByGW(data, targetGW, key) {
     const sortedData = data.sort((a, b) => a.GW - b.GW);
