@@ -48,9 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const humidityPercentage = humidity ? humidity.value : 'N/A'; // Humidity as percentage
 
 
-        // Optionally, update the OAT field or any other fields you want in the UI
+        // Update OAT and METAR fields
         const oatSpan = document.getElementById("oat");
-        oatSpan.textContent = temperatureCelsius;  // Populate the OAT span with the temperature
+        oatSpan.textContent = temperatureCelsius ? '°C';  // Populate the OAT span with the temperature
         const metarSPAN = document.getElementById("rawMETAR")
         metarSPAN.textContent = rawMessage // Populate with RAW Metar Data
       } else {
