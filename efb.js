@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Define the min and max values for sliders
   const minZFW = 10360;
-  const maxZFW = 18300;
+  const maxZFW = 13500;
   const minFOB = 0;
   const maxFOB = 6240;
   const maxGW = 18300;
