@@ -304,56 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return distance;
     }
 
-    //Perform Trilinear Interpolation for Landing Data - LDR-A
-    function trilinearInterpolationLanding(data, oat, elevation, gw) {
-      const elevationLevels = Object.keys(data); // Get available elevation levels
-      const gwLevels = Object.keys(data[elevationLevels[0]]); // Get available GW levels
-      const oatLevels = Object.keys(data[elevationLevels[0]][gwLevels[0]]); // Get available OAT levels
-      
-      // Find the closest elevation, GW, and OAT levels
-      let lowerElevation = null, upperElevation = null;
-      let lowerGW = null, upperGW = null;
-      let lowerOAT = null, upperOAT = null;
-    
-      // Elevation interpolation
-      for (let i = 0; i < elevationLevels.length; i++) {
-        if (elevationLevels[i] <= elevation) lowerElevation = elevationLevels[i];
-        if (elevationLevels[i] >= elevation) {
-          upperElevation = elevationLevels[i];
-          break;
-        }
-      }
-    
-      // GW interpolation
-      for (let i = 0; i < gwLevels.length; i++) {
-        if (gwLevels[i] <= gw) lowerGW = gwLevels[i];
-        if (gwLevels[i] >= gw) {
-          upperGW = gwLevels[i];
-          break;
-        }
-      }
-    
-      // OAT interpolation
-      for (let i = 0; i < oatLevels.length; i++) {
-        if (oatLevels[i] <= oat) lowerOAT = oatLevels[i];
-        if (oatLevels[i] >= oat) {
-          upperOAT = oatLevels[i];
-          break;
-        }
-      }
-    
-      // Get relevant data points from the nested structure
-      const lowerElevationData = data[lowerElevation][lowerGW][lowerOAT];
-      const upperElevationData = data[upperElevation][upperGW][upperOAT];
-    
-      // Perform trilinear interpolation for landing distance
-      const interpolateValue = (lowerValue, upperValue, lowerDistance, upperDistance) => {
-        return lowerDistance + ((upperDistance - lowerDistance) / (upperValue - lowerValue)) * (oat - lowerValue);
-      };
-    
-      const distance = interpolateValue(lowerElevation, upperElevation, lowerElevationData, upperElevationData);
-      return distance;
-    }
+
     
         
     const v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
@@ -362,7 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const vr = interpolateByGW(vrData, gw, "VR");
     const v2 = interpolateByGW(v2Data, gw, "V2");
     const vref = interpolateByGW(vrefData, gw, "VREF");
-    const ldaa = trilinearInterpolationLanding(ldaData, oat, elevation, gw);
+
 
     console.log("V1 Speed:", v1);
     console.log("VRef Speed:", vref);
@@ -373,7 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("vr-output").innerText = vr ? `${Math.round(vr)} knots` : "N/A";
     document.getElementById("v2-output").innerText = v2 ? `${Math.round(v2)} knots` : "N/A";
     document.getElementById("vref-output").innerText = vref ? `${Math.round(vref)} knots` : "N/A";
-    document.getElementById("lda-output").innerText = ldaa ? `${Math.round(ldaa)} feet` : "N/A";
+
   });
 
   loadData();
