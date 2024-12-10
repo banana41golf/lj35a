@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  let n1Data, f8ToData, f8DisData, vrData, v2Data, vrefData;
+  let n1Data, f8ToData, f8DisData, vrData, v2Data, vrefData,ldaData;
   const zfwSlider = document.getElementById("zfw-slider");
   const zfwInput = document.getElementById("zfw");
   const fobSlider = document.getElementById("fob-slider");
@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     vrData = await fetch("VR_flat.json").then((res) => res.json());
     v2Data = await fetch("V2_flat.json").then((res) => res.json());
     vrefData = await fetch("vref.json").then((res) => res.json());
+    ldaData = await fetch("lda.json").then((res) => res.json());
   }
 
   // Function to update the Gross Weight (GW) based on ZFW and FOB values
