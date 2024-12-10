@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     vrData = await fetch("VR_flat.json").then((res) => res.json());
     v2Data = await fetch("V2_flat.json").then((res) => res.json());
     vrefData = await fetch("vref.json").then((res) => res.json());
-    ldaData = await fetch("lda.json").then((res) => res.json());
+    ldaData = await fetch("LDAA_flat.json").then((res) => res.json());
   }
 
   // Function to update the Gross Weight (GW) based on ZFW and FOB values
@@ -313,6 +313,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const vr = interpolateByGW(vrData, gw, "VR");
     const v2 = interpolateByGW(v2Data, gw, "V2");
     const vref = interpolateByGW(vrefData, gw, "VREF");
+
+    // LDA Testing
+
+    const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
+    console.log("LDA Data: ", ldaa);
 
 
     console.log("V1 Speed:", v1);
