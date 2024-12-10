@@ -194,6 +194,8 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Elevation is not valid:", elevation);
       return;
     }
+
+    // Trilinear Function for V1
     function trilinearInterpolationV1(data, oat, elevation, gw) {
       const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
       const gwLevels = [...new Set(data.map((item) => item.GW))].sort((a, b) => a - b);
@@ -249,6 +251,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const v1 = interpolateValue(lowerElevationData, upperElevationData, lowerOAT, upperOAT);
       return v1;
     }
+
+    // Trilinear Function for TO and LDG Distance
     function trilinearInterpolationDistance(data, oat, elevation, gw) {
       const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
       const gwLevels = [...new Set(data.map((item) => item.GW))].sort((a, b) => a - b);
@@ -316,11 +320,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const vref = interpolateByGW(vrefData, gw, "VREF");
     const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
-  
-
-
-    console.log("V1 Speed:", v1);
-    console.log("VRef Speed:", vref);
 
     //Update HTML forms
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(2) : "N/A";
