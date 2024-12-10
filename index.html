@@ -25,15 +25,15 @@
         <label for="gw">Gross Weight (GW):</label>
         <input type="text" id="gw" name="gw" placeholder="Calculated Automatically" readonly />
         <small id="gw-warning" style="color: red; display: none;">
-          <!-- Warning messages will appear here dynamically -->
+          <!-- Warning messages appear here dynamically -->
         </small>
       </div>
-<!-- New Departure Airport (ICAO) Input Field and Dropdown -->
+<!-- Departure Airport (ICAO) Input Field and Dropdown -->
 <div class="form-group">
     <label for="departure-airport">Departure or Arrival Airport (ICAO):</label>
     <input type="text" id="departure-airport" name="departure-airport" placeholder="Enter ICAO code" autocomplete="off" required />
     <select id="airport-suggestions" size="5" style="display:none;">
-        <!-- Dropdown will populate here -->
+        <!-- Dropdown populates here -->
     </select>
 </div>
 <div class="form-group">
@@ -54,6 +54,8 @@
         <label for="oat">Outside Air Temperature (OAT):</label>
         <span id="oat" style="color: #ffffff; font-size: 1rem; font-weight: normal;"></span>°C
       </div>
+
+
       <!-- Outputs -->
       <div class="form-output">
         <div class ="output-column">
@@ -75,13 +77,12 @@
                 <p><strong>LDR (Factored):</strong> <span id="fact-output">-</span></p>
               </div>
         </div>
-
-
-      <!-- Button -->
       <button type="submit">Calculate</button>
     </form>
   </div>
+
 <script src="efb.js"></script>
 <script src="airport-search.js"></script>
+
 </body>
 </html>
