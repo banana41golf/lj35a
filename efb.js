@@ -307,27 +307,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     
-        
+    // Calculations Here    
     const v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
     const distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
     const n1 = bilinearInterpolation(n1Data, oat, elevation); // N1
     const vr = interpolateByGW(vrData, gw, "VR");
     const v2 = interpolateByGW(v2Data, gw, "V2");
     const vref = interpolateByGW(vrefData, gw, "VREF");
-
-    // LDA Testing
-
     const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
-    console.log("LDA Data: ", ldaa);
-
-    // FACT testing
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
-    console.log("Factored Landing Data: ", fact);
+  
 
 
     console.log("V1 Speed:", v1);
     console.log("VRef Speed:", vref);
 
+    //Update HTML forms
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(2) : "N/A";
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
     document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
@@ -335,6 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("v2-output").innerText = v2 ? `${Math.round(v2)} knots` : "N/A";
     document.getElementById("vref-output").innerText = vref ? `${Math.round(vref)} knots` : "N/A";
     document.getElementById("ldaa-output").innerText = ldaa ? `${Math.round(ldaa)} feet` : "N/A";
+    document.getElementById("fact-output").innerText = fact ? `${Math.round(fact)} feet` : "N/A";
   });
 
   loadData();
