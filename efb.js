@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  let n1Data, f8ToData, f8DisData, vrData, v2Data, vrefData, ldaData;
+  let n1Data, f8ToData, f8DisData, vrData, v2Data, vrefData, ldaData, factData;
   const zfwSlider = document.getElementById("zfw-slider");
   const zfwInput = document.getElementById("zfw");
   const fobSlider = document.getElementById("fob-slider");
@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     v2Data = await fetch("V2_flat.json").then((res) => res.json());
     vrefData = await fetch("vref.json").then((res) => res.json());
     ldaData = await fetch("LDAA_flat.json").then((res) => res.json());
+    factData = await fetch("fact.json").then((res) => res.json());
   }
 
   // Function to update the Gross Weight (GW) based on ZFW and FOB values
@@ -318,6 +319,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
     console.log("LDA Data: ", ldaa);
+
+    // FACT testing
+    const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
+    console.log("Factored Landing Data: ", fact);
 
 
     console.log("V1 Speed:", v1);
