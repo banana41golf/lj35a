@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  let n1Data, f8ToData, f8DisData, vrData, v2Data;
+  let n1Data, f8ToData, f8DisData, vrData, v2Data, vrefData;
   const zfwSlider = document.getElementById("zfw-slider");
   const zfwInput = document.getElementById("zfw");
   const fobSlider = document.getElementById("fob-slider");
@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     f8DisData = await fetch("F8-DIS_flat.json").then((res) => res.json());
     vrData = await fetch("VR_flat.json").then((res) => res.json());
     v2Data = await fetch("V2_flat.json").then((res) => res.json());
+    vrefData = await fetch("vref.json").then((res) => res.json());
   }
 
   // Function to update the Gross Weight (GW) based on ZFW and FOB values
@@ -32,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const gw = zfw + fob;
 
     if (gw > maxGW || gw < minGW) {
-      gwInput.value = gw > maxGW ? `OUT OF LIMIT` : `Below min (${minGW})!`;
+      gwInput.value = gw > maxGW ? `MTOW EXCEEDED` : `Below min (${minGW})!`;
       calculateButton.disabled = true;
       gwWarning.style.display = "block";
       gwWarning.textContent = gw > maxGW
@@ -170,6 +171,8 @@ document.addEventListener("DOMContentLoaded", () => {
     return y1 + ((targetGW - x1) * (y2 - y1)) / (x2 - x1);
   }
 
+  // Calculate Button
+
   calculateButton.addEventListener("click", (event) => {
     event.preventDefault();
 
@@ -303,14 +306,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const n1 = bilinearInterpolation(n1Data, oat, elevation); // N1
     const vr = interpolateByGW(vrData, gw, "VR");
     const v2 = interpolateByGW(v2Data, gw, "V2");
+    const vref = interpolateByGW(vrefData, gw, "VREF");
 
     console.log("V1 Speed:", v1);
+    console.log("VRef Speed:", vref);
 
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(2) : "N/A";
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
     document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
     document.getElementById("vr-output").innerText = vr ? `${Math.round(vr)} knots` : "N/A";
     document.getElementById("v2-output").innerText = v2 ? `${Math.round(v2)} knots` : "N/A";
+    document.getElementById("vref-output").innerText = vref ? `${Math.round(vref)} knots` : "N/A";
   });
 
   loadData();

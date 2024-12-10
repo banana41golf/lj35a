@@ -32,7 +32,7 @@
       </div>
 <!-- New Departure Airport (ICAO) Input Field and Dropdown -->
 <div class="form-group">
-    <label for="departure-airport">Departure Airport (ICAO):</label>
+    <label for="departure-airport">Departure or Arrival Airport (ICAO):</label>
     <input type="text" id="departure-airport" name="departure-airport" placeholder="Enter ICAO code" autocomplete="off" required />
     <select id="airport-suggestions" size="5" style="display:none;">
         <!-- Dropdown will populate here -->
@@ -67,18 +67,18 @@
         
                 <p><strong>VR Speed:</strong> <span id="vr-output">-</span></p>
                 <p><strong>V2 Speed:</strong> <span id="v2-output">-</span></p>
-        
+               
               </div>
         <div class ="output-column">
         <strong>Landing Performance</strong>
                 <p><strong>Flaps:</strong> <span id="landingflaps">40</span></p>
-                <p><strong>Vref:</strong> <span id="vref">-</span></p>
+                <p><strong>Vref:</strong> <span id="vref-output">-</span></p>
                 <p><strong>Wind Corr:</strong> <span id="windcorr">-</span></p>
         <p><strong>Vapp:</strong> <span id="vapp">-</span></p>
         
                 <p><strong>LACT:</strong> <span id="lact">-</span></p>
                 <p><strong>FACT:</strong> <span id="fact">-</span></p>
-        
+                
               </div>
         </div>
 
