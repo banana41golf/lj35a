@@ -329,7 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("vr-output").innerText = vr ? `${Math.round(vr)} knots` : "N/A";
     document.getElementById("v2-output").innerText = v2 ? `${Math.round(v2)} knots` : "N/A";
     document.getElementById("vref-output").innerText = vref ? `${Math.round(vref)} knots` : "N/A";
-
+    document.getElementById("ldaa-output").innerText = ldaa ? `${Math.round(ldaa)} feet` : "N/A";
   });
 
   loadData();
