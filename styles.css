@@ -6,7 +6,7 @@ body {
 }
 
 .container {
-  max-width: 700px;
+  max-width: 600px;
   margin: 50px auto;
   padding: 20px;
   background-color: #1e1e1e;
@@ -87,4 +87,21 @@ button:disabled {
   background-color: gray;
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+/* Apply flexbox only to fields with class "horizontal" */
+.form-group.horizontal {
+  display: flex;
+  align-items: center; /* Vertically center the elements */
+  gap: 10px; /* Space between ZFW and FOB */
+}
+
+.form-group.horizontal label {
+  width: 150px; /* Adjust width to fit the layout */
+  margin-right: 10px; /* Space between label and input field */
+}
+
+.form-group.horizontal input[type="number"],
+.form-group.horizontal input[type="range"] {
+  width: 48%; /* Make the input fields take up about half of the space each */
 }

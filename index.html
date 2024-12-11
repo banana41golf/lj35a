@@ -11,17 +11,19 @@
     <h1>Learjet 35A Performance Calculator</h1>
     <form id="performance-calculator">
       <!-- Inputs -->
-      <div class="form-group">
+      <div class="form-group horizontal">
         <label for="zfw">Zero Fuel Weight (ZFW):</label>
         <input type="number" id="zfw" name="zfw" placeholder="lbs" required />
         <input type="range" id="zfw-slider" min="10350" max="13500" step="50">
       </div>
-      <div class="form-group">
+      
+      <div class="form-group horizontal">
         <label for="fob">Fuel On Board (FOB):</label>
         <input type="number" id="fob" name="fob" placeholder="lbs" required />
         <input type="range" id="fob-slider" min="600" max="6240" step="10">
       </div>
-      <div class="form-group">
+      
+      <div class="form-group horizontal">
         <label for="gw">Gross Weight (GW):</label>
         <input type="text" id="gw" name="gw" placeholder="Calculated Automatically" readonly />
         <small id="gw-warning" style="color: red; display: none;">
@@ -29,7 +31,7 @@
         </small>
       </div>
 <!-- Departure Airport (ICAO) Input Field and Dropdown -->
-<div class="form-group">
+<div class="form-group horizontal">
     <label for="departure-airport">Departure or Arrival Airport (ICAO):</label>
     <input type="text" id="departure-airport" name="departure-airport" placeholder="Enter ICAO code" autocomplete="off" required />
     <select id="airport-suggestions" size="5" style="display:none;">
