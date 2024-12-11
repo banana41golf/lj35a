@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let selICAO; 
   let cleanedICAO;
   let matchingRunways = [];
+  let runwayIds = [];
 
   // Load airport data from the airports.json file
   async function loadAirportData() {
@@ -93,60 +94,49 @@ document.addEventListener("DOMContentLoaded", () => {
         airportSuggestions.appendChild(option);
       });
 
-      // First attempt at looking up Runways
-      async function loadRunwaysData() {
+      // Load Runway Daata
+      async function loadRunwaysData(cleanedICAO) {
         const response = await fetch("runways.json");
         const runwaysData = await response.json();
-      
-        // Find the matching airport based on ICAO (ARPT_ID)
-        const matchingRunways = runwaysData.filter(runway => runway.ARPT_ID === cleanedICAO);
-      
-        // Extract the RWY_IDs from the matching runways
-        const runwayIds = matchingRunways.flatMap(runway => runway.RWY_ID);
-      
-        // Log the runway IDs to the console
-        console.log("Matching runway IDs:", runwayIds);
-      
-        // You can now use the runwayIds array as needed
-      }
-      
-      loadRunwaysData();  // Call the function to load and filter the data
-
-
-      // Assuming matchingRunways array is already populated from loadRunwaysData
-const runwaySelect = document.getElementById("runway-select");  // Your dropdown for runway selection
-const runwayLengthField = document.getElementById("runway-length");  // Field to display runway length
-
-// Function to populate the runway dropdown
-function populateRunwayDropdown(runwayIds) {
-    runwaySelect.innerHTML = '';  // Clear any existing options
-    runways.forEach(runway => {
-        runway.RWY_ID.forEach(rwyId => {
-            const option = document.createElement("option");
-            option.value = rwyId;
-            option.textContent = `Runway ${rwyId}`;  // You can customize this text
-            runwaySelect.appendChild(option);
-        });
-    });
-}
-
-// Function to update runway length when a runway is selected
-runwaySelect.addEventListener("change", (event) => {
-    const selectedRunwayId = event.target.value;  // Get selected runway ID
-
-    // Find the runway data from the matching runways based on the selected ID
-    const selectedRunway = matchingRunways.find(runway => runway.RWY_ID.includes(selectedRunwayId));
     
-    // Display the runway length if a matching runway is found
-    if (selectedRunway) {
-        runwayLengthField.textContent = `Runway Length: ${selectedRunway.RWY_LEN} feet`;  // Set the runway length
-    } else {
-        runwayLengthField.textContent = "Runway length not available.";  // Fallback if no match
+        // Find the matching airport based on ICAO (ARPT_ID)
+        runwayIDs = runwaysData.filter(runway => runway.ARPT_ID === cleanedICAO);
+    
+        // Debug: Log the populated runwayIDs array
+        console.log("Runway IDs array:", runwayIDs);
+    
+        // Call the function to populate the dropdown
+        populateRunwayDropdown(runwayIDs);
     }
-});
-
-// Call this function after loading the matching runways
-populateRunwayDropdown(matchingRunways);
+    
+    // Function to populate the runway dropdown using the correct variable (runwayIDs)
+    function populateRunwayDropdown(runwayIDs) {
+        const runwaySelect = document.getElementById("runway-select");
+        runwaySelect.innerHTML = '';  // Clear any existing options
+    
+        // Debug: Log the runwayIDs array to check its structure
+        console.log("Runway IDs in populate function:", runwayIDs);
+    
+        // If the runwayIDs array is populated, proceed to populate the dropdown
+        if (runwayIDs.length > 0) {
+            runwayIDs.forEach(runway => {
+                // Check if RWY_ID exists and is an array
+                if (Array.isArray(runway.RWY_ID)) {
+                    runway.RWY_ID.forEach(rwyId => {
+                        const option = document.createElement("option");
+                        option.value = rwyId;
+                        option.textContent = `Runway ${rwyId}`;  // Customize this text if needed
+                        runwaySelect.appendChild(option);
+                    });
+                }
+            });
+        } else {
+            console.log("No runways found to populate the dropdown.");
+        }
+    }
+    
+    // Example: Assuming ICAO is already set, call the function to load data
+    loadRunwaysData(cleanedICAO);  // Call after ICAO is selected and set
 
 /// end of runway search section
 
