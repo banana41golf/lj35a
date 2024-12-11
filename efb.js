@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const gwInput = document.getElementById("gw");
   const calculateButton = document.querySelector("button[type='submit']");
   const gwWarning = document.getElementById("gw-warning");
-  const mlwWarning = document.getElementById("mlw-warning");
+
 
   // Define the min and max values for sliders
   const minZFW = 10360;
@@ -17,8 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const maxGW = 18300;
   const minGW = 0;
 
-  // Other Aircraft Performance
-  const MLW = 13500;
 
   // Function to load the JSON data
   async function loadData() {
@@ -324,22 +322,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const vref = interpolateByGW(vrefData, gw, "VREF");
     const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
-
-    // Verify Landing Weight does not exceed MLW
-let MLWflag;
-
-    if (gw > MLW) { 
-      MLWflag = true;
-    } else {MLWflag = false;}
-console.log("MLW Flag: ", {MLWflag} );
-
-if (gw > MLW) {
-  mlwWarning.style.display = "block";
-  mlwWarning.textContent = `Gross Weight exceeds MLW of ${MLW} lbs!`
-    ;
-} else {
-  mlwWarning.style.display = "none";
-}
 
 
     //Update HTML forms
