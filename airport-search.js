@@ -155,7 +155,7 @@ document.getElementById("runway-select").addEventListener("change", (event) => {
   // Display the runway length if a matching runway is found
   const runwayLengthField = document.getElementById("runway-length");
   if (selectedRunway) {
-      runwayLengthField.textContent = `Runway Length: ${selectedRunway.RWY_LEN} feet`;  // Set the runway length
+      runwayLengthField.textContent = `${selectedRunway.RWY_LEN} feet`;  // Set the runway length
   } else {
       runwayLengthField.textContent = "Runway length not available.";  // Fallback if no match
   }
