@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
         airportSuggestions.appendChild(option);
       });
 
-      // Load Runway Daata
+      // Load Runway Data
       async function loadRunwaysData(cleanedICAO) {
         const response = await fetch("runways.json");
         const runwaysData = await response.json();
@@ -108,6 +108,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
         // Call the function to populate the dropdown
         populateRunwayDropdown(runwayIDs);
+
+        // Reset the runway dropdown to "Select Runway" if any option was pre-selected
+        const runwaySelect = document.getElementById("runway-select");
+        runwaySelect.value = "";  // Reset dropdown to default value ("Select Runway")
     }
     
     // Function to populate the runway dropdown using the correct variable (runwayIDs)
