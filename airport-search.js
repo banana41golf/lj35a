@@ -138,6 +138,23 @@ document.addEventListener("DOMContentLoaded", () => {
     // Example: Assuming ICAO is already set, call the function to load data
     loadRunwaysData(cleanedICAO);  // Call after ICAO is selected and set
 
+    // Event listener to handle the selection of a runway
+document.getElementById("runway-select").addEventListener("change", (event) => {
+  const selectedRunwayId = event.target.value;  // Get selected runway ID
+
+  // Find the runway data from the runwayIDs array based on the selected ID
+  const selectedRunway = runwayIDs.find(runway => runway.RWY_ID.includes(selectedRunwayId));
+
+  // Display the runway length if a matching runway is found
+  const runwayLengthField = document.getElementById("runway-length");
+  if (selectedRunway) {
+      runwayLengthField.textContent = `Runway Length: ${selectedRunway.RWY_LEN} feet`;  // Set the runway length
+  } else {
+      runwayLengthField.textContent = "Runway length not available.";  // Fallback if no match
+  }
+});
+
+
 /// end of runway search section
 
       airportSuggestions.style.display = matchingAirports.length > 0 ? "block" : "none";
