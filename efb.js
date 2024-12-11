@@ -330,6 +330,15 @@ document.addEventListener("DOMContentLoaded", () => {
     else {mlwFlag = false;}
     console.log("MLW Flag: ", {mlwFlag});
 
+    if(mlwFlag = true) {
+      document.getElementById("mlw-message").innerText = "MLW EXCEEDED"; 
+    } else {
+      document.getElementById("mlw-message").innerText = "";
+    }
+
+
+  
+
 
     //Update HTML forms
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(2) : "N/A";
