@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const metarReport = document.getElementById("metar-report"); // New METAR report div
   const oatInput = document.getElementById("oat"); // OAT (temperature) input field
   const depName = document.getElementById("depName"); // Airport name field
+  let selICAO; 
 
   // Load airport data from the airports.json file
   async function loadAirportData() {
