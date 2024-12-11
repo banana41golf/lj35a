@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const runwaySelect = document.getElementById("runway-select");
         runwaySelect.value = "Select Runway";  // Reset dropdown to default value ("Select Runway")
         const rwyLength = document.getElementById("runway-length");
-        rwyLength.value = "N/A";  // Reset runway length to "N/A"
+        rwyLength.textContent = "N/A";  // Reset runway length to "N/A"
     }
     
     // Function to populate the runway dropdown using the correct variable (runwayIDs)
