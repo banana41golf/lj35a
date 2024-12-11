@@ -68,11 +68,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Filter airports based on IATA code and show suggestions
   function filterAirports(query) {
-    console.log("Filtering airports for query:", query); // Log the query
+    // console.log("Filtering airports for query:", query); // DBUG: Log the query // Reenable for trouble shooting
     const filteredAirports = airportsData.filter(airport =>
       airport.IATA.replace(/^"|"$/g, '').toUpperCase().includes(query.toUpperCase()) // Remove quotes before matching
     );
-    console.log("Filtered airports:", filteredAirports); // Log the filtered airports
+    // console.log("Filtered airports:", filteredAirports); // DBUG: Log the filtered airports 
     return filteredAirports;
   }
 
@@ -87,11 +87,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const cleanedIATA = airport.IATA.replace(/^"|"$/g, '');  // Clean IATA code before setting value
         option.value = cleanedIATA;  // Set IATA code as value
         option.textContent = `${cleanedIATA} - ${airport.Name} (${airport.City}, ${airport.Country})`; 
-        console.log(airport.ICAO);
+        //console.log(airport.ICAO);
         const selICAO = airport.ICAO;
-        console.log(selICAO);
+        //console.log(selICAO);
         cleanedICAO = selICAO.replace(/^"|"$/g, '').trim();
-        console.log(cleanedICAO);
+        //console.log(cleanedICAO);
         airportSuggestions.appendChild(option);
       });
 
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
         runwayIDs = runwaysData.filter(runway => runway.ARPT_ID === cleanedICAO);
     
         // Debug: Log the populated runwayIDs array
-        console.log("Runway IDs array:", runwayIDs);
+        //console.log("Runway IDs array:", runwayIDs);
     
         // Call the function to populate the dropdown
         populateRunwayDropdown(runwayIDs);
@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
         runwaySelect.innerHTML = '';  // Clear any existing options
     
         // Debug: Log the runwayIDs array to check its structure
-        console.log("Runway IDs in populate function:", runwayIDs);
+        // console.log("Runway IDs in populate function:", runwayIDs);
     
         // If the runwayIDs array is populated, proceed to populate the dropdown
         if (runwayIDs.length > 0) {
@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         } else {
-            console.log("No runways found to populate the dropdown.");
+            //console.log("No runways found to populate the dropdown.");
         }
     }
     
@@ -175,7 +175,7 @@ document.getElementById("runway-select").addEventListener("change", (event) => {
     let selectedIATA = event.target.value;  // Get the IATA code from selected option
 
     // Log the selected IATA code before the search
-    console.log("Selected IATA Code:", selectedIATA);
+    //console.log("Selected IATA Code:", selectedIATA);
 
     // Clean up the IATA code for the search
     const cleanedIATA = selectedIATA.replace(/^"|"$/g, '').trim();
@@ -202,7 +202,7 @@ depName.textContent = cleanedAirportName || "N/A";  // Fallback if name is undef
         // Fetch the METAR data for the selected airport using the cleaned IATA
         fetchMETAR(cleanedIATA);
     } else {
-        console.log("Airport not found in data:", selectedIATA);  // Log if airport is not found
+        //console.log("Airport not found in data:", selectedIATA);  // Log if airport is not found
         elevationField.textContent = "Airport not found";
     }
     
