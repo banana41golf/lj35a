@@ -105,3 +105,17 @@ button:disabled {
 .form-group.horizontal input[type="range"] {
   width: 48%; /* Make the input fields take up about half of the space each */
 }
+
+.output-column p {
+  display: flex;
+  align-items: center; /* Vertically align the label and span */
+  margin-bottom: 10px; /* Space between each row */
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.output-column label {
+  margin-right: 10px; /* Space between label and span */
+  font-weight: normal; /* Adjust label font weight if needed */
+}
+

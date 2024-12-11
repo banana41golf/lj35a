@@ -31,7 +31,7 @@
         </small>
       </div>
 <!-- Departure Airport (ICAO) Input Field and Dropdown -->
-<div class="form-group horizontal">
+<div class="form-group">
     <label for="departure-airport">Departure or Arrival Airport (ICAO):</label>
     <input type="text" id="departure-airport" name="departure-airport" placeholder="Enter ICAO code" autocomplete="off" required />
     <select id="airport-suggestions" size="5" style="display:none;">
@@ -66,36 +66,46 @@
 
         <!-- Runway Length Stuff-->
         <div class="output-column">
-
+<p>
 <label for ="runway-select">Select Runway:</label>
   <select id="runway-select">
     <option value=""></option>  <!-- Default option -->
-</select>
-<label for="runway-length">Runway Length:</label>
-<p id="runway-length">N/A</p>  <!-- Field to display runway length -->
+</select></p>
+<p><label for="runway-length">Runway Length:</label>
+<span id="runway-length">N/A</span></p>  <!-- Field to display runway length -->
 </div>
 
         <div class ="output-column">
         <strong>Takeoff Performance</strong>
-                <p><strong>Flaps:</strong> <span id="flaps">8</span></p>
-                <p><strong>Anti-Ice:</strong> <span id="antiice">Off</span></p>
-                <p><strong>N1 Power Setting:</strong> <span id="n1-output">-</span>%</p>
-                <p><strong>Takeoff Distance:</strong> <span id="distance-output">-</span></p>
-        <p><strong>V1 Speed:</strong> <span id="v1-output">-</span></p>
-        
-                <p><strong>VR Speed:</strong> <span id="vr-output">-</span></p>
-                <p><strong>V2 Speed:</strong> <span id="v2-output">-</span></p>
-               
+                <p><label for="flaps">Flaps:</label>
+                  <span id="flaps">8</span></p>
+                <p><label for="antiice">Anti-Ice:</label>
+                  <span id="antiice">Off</span></p>
+                <p><label for="n1-output">N1 Power Setting:</label>
+                  <span id="n1-output">-</span>%</p>
+                <p><label for="distance-output">Takeoff Distance:</label> 
+                  <span id="distance-output">-</span></p>
+                <p><label for="v1-output">V1 Speed:</label> 
+                  <span id="v1-output">-</span></p>
+                <p><label for="vr-output">VR Speed:</label> 
+                  <span id="vr-output">-</span></p>
+                <p><label for="v2-output">V2 Speed:</label> 
+                  <span id="v2-output">-</span></p>
               </div>
+
         <div class ="output-column">
         <strong>Landing Performance</strong>
-                <p><strong>Flaps:</strong> <span id="landingflaps">40</span></p>
-                <p><strong>Vref:</strong> <span id="vref-output">-</span></p>
-                <p><strong>LDR (Actual):</strong> <span id="ldaa-output">-</span></p>
-                <p><strong>LDR (Factored):</strong> <span id="fact-output">-</span></p>
-                <p><span id="mlw-message"></span></p>
+                <p><label for="landingflaps">Flaps:</label> 
+                  <span id="landingflaps">40</span></p>
+                <p><label for="vref-output">Vref:</label> 
+                  <span id="vref-output">-</span></p>
+                <p><label for="ldaa-output">LDR (Actual):</label> 
+                  <span id="ldaa-output">-</span></p>
+                <p><label for="fact-output">LDR (Factored):</label> 
+                  <span id="fact-output">-</span></p>
               </div>
         </div>
+
       <button type="submit">Calculate</button>
     </form>
   </div>
