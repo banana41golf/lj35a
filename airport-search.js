@@ -31,8 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (data && data.properties) {
       const { rawMessage, temperature, windSpeed, windDirection, pressure, humidity } = data.properties;
 
-       // Log rawMessage to inspect its structure
-  console.log('Raw Message:', typeof rawMessage); // Log rawMessage to check if it's an object or string
+
 
         // Extract temperature in Celsius
         const temperatureCelsius = temperature ? temperature.value : 'N/A';
@@ -83,6 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const cleanedIATA = airport.IATA.replace(/^"|"$/g, '');  // Clean IATA code before setting value
         option.value = cleanedIATA;  // Set IATA code as value
         option.textContent = `${cleanedIATA} - ${airport.Name} (${airport.City}, ${airport.Country})`; 
+        console.log(airport.ICAO);
         airportSuggestions.appendChild(option);
       });
 
