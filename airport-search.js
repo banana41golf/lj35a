@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Update OAT and METAR fields
         const oatSpan = document.getElementById("oat");
-        oatSpan.textContent = temperatureCelsius;  // Populate the OAT span with the temperature
+        oatSpan.textContent = `${temperatureCelsius}°C`;  // Populate the OAT span with the temperature
         const metarSPAN = document.getElementById("rawMETAR")
         metarSPAN.textContent = rawMessage // Populate with RAW Metar Data
       } else {
