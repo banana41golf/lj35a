@@ -155,6 +155,8 @@ document.getElementById("runway-select").addEventListener("change", (event) => {
 });
 
 
+document.getElementById("icao-code").innerText = cleanedICAO;
+
 /// end of runway search section
 
       airportSuggestions.style.display = matchingAirports.length > 0 ? "block" : "none";
