@@ -323,27 +323,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
 
-    // MLW
-    const mlw = 15300;
-    let mlwFlag;
-    if(gw > mlw){mlwFlag = true;}
-    else {mlwFlag = false;}
-    console.log("MLW Flag: ", {mlwFlag});
-
-    if(mlwFlag = true) {
-      document.getElementById("mlw-message").innerText = "MLW EXCEEDED"; 
-    } else {
-      document.getElementById("mlw-message").innerText = "";
-    }
-
-    if(mlwFlag = false) {
-      document.getElementById("mlw-message").innerText = " "; 
-    } else {
-      document.getElementById("mlw-message").innerText = " ";
-    }
-  
-
-
     //Update HTML forms
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(2) : "N/A";
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
