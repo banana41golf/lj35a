@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const depName = document.getElementById("depName"); // Airport name field
   let selICAO; 
   let cleanedICAO;
+  let matchingRunways = [];
 
   // Load airport data from the airports.json file
   async function loadAirportData() {
@@ -93,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       // First attempt at looking up Runways
-
       async function loadRunwaysData() {
         const response = await fetch("runways.json");
         const runwaysData = await response.json();
