@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const oatInput = document.getElementById("oat"); // OAT (temperature) input field
   const depName = document.getElementById("depName"); // Airport name field
   let selICAO; 
+  let cleanedICAO;
 
   // Load airport data from the airports.json file
   async function loadAirportData() {
@@ -86,6 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(airport.ICAO);
         const selICAO = airport.ICAO;
         console.log(selICAO);
+        cleanedICAO = selICAO.replace(/^"|"$/g, '').trim();
+        console.log(cleanedICAO);
         airportSuggestions.appendChild(option);
       });
 
