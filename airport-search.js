@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const runwaysData = await response.json();
       
         // Find the matching airport based on ICAO (ARPT_ID)
-        const matchingRunways = runwaysData.filter(runway => runway.ARPT_ID === selICAO);
+        const matchingRunways = runwaysData.filter(runway => runway.ARPT_ID === cleanedICAO);
       
         // Extract the RWY_IDs from the matching runways
         const runwayIds = matchingRunways.flatMap(runway => runway.RWY_ID);
