@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       console.error("Failed to fetch METAR data:", error);
-      metarSPAN.textContent = "Unable to fetch METAR data.";
+      document.getElementById("rawMETAR").innerText = "Unable to fetch METAR data";
     }
   }
 
