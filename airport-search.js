@@ -111,9 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Reset the runway dropdown to "Select Runway" if any option was pre-selected
         const runwaySelect = document.getElementById("runway-select");
-        runwaySelect.innerHTML = `<option value="">Select Runway</option>`;  // Reset dropdown to default value ("Select Runway")
+        runwaySelect.value = "";  // Reset dropdown to default value ("Select Runway")
         const rwyLength = document.getElementById("runway-length");
-        rwyLength.textContent = "N/A";  // Reset runway length to "N/A"
+        rwyLength.value = "N/A";  // Reset runway length to N/A
     }
     
     // Function to populate the runway dropdown using the correct variable (runwayIDs)
