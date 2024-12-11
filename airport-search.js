@@ -88,6 +88,26 @@ document.addEventListener("DOMContentLoaded", () => {
         airportSuggestions.appendChild(option);
       });
 
+      // First attempt at looking up Runways
+
+      async function loadRunwaysData() {
+        const response = await fetch("runways.json");
+        const runwaysData = await response.json();
+      
+        // Find the matching airport based on ICAO (ARPT_ID)
+        const matchingRunways = runwaysData.filter(runway => runway.ARPT_ID === selICAO);
+      
+        // Extract the RWY_IDs from the matching runways
+        const runwayIds = matchingRunways.flatMap(runway => runway.RWY_ID);
+      
+        // Log the runway IDs to the console
+        console.log("Matching runway IDs:", runwayIds);
+      
+        // You can now use the runwayIds array as needed
+      }
+      
+      loadRunwaysData();  // Call the function to load and filter the data
+
       airportSuggestions.style.display = matchingAirports.length > 0 ? "block" : "none";
     } else {
       airportSuggestions.style.display = "none";
