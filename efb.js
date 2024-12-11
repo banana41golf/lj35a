@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const maxGW = 18300;
   const minGW = 0;
 
+  // Other Aircraft Performance
+  const MLW = 13500;
+
   // Function to load the JSON data
   async function loadData() {
     n1Data = await fetch("N1_flat.json").then((res) => res.json());
@@ -314,12 +317,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // Calculations Here    
     const v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
     const distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
-    const n1 = bilinearInterpolation(n1Data, oat, elevation); // N1
+    const n1 = bilinearInterpolation(n1Data, oat, elevation);
     const vr = interpolateByGW(vrData, gw, "VR");
     const v2 = interpolateByGW(v2Data, gw, "V2");
     const vref = interpolateByGW(vrefData, gw, "VREF");
     const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
+
+    // Verify Landing Weight does not exceed MLW
+let MLWflag;
+
+    if (gw > MLW) { 
+      MLWflag = true;
+    } else {MLWflag = false;}
+console.log("MLW Flag: ", {MLWflag} );
+
+
 
     //Update HTML forms
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(2) : "N/A";
