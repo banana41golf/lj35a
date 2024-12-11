@@ -336,7 +336,11 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("mlw-message").innerText = "";
     }
 
-
+    if(mlwFlag = false) {
+      document.getElementById("mlw-message").innerText = " "; 
+    } else {
+      document.getElementById("mlw-message").innerText = " ";
+    }
   
 
 
