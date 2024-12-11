@@ -61,20 +61,23 @@
       </div>
 
 
-      <!-- Outputs -->
-      <div class="form-output">
+<!-- Outputs -->
+<div class="form-output">
 
-        <!-- Runway Length Stuff-->
-        <div class="output-column">
-<p>
-<label for ="runway-select">Select Runway:</label>
-  <select id="runway-select">
-    <option value=""></option>  <!-- Default option -->
-</select></p>
-<p><label for="runway-length">Runway Length:</label>
-<span id="runway-length">N/A</span></p>  <!-- Field to display runway length -->
-</div>
+<!-- Airport Data -->
+      <div class="output-column">
+        <strong>Airport Information</strong>
+        <p><label for="elevation">Field Elevation:</label>
+            <span id="elevation"></span></p>
+        <p><label for="oat">OAT:</label>
+            <span id="oat"></span></p>
+        <p><label for ="runway-select">Select Runway:</label>
+          <select id="runway-select"><option value=""></option></select></p>
+        <p><label for="runway-length">Runway Length:</label>
+          <span id="runway-length">N/A</span></p>  <!-- Field to display runway length -->
+        </div>
 
+<!-- Takeoff Performance -->
         <div class ="output-column">
         <strong>Takeoff Performance</strong>
                 <p><label for="flaps">Flaps:</label>
@@ -93,6 +96,7 @@
                   <span id="v2-output">-</span></p>
               </div>
 
+<!-- Landing Performance -->
         <div class ="output-column">
         <strong>Landing Performance</strong>
                 <p><label for="landingflaps">Flaps:</label> 
@@ -106,10 +110,12 @@
               </div>
         </div>
 
-      <button type="submit">Calculate</button>
-    </form>
-  </div>
+<!-- Calculate Button -->
+<button type="submit">Calculate</button>
+</form>
+</div>
 
+<!-- Javascript -->
 <script src="efb.js"></script>
 <script src="airport-search.js"></script>
 
