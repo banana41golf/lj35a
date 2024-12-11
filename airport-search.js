@@ -83,6 +83,8 @@ document.addEventListener("DOMContentLoaded", () => {
         option.value = cleanedIATA;  // Set IATA code as value
         option.textContent = `${cleanedIATA} - ${airport.Name} (${airport.City}, ${airport.Country})`; 
         console.log(airport.ICAO);
+        const selICAO = airport.ICAO;
+        console.log(selICAO);
         airportSuggestions.appendChild(option);
       });
 
