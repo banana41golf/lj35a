@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadAirportData() {
     const response = await fetch("airports.json");
     airportsData = await response.json();
-    console.log("Loaded airports data:", airportsData); // Log loaded airport data for inspection
+    //console.log("Loaded airports data:", airportsData); // Log loaded airport data for inspection
   }
 
   // Function to fetch the latest METAR data for a given IATA code

@@ -189,7 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const elevationText = document.getElementById("elevation").textContent;
     const elevation = parseInt(elevationText, 10); // Convert to number
 
-    console.log("V1 Calculation Inputs:", { oat, elevation, gw });
+    console.log("Calculation Inputs:", { oat, elevation, gw });
 
     // Check if elevation is valid
     if (isNaN(elevation)) {
