@@ -62,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error("Failed to fetch METAR data:", error);
       document.getElementById("rawMETAR").innerText = "Unable to fetch METAR data";
+      document.getElementById("oat").innerText = "N/A";
     }
   }
 
