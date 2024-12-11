@@ -6,7 +6,7 @@ body {
 }
 
 .container {
-  max-width: 600px;
+  max-width: 650px;
   margin: 50px auto;
   padding: 20px;
   background-color: #1e1e1e;
@@ -59,7 +59,9 @@ input:focus, select:focus {
 }
 
 .output-column {
-  width: 48%; /* Adjust width as needed */
+  width: 48%; /* Adjust this width to give the columns more space */
+  padding: 10px; /* Optional: add padding for more space inside the columns */
+  box-sizing: border-box; /* Ensures padding is included in the element's total width */
 }
 
 button {
