@@ -118,7 +118,7 @@ const runwaySelect = document.getElementById("runway-select");  // Your dropdown
 const runwayLengthField = document.getElementById("runway-length");  // Field to display runway length
 
 // Function to populate the runway dropdown
-function populateRunwayDropdown(runways) {
+function populateRunwayDropdown(runwayIds) {
     runwaySelect.innerHTML = '';  // Clear any existing options
     runways.forEach(runway => {
         runway.RWY_ID.forEach(rwyId => {
