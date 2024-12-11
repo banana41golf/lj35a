@@ -112,6 +112,44 @@ document.addEventListener("DOMContentLoaded", () => {
       
       loadRunwaysData();  // Call the function to load and filter the data
 
+
+      // Assuming matchingRunways array is already populated from loadRunwaysData
+const runwaySelect = document.getElementById("runway-select");  // Your dropdown for runway selection
+const runwayLengthField = document.getElementById("runway-length");  // Field to display runway length
+
+// Function to populate the runway dropdown
+function populateRunwayDropdown(runways) {
+    runwaySelect.innerHTML = '';  // Clear any existing options
+    runways.forEach(runway => {
+        runway.RWY_ID.forEach(rwyId => {
+            const option = document.createElement("option");
+            option.value = rwyId;
+            option.textContent = `Runway ${rwyId}`;  // You can customize this text
+            runwaySelect.appendChild(option);
+        });
+    });
+}
+
+// Function to update runway length when a runway is selected
+runwaySelect.addEventListener("change", (event) => {
+    const selectedRunwayId = event.target.value;  // Get selected runway ID
+
+    // Find the runway data from the matching runways based on the selected ID
+    const selectedRunway = matchingRunways.find(runway => runway.RWY_ID.includes(selectedRunwayId));
+    
+    // Display the runway length if a matching runway is found
+    if (selectedRunway) {
+        runwayLengthField.textContent = `Runway Length: ${selectedRunway.RWY_LEN} feet`;  // Set the runway length
+    } else {
+        runwayLengthField.textContent = "Runway length not available.";  // Fallback if no match
+    }
+});
+
+// Call this function after loading the matching runways
+populateRunwayDropdown(matchingRunways);
+
+/// end of runway search section
+
       airportSuggestions.style.display = matchingAirports.length > 0 ? "block" : "none";
     } else {
       airportSuggestions.style.display = "none";
