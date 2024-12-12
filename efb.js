@@ -323,6 +323,12 @@ if(gw > 15300) {
   console.log("MLW EXCEEDED");
 }
 
+if(gw > 15300) {
+
+  document.getElementById("mlw-flag").innerText = "MLW EXCEEDED";
+
+}
+
     //Update HTML forms
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(2) : "N/A";
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
