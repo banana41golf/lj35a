@@ -291,6 +291,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return distance;
       }
 
+
+      
   // Calculate Button
 
   calculateButton.addEventListener("click", (event) => {
@@ -311,6 +313,46 @@ document.getElementById("mlw-flag").innerText = " ";
       console.error("Elevation is not valid:", elevation);
       return;
     }
+
+
+
+    
+// Interpolation function for TRIM based on MAC
+function interpolateTrim(mac, trimData) {
+  // Sort the trimData based on MAC in ascending order (if it's not sorted)
+  trimData.sort((a, b) => a.MAC - b.MAC);
+
+  // Find the two points (below and above the input MAC value)
+  let lower = null, upper = null;
+  for (let i = 0; i < trimData.length; i++) {
+    if (trimData[i].MAC <= mac) {
+      lower = trimData[i];
+    }
+    if (trimData[i].MAC >= mac) {
+      upper = trimData[i];
+      break;
+    }
+  }
+
+  // If no interpolation is needed (MAC value is exactly a data point)
+  if (lower === upper) {
+    return lower.TRIM;
+  }
+
+  // Linear interpolation formula
+  const slope = (upper.TRIM - lower.TRIM) / (upper.MAC - lower.MAC);
+  const trim = lower.TRIM + slope * (mac - lower.MAC);
+
+  return trim;
+}
+
+// Example input from user
+const userMAC = 10.0;  // Example MAC input
+const trimResult = interpolateTrim(userMAC, trimData);
+console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
+
+
+
 
     // Calculations Here    
     const v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
@@ -347,52 +389,7 @@ if(gw > 15300) {
     const gustFactor = parseInt(document.getElementById("gust-factor").value);
     const vapp = gustFactor + vref
     document.getElementById("vapp-output").innerText = vapp ? `${Math.round(vapp)} knots` : "N/A";
-  // Interpolation function for TRIM based on MAC
-function interpolateTrim(mac, trimData) {
-  // Sort the trimData based on MAC in ascending order (if it's not sorted)
-  trimData.sort((a, b) => a.MAC - b.MAC);
-
-  // Find the two points (below and above the input MAC value)
-  let lower = null, upper = null;
-  for (let i = 0; i < trimData.length; i++) {
-    if (trimData[i].MAC <= mac) {
-      lower = trimData[i];
-    }
-    if (trimData[i].MAC >= mac) {
-      upper = trimData[i];
-      break;
-    }
-  }
-
-  // If no interpolation is needed (MAC value is exactly a data point)
-  if (lower === upper) {
-    return lower.TRIM;
-  }
-
-  // Linear interpolation formula
-  const slope = (upper.TRIM - lower.TRIM) / (upper.MAC - lower.MAC);
-  const trim = lower.TRIM + slope * (mac - lower.MAC);
-
-  return trim;
-}
-
-// Example usage
-const trimData = [
-  { "MAC": 5.0, "TRIM": 7.6 },
-  { "MAC": 8.0, "TRIM": 7.5 },
-  { "MAC": 12.0, "TRIM": 7.4 },
-  { "MAC": 16.0, "TRIM": 7.3 },
-  { "MAC": 20.0, "TRIM": 7.2 },
-  { "MAC": 24.0, "TRIM": 6.1 },
-  { "MAC": 28.0, "TRIM": 5.0 },
-  { "MAC": 30.0, "TRIM": 5.0 }
-];
-
-// Example input from user
-const userMAC = 10.0;  // Example MAC input
-const trimResult = interpolateTrim(userMAC, trimData);
-console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
-
+  
 
   });
 
