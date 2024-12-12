@@ -384,11 +384,12 @@ if(gw > 15300) {
     document.getElementById("vref-output").innerText = vref ? `${Math.round(vref)} knots` : "N/A";
     document.getElementById("ldaa-output").innerText = ldaa ? `${Math.round(ldaa)} feet` : "N/A";
     document.getElementById("fact-output").innerText = fact ? `${Math.round(fact)} feet` : "N/A";
-    document.getElementById("trim-output").innerText = trim ? `${Math.round(trim)} units` : "N/A";
+    document.getElementById("trim-output").innerText = trimResult ? trimResult.toFixed(1) : "N/A";
 // Calculate and populate Vapp (Vref + Gust Factor)
     const gustFactor = parseInt(document.getElementById("gust-factor").value);
     const vapp = gustFactor + vref
     document.getElementById("vapp-output").innerText = vapp ? `${Math.round(vapp)} knots` : "N/A";
+    
   
 
   });
