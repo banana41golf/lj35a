@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  let n1Data, f8ToData, f8DisData, vrData, v2Data, vrefData, ldaData, factData;
+  let n1Data, f8ToData, f8DisData, vrData, v2Data, vrefData, ldaData, factData, trimData;
   const zfwSlider = document.getElementById("zfw-slider");
   const zfwInput = document.getElementById("zfw");
   const fobSlider = document.getElementById("fob-slider");
@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     vrefData = await fetch("vref.json").then((res) => res.json());
     ldaData = await fetch("LDAA_flat.json").then((res) => res.json());
     factData = await fetch("fact.json").then((res) => res.json());
+    trimData = await fetch("trim.json").then((res) => res.json());
   }
 
   // Function to update the Gross Weight (GW) based on ZFW and FOB values
@@ -297,6 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
 document.getElementById("mlw-flag").innerText = " ";
     const oat = parseInt(document.getElementById("oat").textContent, 10);
     const gw = parseInt(gwInput.value, 10);
+    const pmac = parseInt(document.getElementById("mac-input").textContent, 10);
 
     // Get the elevation from the #elevation span (not input)
     const elevationText = document.getElementById("elevation").textContent;
@@ -319,6 +321,8 @@ document.getElementById("mlw-flag").innerText = " ";
     const vref = interpolateByGW(vrefData, gw, "VREF");
     const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
+    const trim = interpolateByGW(trimData, pmac, "TRIM");
+
 
 if(gw > 15300) {
   console.log("MLW EXCEEDED");
