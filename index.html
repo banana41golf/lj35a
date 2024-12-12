@@ -169,15 +169,14 @@
   <script src="efb.js" defer></script>
   <script src="airport-search.js" defer></script>
   <script>
-    // JavaScript to toggle between tabs
-    function showTab(tabName) {
+function showTab(tabName) {
   // Hide both Takeoff and Landing sections
   const takeoffTab = document.getElementById("takeoff");
   const landingTab = document.getElementById("landing");
 
   // Hide both tabs by setting hidden attribute
-  takeoffTab.hidden = true;
-  landingTab.hidden = true;
+  takeoffTab.style.display = "none";
+  landingTab.style.display = "none";
 
   // Remove the active class from both buttons
   const tabButtons = document.querySelectorAll(".tab-button");
@@ -185,15 +184,25 @@
 
   // Show the selected tab
   if (tabName === "takeoff") {
-    takeoffTab.hidden = false;
+    takeoffTab.style.display = "block";
   } else if (tabName === "landing") {
-    landingTab.hidden = false;
+    landingTab.style.display = "block";
   }
 
   // Set the active class on the clicked button
   const activeButton = document.querySelector(`button[onclick="showTab('${tabName}')"]`);
   activeButton.classList.add("active");
+
+  // Keep airport suggestions and input fields intact by not resetting
+  const airportSuggestions = document.getElementById("airport-suggestions");
+  const airportInput = document.getElementById("departure-airport");
+
+  // Ensure the airport search state is preserved
+  if (airportSuggestions) {
+    airportSuggestions.style.display = airportInput.value ? "block" : "none";
+  }
 }
+
   </script>
 </body>
 </html>
