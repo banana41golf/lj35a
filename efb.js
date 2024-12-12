@@ -9,13 +9,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const gwWarning = document.getElementById("gw-warning");
 
 
-  // Define the min and max values for sliders
+  // Define the min and max values for sliders and other weights and speeds
   const minZFW = 10360;
   const maxZFW = 13500;
   const minFOB = 600;
   const maxFOB = 6240;
   const maxGW = 18300;
   const minGW = 0;
+  const maxLW = 15300;
 
 
   // Function to load the JSON data
@@ -326,14 +327,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
 
     //Update HTML forms
+
+
     document.getElementById("n1-output").innerText = n1 ? `${n1.toFixed(1)}%` : "N/A";
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
     document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
     document.getElementById("vr-output").innerText = vr ? `${Math.round(vr)} knots` : "N/A";
     document.getElementById("v2-output").innerText = v2 ? `${Math.round(v2)} knots` : "N/A";
+    
+    // Landing Data 
+
+    if (gw <= maxLW) {
     document.getElementById("vref-output").innerText = vref ? `${Math.round(vref)} knots` : "N/A";
     document.getElementById("ldaa-output").innerText = ldaa ? `${Math.round(ldaa)} feet` : "N/A";
     document.getElementById("fact-output").innerText = fact ? `${Math.round(fact)} feet` : "N/A";
+    } else {
+    document.getElementById("vref-output").innerText = "N/A";
+    document.getElementById("ldaa-output").innerText = "N/A";
+    document.getElementById("fact-output").innerText = "N/A"; 
+    }
+
   });
 
   loadData();
