@@ -316,7 +316,14 @@ document.getElementById("mlw-flag").innerText = " ";
     }
 
 
-
+document.getElementById("mac-input").addEventListener("input", function(event) {
+  let value = parseFloat(event.target.value);
+  if (value < 5) {
+    event.target.value = 5;
+  } else if (value > 30) {
+    event.target.value = 30;
+  }
+});
 
 // Interpolation function for TRIM based on MAC
 function interpolateTrim(mac, trimData) {
