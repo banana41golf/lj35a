@@ -114,23 +114,35 @@ button:disabled {
 
 
 
-/* Apply flexbox layout to the .horizleft class */
+/* Apply flexbox layout to the .horizleft class only */
 .form-group.horizleft {
   display: flex;
-  align-items: center; /* Vertically center the items */
-  gap: 10px; /* Space between label and span */
+  align-items: center; /* Vertically align the items */
+  justify-content: flex-start; /* Ensure everything is left-aligned */
+  margin-bottom: 15px; /* Add some spacing between rows */
 }
 
-/* Ensure label has a fixed width */
+/* Fix the label width to avoid shifting for .horizleft */
 .form-group.horizleft label {
-  width: 150px; /* Fixed width for the label */
-  margin-right: 10px; /* Space between label and span */
+  width: 150px; /* Set a fixed width for labels */
+  margin-right: 10px; /* Space between label and data */
+  text-align: left; /* Ensure the text inside the label is aligned to the left */
 }
 
-/* Ensure span takes up remaining space */
-.form-group.horizleft span {
-  flex-grow: 1; /* Make span take up remaining space */
+/* Allow span to take up remaining space while staying left-aligned */
+.form-group.horizleft span, 
+.form-group.horizleft input, 
+.form-group.horizleft select {
+  flex-grow: 1; /* Allow the span, input, or select to take up the remaining space */
+  text-align: left; /* Ensure the content is left-aligned */
 }
+
+/* Optional: Remove any margin/padding on .horizleft children */
+.form-group.horizleft > * {
+  margin: 0;
+  padding: 0;
+}
+
 
 
 .output-column p {
