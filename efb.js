@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const gwWarning = document.getElementById("gw-warning");
 
 
+
   // Define the min and max values for sliders
   const minZFW = 10360;
   const maxZFW = 13500;
@@ -339,6 +340,11 @@ if(gw > 15300) {
     document.getElementById("ldaa-output").innerText = ldaa ? `${Math.round(ldaa)} feet` : "N/A";
     document.getElementById("fact-output").innerText = fact ? `${Math.round(fact)} feet` : "N/A";
   });
+
+  const gustFactor = document.getElementById("gust-factor");
+  const vapp = gustFactor + vref
+
+  document.getElementById("vapp-output").innerText = vapp ? `${Math.round(vapp)} knots` : "N/A";
 
   loadData();
 });
