@@ -91,8 +91,8 @@
 
       <!-- Tabs -->
       <div class="tabs">
-        <button class="tab-button active" onclick="showTab('takeoff')">Takeoff</button>
-        <button class="tab-button" onclick="showTab('landing')">Landing</button>
+        <button class="tab-button active" id="takeoff-tab">Takeoff</button>
+        <button class="tab-button" id="landing-tab">Landing</button>
       </div>
 
       <!-- Tab Content -->
@@ -100,7 +100,6 @@
         <!-- Takeoff Performance -->
         <div id="takeoff" class="tab-pane active">
           <div class="output-column">
-            <strong>Takeoff Performance</strong>
             <p><label for="flaps">Flaps:</label>
               <select id="flaps">
                 <option value="5">8</option>
@@ -123,7 +122,6 @@
         <!-- Landing Performance -->
         <div id="landing" class="tab-pane" style="display: none;">
           <div class="output-column">
-            <strong>Landing Performance</strong>
             <p><label for="landingflaps">Flaps:</label>
               <span id="landingflaps">40</span></p>
             <p><label for="vref-output">Vref:</label>
@@ -153,30 +151,6 @@
   <!-- Javascript -->
   <script src="efb.js"></script>
   <script src="airport-search.js"></script>
-  <script>
-    // JavaScript to toggle between tabs
-    function showTab(tabName) {
-      // Hide both Takeoff and Landing sections
-      const takeoffTab = document.getElementById("takeoff");
-      const landingTab = document.getElementById("landing");
-      takeoffTab.style.display = "none";
-      landingTab.style.display = "none";
 
-      // Remove the active class from both buttons
-      const tabButtons = document.querySelectorAll(".tab-button");
-      tabButtons.forEach(button => button.classList.remove("active"));
-
-      // Show the selected tab
-      if (tabName === "takeoff") {
-        takeoffTab.style.display = "block";
-      } else if (tabName === "landing") {
-        landingTab.style.display = "block";
-      }
-
-      // Set the active class on the clicked button
-      const activeButton = document.querySelector(`button[onclick="showTab('${tabName}')"]`);
-      activeButton.classList.add("active");
-    }
-  </script>
 </body>
 </html>

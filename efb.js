@@ -8,6 +8,39 @@ document.addEventListener("DOMContentLoaded", () => {
   const calculateButton = document.querySelector("button[type='submit']");
   const gwWarning = document.getElementById("gw-warning");
 
+  document.addEventListener("DOMContentLoaded", function() {
+    // Function to toggle between tabs
+    function showTab(tabName) {
+      // Hide both Takeoff and Landing sections
+      const takeoffTab = document.getElementById("takeoff");
+      const landingTab = document.getElementById("landing");
+      takeoffTab.style.display = "none";
+      landingTab.style.display = "none";
+  
+      // Remove the active class from both buttons
+      const tabButtons = document.querySelectorAll(".tab-button");
+      tabButtons.forEach(button => button.classList.remove("active"));
+  
+      // Show the selected tab
+      if (tabName === "takeoff") {
+        takeoffTab.style.display = "block";
+      } else if (tabName === "landing") {
+        landingTab.style.display = "block";
+      }
+  
+      // Set the active class on the clicked button
+      const activeButton = document.getElementById(`${tabName}-tab`);
+      activeButton.classList.add("active");
+    }
+  
+    // Add event listeners to the buttons
+    document.getElementById("takeoff-tab").addEventListener("click", function() {
+      showTab('takeoff');
+    });
+    document.getElementById("landing-tab").addEventListener("click", function() {
+      showTab('landing');
+    });
+  });
 
 
   // Define the min and max values for sliders
