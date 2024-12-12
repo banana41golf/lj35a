@@ -347,7 +347,7 @@ function interpolateTrim(mac, trimData) {
 }
 
 // Example input from user
-const userMAC = parseInt(document.getElementById("mac-input").textContent, 10);
+const userMAC = parseInt(document.getElementById("mac-input").value, 10);
 console.log(userMAC);
 const trimResult = interpolateTrim(userMAC, trimData);
 console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
