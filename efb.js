@@ -319,6 +319,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
 
+if(gw > 15300) {
+  console.log("MLW EXCEEDED");
+}
+
     //Update HTML forms
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(2) : "N/A";
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
