@@ -113,8 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!lowerElevation) lowerElevation = elevationLevels[0];
     if (!upperElevation) upperElevation = elevationLevels[elevationLevels.length - 1];
 
-    console.log("Elevation Range:", { lowerElevation, upperElevation });
-
     const lowerData = data.filter((item) => item.Elevation === lowerElevation);
     const upperData = data.filter((item) => item.Elevation === upperElevation);
 
@@ -141,8 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const valueAtLowerElevation = interpolateOAT(lowerData, targetOAT);
     const valueAtUpperElevation = interpolateOAT(upperData, targetOAT);
-
-    console.log("Interpolated Values:", { valueAtLowerElevation, valueAtUpperElevation });
 
     if (valueAtLowerElevation === null || valueAtUpperElevation === null) {
       return null;
@@ -313,10 +309,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-
-
-
-    
     // Calculations Here    
     const v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
     const distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
