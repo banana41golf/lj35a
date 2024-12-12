@@ -177,6 +177,122 @@ document.addEventListener("DOMContentLoaded", () => {
     return y1 + ((targetGW - x1) * (y2 - y1)) / (x2 - x1);
   }
 
+      // Trilinear Function for V1
+      function trilinearInterpolationV1(data, oat, elevation, gw) {
+        const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
+        const gwLevels = [...new Set(data.map((item) => item.GW))].sort((a, b) => a - b);
+        const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
+      
+        let lowerElevation = null, upperElevation = null;
+        let lowerGW = null, upperGW = null;
+        let lowerOAT = null, upperOAT = null;
+      
+        // Elevation interpolation
+        for (let i = 0; i < elevationLevels.length; i++) {
+          if (elevationLevels[i] <= elevation) lowerElevation = elevationLevels[i];
+          if (elevationLevels[i] >= elevation) {
+            upperElevation = elevationLevels[i];
+            break;
+          }
+        }
+      
+        // GW interpolation
+        for (let i = 0; i < gwLevels.length; i++) {
+          if (gwLevels[i] <= gw) lowerGW = gwLevels[i];
+          if (gwLevels[i] >= gw) {
+            upperGW = gwLevels[i];
+            break;
+          }
+        }
+      
+        // OAT interpolation
+        for (let i = 0; i < oatLevels.length; i++) {
+          if (oatLevels[i] <= oat) lowerOAT = oatLevels[i];
+          if (oatLevels[i] >= oat) {
+            upperOAT = oatLevels[i];
+            break;
+          }
+        }
+      
+        // Get relevant data points
+        const lowerElevationData = data.filter((item) => item.Elevation === lowerElevation);
+        const upperElevationData = data.filter((item) => item.Elevation === upperElevation);
+        const lowerGWData = data.filter((item) => item.GW === lowerGW);
+        const upperGWData = data.filter((item) => item.GW === upperGW);
+        const lowerOATData = data.filter((item) => item.OAT === lowerOAT);
+        const upperOATData = data.filter((item) => item.OAT === upperOAT);
+      
+        // Perform trilinear interpolation
+        const interpolateValue = (lowerData, upperData, lowerValue, upperValue) => {
+          const lower = lowerData.find((item) => item.OAT === lowerValue && item.GW === lowerGW && item.Elevation === lowerElevation);
+          const upper = upperData.find((item) => item.OAT === upperValue && item.GW === upperGW && item.Elevation === upperElevation);
+          if (!lower || !upper) return null;
+          return lower.V1 + ((upper.V1 - lower.V1) / (upper.OAT - lower.OAT)) * (oat - lower.OAT);
+        };
+      
+        const v1 = interpolateValue(lowerElevationData, upperElevationData, lowerOAT, upperOAT);
+        return v1;
+      }
+  
+      // Trilinear Function for TO and LDG Distance
+      function trilinearInterpolationDistance(data, oat, elevation, gw) {
+        const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
+        const gwLevels = [...new Set(data.map((item) => item.GW))].sort((a, b) => a - b);
+        const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
+      
+        let lowerElevation = null, upperElevation = null;
+        let lowerGW = null, upperGW = null;
+        let lowerOAT = null, upperOAT = null;
+      
+        // Elevation interpolation
+        for (let i = 0; i < elevationLevels.length; i++) {
+          if (elevationLevels[i] <= elevation) lowerElevation = elevationLevels[i];
+          if (elevationLevels[i] >= elevation) {
+            upperElevation = elevationLevels[i];
+            break;
+          }
+        }
+  
+        // GW interpolation
+        for (let i = 0; i < gwLevels.length; i++) {
+          if (gwLevels[i] <= gw) lowerGW = gwLevels[i];
+          if (gwLevels[i] >= gw) {
+            upperGW = gwLevels[i];
+            break;
+          }
+        }
+      
+        // OAT interpolation
+        for (let i = 0; i < oatLevels.length; i++) {
+          if (oatLevels[i] <= oat) lowerOAT = oatLevels[i];
+          if (oatLevels[i] >= oat) {
+            upperOAT = oatLevels[i];
+            break;
+          }
+        }
+      
+        // Get relevant data points
+        const lowerElevationData = data.filter((item) => item.Elevation === lowerElevation);
+        const upperElevationData = data.filter((item) => item.Elevation === upperElevation);
+        const lowerGWData = data.filter((item) => item.GW === lowerGW);
+        const upperGWData = data.filter((item) => item.GW === upperGW);
+        const lowerOATData = data.filter((item) => item.OAT === lowerOAT);
+        const upperOATData = data.filter((item) => item.OAT === upperOAT);
+  
+      
+      
+        // Perform trilinear interpolation for takeoff distance
+        const interpolateValue = (lowerData, upperData, lowerValue, upperValue) => {
+          const lower = lowerData.find((item) => item.OAT === lowerValue && item.GW === lowerGW && item.Elevation === lowerElevation);
+          const upper = upperData.find((item) => item.OAT === upperValue && item.GW === upperGW && item.Elevation === upperElevation);
+          if (!lower || !upper) return null;
+          return lower.Distance + ((upper.Distance - lower.Distance) / (upper.OAT - lower.OAT)) * (oat - lower.OAT);
+        };
+      
+        const distance = interpolateValue(lowerElevationData, upperElevationData, lowerOAT, upperOAT);
+        return distance;
+      }
+
   // Calculate Button
 
   calculateButton.addEventListener("click", (event) => {
@@ -197,121 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Trilinear Function for V1
-    function trilinearInterpolationV1(data, oat, elevation, gw) {
-      const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
-      const gwLevels = [...new Set(data.map((item) => item.GW))].sort((a, b) => a - b);
-      const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
-    
-      let lowerElevation = null, upperElevation = null;
-      let lowerGW = null, upperGW = null;
-      let lowerOAT = null, upperOAT = null;
-    
-      // Elevation interpolation
-      for (let i = 0; i < elevationLevels.length; i++) {
-        if (elevationLevels[i] <= elevation) lowerElevation = elevationLevels[i];
-        if (elevationLevels[i] >= elevation) {
-          upperElevation = elevationLevels[i];
-          break;
-        }
-      }
-    
-      // GW interpolation
-      for (let i = 0; i < gwLevels.length; i++) {
-        if (gwLevels[i] <= gw) lowerGW = gwLevels[i];
-        if (gwLevels[i] >= gw) {
-          upperGW = gwLevels[i];
-          break;
-        }
-      }
-    
-      // OAT interpolation
-      for (let i = 0; i < oatLevels.length; i++) {
-        if (oatLevels[i] <= oat) lowerOAT = oatLevels[i];
-        if (oatLevels[i] >= oat) {
-          upperOAT = oatLevels[i];
-          break;
-        }
-      }
-    
-      // Get relevant data points
-      const lowerElevationData = data.filter((item) => item.Elevation === lowerElevation);
-      const upperElevationData = data.filter((item) => item.Elevation === upperElevation);
-      const lowerGWData = data.filter((item) => item.GW === lowerGW);
-      const upperGWData = data.filter((item) => item.GW === upperGW);
-      const lowerOATData = data.filter((item) => item.OAT === lowerOAT);
-      const upperOATData = data.filter((item) => item.OAT === upperOAT);
-    
-      // Perform trilinear interpolation
-      const interpolateValue = (lowerData, upperData, lowerValue, upperValue) => {
-        const lower = lowerData.find((item) => item.OAT === lowerValue && item.GW === lowerGW && item.Elevation === lowerElevation);
-        const upper = upperData.find((item) => item.OAT === upperValue && item.GW === upperGW && item.Elevation === upperElevation);
-        if (!lower || !upper) return null;
-        return lower.V1 + ((upper.V1 - lower.V1) / (upper.OAT - lower.OAT)) * (oat - lower.OAT);
-      };
-    
-      const v1 = interpolateValue(lowerElevationData, upperElevationData, lowerOAT, upperOAT);
-      return v1;
-    }
 
-    // Trilinear Function for TO and LDG Distance
-    function trilinearInterpolationDistance(data, oat, elevation, gw) {
-      const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
-      const gwLevels = [...new Set(data.map((item) => item.GW))].sort((a, b) => a - b);
-      const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
-    
-      let lowerElevation = null, upperElevation = null;
-      let lowerGW = null, upperGW = null;
-      let lowerOAT = null, upperOAT = null;
-    
-      // Elevation interpolation
-      for (let i = 0; i < elevationLevels.length; i++) {
-        if (elevationLevels[i] <= elevation) lowerElevation = elevationLevels[i];
-        if (elevationLevels[i] >= elevation) {
-          upperElevation = elevationLevels[i];
-          break;
-        }
-      }
-
-      // GW interpolation
-      for (let i = 0; i < gwLevels.length; i++) {
-        if (gwLevels[i] <= gw) lowerGW = gwLevels[i];
-        if (gwLevels[i] >= gw) {
-          upperGW = gwLevels[i];
-          break;
-        }
-      }
-    
-      // OAT interpolation
-      for (let i = 0; i < oatLevels.length; i++) {
-        if (oatLevels[i] <= oat) lowerOAT = oatLevels[i];
-        if (oatLevels[i] >= oat) {
-          upperOAT = oatLevels[i];
-          break;
-        }
-      }
-    
-      // Get relevant data points
-      const lowerElevationData = data.filter((item) => item.Elevation === lowerElevation);
-      const upperElevationData = data.filter((item) => item.Elevation === upperElevation);
-      const lowerGWData = data.filter((item) => item.GW === lowerGW);
-      const upperGWData = data.filter((item) => item.GW === upperGW);
-      const lowerOATData = data.filter((item) => item.OAT === lowerOAT);
-      const upperOATData = data.filter((item) => item.OAT === upperOAT);
-
-    
-    
-      // Perform trilinear interpolation for takeoff distance
-      const interpolateValue = (lowerData, upperData, lowerValue, upperValue) => {
-        const lower = lowerData.find((item) => item.OAT === lowerValue && item.GW === lowerGW && item.Elevation === lowerElevation);
-        const upper = upperData.find((item) => item.OAT === upperValue && item.GW === upperGW && item.Elevation === upperElevation);
-        if (!lower || !upper) return null;
-        return lower.Distance + ((upper.Distance - lower.Distance) / (upper.OAT - lower.OAT)) * (oat - lower.OAT);
-      };
-    
-      const distance = interpolateValue(lowerElevationData, upperElevationData, lowerOAT, upperOAT);
-      return distance;
-    }
 
 
     
