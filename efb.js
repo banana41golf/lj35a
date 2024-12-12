@@ -316,7 +316,7 @@ document.getElementById("mlw-flag").innerText = " ";
 
 
 
-    
+
 // Interpolation function for TRIM based on MAC
 function interpolateTrim(mac, trimData) {
   // Sort the trimData based on MAC in ascending order (if it's not sorted)
@@ -347,7 +347,7 @@ function interpolateTrim(mac, trimData) {
 }
 
 // Example input from user
-const userMAC = 10.0;  // Example MAC input
+const userMAC = parseInt(document.getElementById("mac-input").textContent, 10);
 const trimResult = interpolateTrim(userMAC, trimData);
 console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
 
