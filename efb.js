@@ -334,18 +334,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
     document.getElementById("vr-output").innerText = vr ? `${Math.round(vr)} knots` : "N/A";
     document.getElementById("v2-output").innerText = v2 ? `${Math.round(v2)} knots` : "N/A";
-    
-    // Landing Data 
-
-    if (gw <= maxLW) {
     document.getElementById("vref-output").innerText = vref ? `${Math.round(vref)} knots` : "N/A";
     document.getElementById("ldaa-output").innerText = ldaa ? `${Math.round(ldaa)} feet` : "N/A";
     document.getElementById("fact-output").innerText = fact ? `${Math.round(fact)} feet` : "N/A";
-    } else {
-    document.getElementById("vref-output").innerText = "N/A";
-    document.getElementById("ldaa-output").innerText = "N/A";
-    document.getElementById("fact-output").innerText = "N/A"; 
-    }
+
 
   });
 
