@@ -105,8 +105,8 @@
 
       <!-- Tabs -->
       <div class="tabs">
-        <button class="tab-button active" id="takeoff-tab">Takeoff</button>
-        <button class="tab-button" id="landing-tab">Landing</button>
+        <button class="tab-button active" onclick="showTab('takeoff')">Takeoff</button>
+        <button class="tab-button" onclick="showTab('landing')">Landing</button>
       </div>
 
       <!-- Tab Content -->
@@ -165,6 +165,30 @@
   <!-- Javascript -->
   <script src="efb.js" defer></script>
   <script src="airport-search.js" defer></script>
+  <script>
+    // JavaScript to toggle between tabs
+    function showTab(tabName) {
+      // Hide both Takeoff and Landing sections
+      const takeoffTab = document.getElementById("takeoff");
+      const landingTab = document.getElementById("landing");
+      takeoffTab.style.display = "none";
+      landingTab.style.display = "none";
 
+      // Remove the active class from both buttons
+      const tabButtons = document.querySelectorAll(".tab-button");
+      tabButtons.forEach(button => button.classList.remove("active"));
+
+      // Show the selected tab
+      if (tabName === "takeoff") {
+        takeoffTab.style.display = "block";
+      } else if (tabName === "landing") {
+        landingTab.style.display = "block";
+      }
+
+      // Set the active class on the clicked button
+      const activeButton = document.querySelector(`button[onclick="showTab('${tabName}')"]`);
+      activeButton.classList.add("active");
+    }
+  </script>
 </body>
 </html>
