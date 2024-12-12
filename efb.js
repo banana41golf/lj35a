@@ -272,7 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
           break;
         }
       }
-    
+
       // GW interpolation
       for (let i = 0; i < gwLevels.length; i++) {
         if (gwLevels[i] <= gw) lowerGW = gwLevels[i];
@@ -298,6 +298,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const upperGWData = data.filter((item) => item.GW === upperGW);
       const lowerOATData = data.filter((item) => item.OAT === lowerOAT);
       const upperOATData = data.filter((item) => item.OAT === upperOAT);
+
+    
     
       // Perform trilinear interpolation for takeoff distance
       const interpolateValue = (lowerData, upperData, lowerValue, upperValue) => {
