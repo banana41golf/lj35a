@@ -64,17 +64,28 @@
           <select id="runway-select"><option value=""></option></select></p>
         <p><label for="runway-length">Runway Length:</label>
           <span id="runway-length">N/A</span></p>  <!-- Field to display runway length -->
+          <p><label for="distance-output">T/O Distance Req'd:</label> 
+            <span id="distance-output">-</span></p>
         </div>
 
 <!-- Takeoff Performance -->
         <div class ="output-column">
         <strong>Takeoff Performance</strong>
-                <p><label for="flaps">Flaps:</label>
-                  <span id="flaps">8</span></p>
+
+        <p><label for ="flaps">Flaps:</label>
+          <select id="flaps">
+            <option value="5">8</option>
+          </select></p>
+          <p><label for ="mac-input">% of MAC:</label>
+            <input type="number" id="mac-input" name="mac-input" min="5" max="30" step="0.1" placeholder="% of MAC" /></p>
+            <p><label for="trim-outpit">Stab Trim:</label>
+              <span id="trim-outpit">-</span></p>
+
                 <p><label for="n1-output">N1 Power Setting:</label>
                   <span id="n1-output">-</span></p>
-                <p><label for="distance-output">Takeoff Distance:</label> 
-                  <span id="distance-output">-</span></p>
+
+    
+
                 <p><label for="v1-output">V1 Speed:</label> 
                   <span id="v1-output">-</span></p>
                 <p><label for="vr-output">VR Speed:</label> 
