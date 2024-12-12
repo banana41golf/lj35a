@@ -6,6 +6,46 @@
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
   <title>Learjet 35A Performance Calculator</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Style for the tab buttons */
+    .tabs {
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .tab-button {
+      padding: 10px 20px;
+      margin-right: 5px;
+      background-color: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .tab-button.active {
+      background-color: #00bcd4; /* Highlight active tab */
+    }
+
+    .tab-button:hover {
+      background-color: #008c9e;
+    }
+
+    /* Style for the content within each tab */
+    .tab-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tab-pane {
+      display: none; /* Hide all sections by default */
+    }
+
+    .tab-pane.active {
+      display: block; /* Show the active tab section */
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -31,106 +71,112 @@
           <!-- Warning messages appear here dynamically -->
         </small>
       </div>
-<!-- Departure Airport (ICAO) Input Field and Dropdown -->
-<div class="form-group">
-    <label for="departure-airport">Departure or Arrival Airport (ICAO):</label>
-    <input type="text" id="departure-airport" name="departure-airport" placeholder="Enter ICAO code" autocomplete="off" required />
-    <select id="airport-suggestions" size="5" style="display:none;">
-        <!-- Dropdown populates here -->
-    </select>
-</div>
+      <!-- Departure Airport (ICAO) Input Field and Dropdown -->
+      <div class="form-group">
+        <label for="departure-airport">Departure or Arrival Airport (ICAO):</label>
+        <input type="text" id="departure-airport" name="departure-airport" placeholder="Enter ICAO code" autocomplete="off" required />
+        <select id="airport-suggestions" size="5" style="display:none;">
+            <!-- Dropdown populates here -->
+        </select>
+      </div>
 
-<div class="form-group">
-          <label for="depName">Airport:</label>
-          <span id="depName" style="color: #ffffff; font-size: 1rem; font-weight: normal;"></span>
-</div>
-<div class="form-group">
-  <label for="rawMETAR">METAR:</label>
-  <span id="rawMETAR" style="color: #ffffff; font-size: 1rem; font-weight: normal;"></span>
-</div>
+      <div class="form-group">
+        <label for="depName">Airport:</label>
+        <span id="depName" style="color: #ffffff; font-size: 1rem; font-weight: normal;"></span>
+      </div>
+      <div class="form-group">
+        <label for="rawMETAR">METAR:</label>
+        <span id="rawMETAR" style="color: #ffffff; font-size: 1rem; font-weight: normal;"></span>
+      </div>
 
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-button active" onclick="showTab('takeoff')">Takeoff</button>
+        <button class="tab-button" onclick="showTab('landing')">Landing</button>
+      </div>
 
-<!-- Outputs -->
-<div class="form-output">
-
-<!-- Airport Data -->
-      <div class="output-column">
-        <strong>Airport Information</strong>
-        <p><label for="elevation">Field Elevation:</label>
-            <span id="elevation"></span></p>
-        <p><label for="oat">OAT:</label>
-            <span id="oat"></span></p>
-        <p><label for ="runway-select">Select Runway:</label>
-          <select id="runway-select"><option value=""></option></select></p>
-        <p><label for="runway-length">Runway Length:</label>
-          <span id="runway-length">N/A</span></p>  <!-- Field to display runway length -->
-          <p><label for="distance-output">T/O Distance Req'd:</label> 
-            <span id="distance-output">-</span></p>
-        </div>
-
-
-<!-- Takeoff Performance -->
-        <div class ="output-column">
-        <strong>Takeoff Performance</strong>
-
-        <p><label for ="flaps">Flaps:</label>
-          <select id="flaps">
-            <option value="5">8</option>
-          </select></p>
-          <p><label for ="mac-input">% of MAC:</label>
-            <input type="number" id="mac-input" name="mac-input" min="5" max="30" step="0.1" placeholder="% of MAC" required /></p>
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Takeoff Performance -->
+        <div id="takeoff" class="tab-pane active">
+          <div class="output-column">
+            <strong>Takeoff Performance</strong>
+            <p><label for="flaps">Flaps:</label>
+              <select id="flaps">
+                <option value="5">8</option>
+              </select></p>
+            <p><label for="mac-input">% of MAC:</label>
+              <input type="number" id="mac-input" name="mac-input" min="5" max="30" step="0.1" placeholder="% of MAC" required /></p>
             <p><label for="trim-output">Stab Trim:</label>
               <span id="trim-output">-</span></p>
-
-                <p><label for="n1-output">N1 Power Setting:</label>
-                  <span id="n1-output">-</span></p>
-
-    
-
-                <p><label for="v1-output">V1 Speed:</label> 
-                  <span id="v1-output">-</span></p>
-                <p><label for="vr-output">VR Speed:</label> 
-                  <span id="vr-output">-</span></p>
-                <p><label for="v2-output">V2 Speed:</label> 
-                  <span id="v2-output">-</span></p>
-              </div>
-
-<!-- Landing Performance -->
-        <div class ="output-column">
-        <strong>Landing Performance</strong>
-                <p><label for="landingflaps">Flaps:</label> 
-                  <span id="landingflaps">40</span></p>
-                <p><label for="vref-output">Vref:</label> 
-                  <span id="vref-output">-</span></p>
-
-                  <p><label for ="gust-factor">Gust Factor:</label>
-                    <select id="gust-factor">
-                      <option value="5">5 kts</option>
-                      <option value="10">10 kts</option>
-                      <option value="15">15 kts</option>
-                      <option value="20">20 kts</option>
-                    </select></p>
-                  
-                    <p><label for="vapp-output">Vapp:</label> 
-                      <span id="vapp-output">-</span></p>
-
-                <p><label for="ldaa-output">LDR (Actual):</label> 
-                  <span id="ldaa-output">-</span></p>
-                <p><label for="fact-output">LDR (Factored):</label> 
-                  <span id="fact-output">-</span></p>
-                <p>
-                  <span id="mlw-flag"></span></p>            
-              </div>
+            <p><label for="n1-output">N1 Power Setting:</label>
+              <span id="n1-output">-</span></p>
+            <p><label for="v1-output">V1 Speed:</label>
+              <span id="v1-output">-</span></p>
+            <p><label for="vr-output">VR Speed:</label>
+              <span id="vr-output">-</span></p>
+            <p><label for="v2-output">V2 Speed:</label>
+              <span id="v2-output">-</span></p>
+          </div>
         </div>
 
-<!-- Calculate Button -->
-<button type="submit">Calculate</button>
-</form>
-</div>
+        <!-- Landing Performance -->
+        <div id="landing" class="tab-pane" style="display: none;">
+          <div class="output-column">
+            <strong>Landing Performance</strong>
+            <p><label for="landingflaps">Flaps:</label>
+              <span id="landingflaps">40</span></p>
+            <p><label for="vref-output">Vref:</label>
+              <span id="vref-output">-</span></p>
+            <p><label for="gust-factor">Gust Factor:</label>
+              <select id="gust-factor">
+                <option value="5">5 kts</option>
+                <option value="10">10 kts</option>
+                <option value="15">15 kts</option>
+                <option value="20">20 kts</option>
+              </select></p>
+            <p><label for="vapp-output">Vapp:</label>
+              <span id="vapp-output">-</span></p>
+            <p><label for="ldaa-output">LDR (Actual):</label>
+              <span id="ldaa-output">-</span></p>
+            <p><label for="fact-output">LDR (Factored):</label>
+              <span id="fact-output">-</span></p>
+          </div>
+        </div>
+      </div>
 
-<!-- Javascript -->
-<script src="efb.js"></script>
-<script src="airport-search.js"></script>
+      <!-- Calculate Button -->
+      <button type="submit">Calculate</button>
+    </form>
+  </div>
 
+  <!-- Javascript -->
+  <script src="efb.js"></script>
+  <script src="airport-search.js"></script>
+  <script>
+    // JavaScript to toggle between tabs
+    function showTab(tabName) {
+      // Hide both Takeoff and Landing sections
+      const takeoffTab = document.getElementById("takeoff");
+      const landingTab = document.getElementById("landing");
+      takeoffTab.style.display = "none";
+      landingTab.style.display = "none";
+
+      // Remove the active class from both buttons
+      const tabButtons = document.querySelectorAll(".tab-button");
+      tabButtons.forEach(button => button.classList.remove("active"));
+
+      // Show the selected tab
+      if (tabName === "takeoff") {
+        takeoffTab.style.display = "block";
+      } else if (tabName === "landing") {
+        landingTab.style.display = "block";
+      }
+
+      // Set the active class on the clicked button
+      const activeButton = document.querySelector(`button[onclick="showTab('${tabName}')"]`);
+      activeButton.classList.add("active");
+    }
+  </script>
 </body>
 </html>
