@@ -293,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   calculateButton.addEventListener("click", (event) => {
     event.preventDefault();
-
+document.getElementById("mlw-flag").innerText = " ";
     const oat = parseInt(document.getElementById("oat").textContent, 10);
     const gw = parseInt(gwInput.value, 10);
 
