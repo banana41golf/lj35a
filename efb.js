@@ -318,6 +318,10 @@ document.getElementById("mlw-flag").innerText = " ";
       return;
     }
 
+    if (!pmac) {
+      console.error("Please enter % of MAC");
+      
+    }
 
 document.getElementById("mac-input").addEventListener("input", function(event) {
   let value = parseFloat(event.target.value);
