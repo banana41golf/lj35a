@@ -122,23 +122,24 @@ button:disabled {
   margin-bottom: 15px; /* Add some spacing between rows */
 }
 
-/* Fix the label width to avoid shifting for .horizleft */
+/* Ensure the labels are fixed-width and aligned to the left */
 .form-group.horizleft label {
-  width: 150px; /* Set a fixed width for labels */
-  margin-right: 10px; /* Space between label and data */
-  text-align: left; /* Ensure the label text is aligned to the left */
+  width: 150px; /* Fixed width for labels to ensure consistent alignment */
+  margin-right: 10px; /* Space between the label and the input */
+  text-align: left; /* Ensure label text is aligned to the left */
 }
 
-/* Allow span to take up remaining space while staying left-aligned */
+/* Ensure that spans, inputs, and selects are aligned to the left */
 .form-group.horizleft span, 
 .form-group.horizleft input, 
 .form-group.horizleft select {
-  flex-grow: 1; /* Allow the span, input, or select to take up the remaining space */
-  text-align: left; /* Ensure the content is left-aligned */
-  display: block; /* Ensure block-level elements for consistent alignment */
+  flex: 1 0 auto; /* Allow span, input, and select to grow, but prevent shrinking */
+  text-align: left; /* Align text inside these elements to the left */
+  display: inline-block; /* Ensures they behave like inline elements */
+  width: auto; /* Prevent any automatic width that may cause misalignment */
 }
 
-/* Optional: Remove any margin/padding on .horizleft children */
+/* Remove any default margins or padding for child elements inside .horizleft */
 .form-group.horizleft > * {
   margin: 0;
   padding: 0;
