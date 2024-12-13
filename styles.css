@@ -126,7 +126,7 @@ button:disabled {
 .form-group.horizleft label {
   width: 150px; /* Set a fixed width for labels */
   margin-right: 10px; /* Space between label and data */
-  text-align: left; /* Ensure the text inside the label is aligned to the left */
+  text-align: left; /* Ensure the label text is aligned to the left */
 }
 
 /* Allow span to take up remaining space while staying left-aligned */
@@ -135,6 +135,7 @@ button:disabled {
 .form-group.horizleft select {
   flex-grow: 1; /* Allow the span, input, or select to take up the remaining space */
   text-align: left; /* Ensure the content is left-aligned */
+  display: block; /* Ensure block-level elements for consistent alignment */
 }
 
 /* Optional: Remove any margin/padding on .horizleft children */
