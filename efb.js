@@ -319,25 +319,38 @@ document.getElementById("mlw-flag").innerText = " ";
     }
 
 
-    document.getElementById("mac-input").addEventListener("input", function(event) {
-      let value = parseFloat(event.target.value);
+    document.addEventListener("DOMContentLoaded", () => {
+      const calculateButton = document.querySelector("button[type='submit']");
+      const macInput = document.getElementById("mac-input");
     
-      // Ensure the value is within the specified range (5-30)
-      if (value < 5) {
-        event.target.value = 5;
-        value = 5;
-      } else if (value > 30) {
-        event.target.value = 30;
-        value = 30;
+      // Function to check if the value is valid
+      function checkMacInput() {
+        let value = parseFloat(macInput.value);
+    
+        // Ensure the value is within the specified range (5-30)
+        if (value < 5) {
+          macInput.value = 5;
+          value = 5;
+        } else if (value > 30) {
+          macInput.value = 30;
+          value = 30;
+        }
+    
+        // Disable the calculate button if the value is out of range or invalid
+        if (isNaN(value) || value < 5 || value > 30) {
+          calculateButton.disabled = true;
+        } else {
+          calculateButton.disabled = false;
+        }
       }
     
-      // Disable the calculate button if the value is out of range or null
-      if (isNaN(value) || value < 5 || value > 30) {
-        calculateButton.disabled = true;
-      } else {
-        calculateButton.disabled = false;
-      }
+      // Add event listener for user input
+      macInput.addEventListener("input", checkMacInput);
+    
+      // Check the value on page load to ensure the button is correctly enabled/disabled
+      checkMacInput();
     });
+    
 
 // Interpolation function for TRIM based on MAC
 function interpolateTrim(mac, trimData) {
