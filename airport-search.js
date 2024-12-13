@@ -2,19 +2,20 @@ document.addEventListener("DOMContentLoaded", () => {
   let airportsData = []; // Store airport data
   const airportInput = document.getElementById("departure-airport");
   const airportSuggestions = document.getElementById("airport-suggestions");
-  const elevationInput = document.getElementById("elevation");
+  const elevationField = document.getElementById("elevation");
+  const metarReport = document.getElementById("metar-report"); // New METAR report div
   const oatInput = document.getElementById("oat"); // OAT (temperature) input field
   const depName = document.getElementById("depName"); // Airport name field
-  const syncOATButton = document.getElementById("sync-oat");
-  const syncElevationButton = document.getElementById("sync-elevation");
-
-  let selICAO;
+  let selICAO; 
   let cleanedICAO;
+  let matchingRunways = [];
+  let runwayIds = [];
 
   // Load airport data from the airports.json file
   async function loadAirportData() {
     const response = await fetch("airports.json");
     airportsData = await response.json();
+    //console.log("Loaded airports data:", airportsData); // Log loaded airport data for inspection
   }
 
   // Function to fetch the latest METAR data for a given IATA code
@@ -28,38 +29,51 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error("Failed to fetch data from NOAA API");
       }
 
-      const data = await response.json(); // Parse the JSON response
+      const data = await response.json();  // Parse the JSON response
+    
+      // Check if we received valid data
+    if (data && data.properties) {
+      const { rawMessage, temperature, windSpeed, windDirection, pressure, humidity } = data.properties;
 
-      if (data && data.properties) {
-        const { temperature, rawMessage } = data.properties;
+
 
         // Extract temperature in Celsius
-        const temperatureCelsius = temperature ? temperature.value : null;
+        const temperatureCelsius = temperature ? temperature.value : 'N/A';
 
-        // Update OAT field when SYNC is clicked
-        syncOATButton.addEventListener("click", () => {
-          oatInput.value = temperatureCelsius !== null ? `${temperatureCelsius.toFixed(1)}` : "N/A";
-          console.log("OAT synced:", oatInput.value);
-        });
+        // Extract wind data (Speed and Direction)
+        const windSpeedKph = windSpeed ? windSpeed.value : 'N/A'; // Speed in meters per second
+        const windDirectionDegrees = windDirection ? windDirection.value : 'N/A';
 
-        // Update METAR field
-        const metarSPAN = document.getElementById("rawMETAR");
-        metarSPAN.textContent = rawMessage || "N/A";
+        // Extract atmospheric pressure
+        const pressureMb = pressure ? pressure.value : 'N/A'; // Pressure in millibars
+
+        // Extract humidity
+        const humidityPercentage = humidity ? humidity.value : 'N/A'; // Humidity as percentage
+
+
+        // Update OAT and METAR fields
+        const oatInput = document.getElementById("oat");
+oatInput.value = temperatureCelsius !== null ? `${temperatureCelsius.toFixed(1)}`: "N/A";
+  // Populate the OAT span with the temperature
+        const metarSPAN = document.getElementById("rawMETAR")
+        metarSPAN.textContent = rawMessage // Populate with RAW Metar Data
       } else {
         console.log("Weather data not available");
       }
     } catch (error) {
       console.error("Failed to fetch METAR data:", error);
       document.getElementById("rawMETAR").innerText = "Unable to fetch METAR data";
-      oatInput.value = "N/A";
+      document.getElementById("oat").innerText = "N/A";
     }
   }
 
   // Filter airports based on IATA code and show suggestions
   function filterAirports(query) {
-    const filteredAirports = airportsData.filter((airport) =>
-      airport.IATA.replace(/^"|"$/g, '').toUpperCase().includes(query.toUpperCase())
+    // console.log("Filtering airports for query:", query); // DBUG: Log the query // Reenable for trouble shooting
+    const filteredAirports = airportsData.filter(airport =>
+      airport.IATA.replace(/^"|"$/g, '').toUpperCase().includes(query.toUpperCase()) // Remove quotes before matching
     );
+    // console.log("Filtered airports:", filteredAirports); // DBUG: Log the filtered airports 
     return filteredAirports;
   }
 
@@ -69,14 +83,88 @@ document.addEventListener("DOMContentLoaded", () => {
     if (query.length > 0) {
       const matchingAirports = filterAirports(query);
       airportSuggestions.innerHTML = "";
-      matchingAirports.forEach((airport) => {
+      matchingAirports.forEach(airport => {
         const option = document.createElement("option");
-        const cleanedIATA = airport.IATA.replace(/^"|"$/g, '');
-        option.value = cleanedIATA;
-        option.textContent = `${cleanedIATA} - ${airport.Name} (${airport.City}, ${airport.Country})`;
-        selICAO = airport.ICAO.replace(/^"|"$/g, '').trim();
+        const cleanedIATA = airport.IATA.replace(/^"|"$/g, '');  // Clean IATA code before setting value
+        option.value = cleanedIATA;  // Set IATA code as value
+        option.textContent = `${cleanedIATA} - ${airport.Name} (${airport.City}, ${airport.Country})`; 
+        //console.log(airport.ICAO);
+        const selICAO = airport.ICAO;
+        //console.log(selICAO);
+        cleanedICAO = selICAO.replace(/^"|"$/g, '').trim();
+        //console.log(cleanedICAO);
         airportSuggestions.appendChild(option);
       });
+
+      // Load Runway Data
+      async function loadRunwaysData(cleanedICAO) {
+        const response = await fetch("runways.json");
+        const runwaysData = await response.json();
+    
+        // Find the matching airport based on ICAO (ARPT_ID)
+        runwayIDs = runwaysData.filter(runway => runway.ARPT_ID === cleanedICAO);
+    
+        // Debug: Log the populated runwayIDs array
+        //console.log("Runway IDs array:", runwayIDs);
+    
+        // Call the function to populate the dropdown
+        populateRunwayDropdown(runwayIDs);
+
+        // Reset the runway dropdown to "Select Runway" if any option was pre-selected
+        const runwaySelect = document.getElementById("runway-select");
+        runwaySelect.value = "";  // Reset dropdown to default value ("Select Runway")
+        const rwyLength = document.getElementById("runway-length");
+        rwyLength.textContent = "N/A";  // Reset runway length to N/A
+    }
+    
+    // Function to populate the runway dropdown using the correct variable (runwayIDs)
+    function populateRunwayDropdown(runwayIDs) {
+        const runwaySelect = document.getElementById("runway-select");
+        runwaySelect.innerHTML = '';  // Clear any existing options
+    
+        // Debug: Log the runwayIDs array to check its structure
+        // console.log("Runway IDs in populate function:", runwayIDs);
+    
+        // If the runwayIDs array is populated, proceed to populate the dropdown
+        if (runwayIDs.length > 0) {
+            runwayIDs.forEach(runway => {
+                // Check if RWY_ID exists and is an array
+                if (Array.isArray(runway.RWY_ID)) {
+                    runway.RWY_ID.forEach(rwyId => {
+                        const option = document.createElement("option");
+                        option.value = rwyId;
+                        option.textContent = `Runway ${rwyId}`;  // Customize this text if needed
+                        runwaySelect.appendChild(option);
+                    });
+                }
+            });
+        } else {
+            //console.log("No runways found to populate the dropdown.");
+        }
+    }
+    
+    // Example: Assuming ICAO is already set, call the function to load data
+    loadRunwaysData(cleanedICAO);  // Call after ICAO is selected and set
+
+    // Event listener to handle the selection of a runway
+document.getElementById("runway-select").addEventListener("change", (event) => {
+  const selectedRunwayId = event.target.value;  // Get selected runway ID
+
+  // Find the runway data from the runwayIDs array based on the selected ID
+  const selectedRunway = runwayIDs.find(runway => runway.RWY_ID.includes(selectedRunwayId));
+
+  // Display the runway length if a matching runway is found
+  const runwayLengthField = document.getElementById("runway-length");
+  if (selectedRunway) {
+      runwayLengthField.textContent = `${selectedRunway.RWY_LEN} feet`;  // Set the runway length
+  } else {
+      runwayLengthField.textContent = "Runway length not available.";  // Fallback if no match
+  }
+});
+
+
+/// end of runway search section
+
       airportSuggestions.style.display = matchingAirports.length > 0 ? "block" : "none";
     } else {
       airportSuggestions.style.display = "none";
@@ -85,29 +173,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Set the IATA code when the user selects an option from the dropdown
   airportSuggestions.addEventListener("change", (event) => {
-    const selectedIATA = event.target.value.trim();
-    const selectedAirport = airportsData.find(
-      (airport) => airport.IATA.replace(/^"|"$/g, '') === selectedIATA
-    );
+    let selectedIATA = event.target.value;  // Get the IATA code from selected option
+
+    // Log the selected IATA code before the search
+    //console.log("Selected IATA Code:", selectedIATA);
+
+    // Clean up the IATA code for the search
+    const cleanedIATA = selectedIATA.replace(/^"|"$/g, '').trim();
+
+    // Look for the IATA code without quotes in the data (search without quotes)
+    const selectedAirport = airportsData.find(airport => airport.IATA.replace(/^"|"$/g, '') === cleanedIATA);
+    
+    // Log the airport found
+    console.log("Selected Airport:", selectedAirport);
 
     if (selectedAirport) {
-      airportInput.value = selectedIATA;
+        airportInput.value = cleanedIATA;
+        
+        // Populate the elevation field with the airport's elevation
+        elevationField.value = selectedAirport.Altitude || "N/A"; // Fallback if Altitude is undefined
 
-      // Add event listener to sync Elevation
-      syncElevationButton.addEventListener("click", () => {
-        elevationInput.value = selectedAirport.Altitude || "N/A";
-        console.log("Elevation synced:", elevationInput.value);
-      });
+   
+// Remove the quotes from the airport name if present
+const cleanedAirportName = selectedAirport.Name.replace(/"/g, '').trim();
 
-      const cleanedAirportName = selectedAirport.Name.replace(/"/g, '').trim();
-      depName.textContent = cleanedAirportName || "N/A";
-
-      // Fetch the METAR data for the selected airport
-      fetchMETAR(selectedIATA);
+// Populate the airport name without quotes
+depName.textContent = cleanedAirportName || "N/A";  // Fallback if name is undefined
+        
+        // Fetch the METAR data for the selected airport using the cleaned IATA
+        fetchMETAR(cleanedIATA);
     } else {
-      elevationInput.value = "Airport not found";
+        //console.log("Airport not found in data:", selectedIATA);  // Log if airport is not found
+        elevationField.value = "Airport not found";
     }
-
+    
     airportSuggestions.style.display = "none";
   });
 
