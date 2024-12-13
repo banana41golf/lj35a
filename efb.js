@@ -307,7 +307,7 @@ document.getElementById("mlw-flag").innerText = " ";
     const pmac = parseInt(document.getElementById("mac-input").textContent, 10);
 
     // Get the elevation from the #elevation span (not input)
-    const elevationText = document.getElementById("elevation").textContent;
+    const elevationText = document.getElementById("elevation").value;
     const elevation = parseInt(elevationText, 10); // Convert to number
 
     console.log("Calculation Inputs:", { oat, elevation, gw });
