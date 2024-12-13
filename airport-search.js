@@ -191,7 +191,7 @@ document.getElementById("runway-select").addEventListener("change", (event) => {
         airportInput.value = cleanedIATA;
         
         // Populate the elevation field with the airport's elevation
-        elevationField.textContent = selectedAirport.Altitude || "N/A"; // Fallback if Altitude is undefined
+        elevationField.value = selectedAirport.Altitude || "N/A"; // Fallback if Altitude is undefined
 
    
 // Remove the quotes from the airport name if present
@@ -204,7 +204,7 @@ depName.textContent = cleanedAirportName || "N/A";  // Fallback if name is undef
         fetchMETAR(cleanedIATA);
     } else {
         //console.log("Airport not found in data:", selectedIATA);  // Log if airport is not found
-        elevationField.textContent = "Airport not found";
+        elevationField.value = "Airport not found";
     }
     
     airportSuggestions.style.display = "none";
