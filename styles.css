@@ -22,15 +22,18 @@ h1 {
 }
 
 .form-group {
-  margin-bottom: 15px;
+  display: flex; /* Align input fields and buttons horizontally */
+  align-items: center; /* Vertically align items */
+  gap: 10px; /* Space between elements */
 }
 
 label {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 14px;
-  color: #bbbbbb;
+  display: inline-block; /* Ensure labels have a consistent block-like appearance */
+  width: 150px; /* Fixed width for all labels */
+  text-align: left; /* Align text to the left */
+  margin-right: 10px; /* Add spacing between label and input */
 }
+
 
 input, select {
   width: 100%;
@@ -129,3 +132,25 @@ button:disabled {
   font-weight: normal; /* Adjust label font weight if needed */
 }
 
+
+#oat, #elevation {
+  flex: 1; /* Let the input field take up the remaining space */
+  height: 40px; /* Ensure consistent height */
+}
+
+#sync-oat, #sync-elevation {
+  width: 25%; /* Buttons take up 25% of the container width */
+  height: 40px; /* Match input field height */
+  padding: 0; /* Remove extra padding */
+  font-size: 14px; /* Adjust font size */
+  background-color: #00bcd4;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+#sync-oat:hover, #sync-elevation:hover {
+  background-color: #008c9e;
+}
