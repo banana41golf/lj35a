@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
       gwWarning.style.display = "none";
     }
   };
+  
 
   // Set initial values for sliders and input fields
   const setInitialValues = () => {
@@ -318,14 +319,25 @@ document.getElementById("mlw-flag").innerText = " ";
     }
 
 
-document.getElementById("mac-input").addEventListener("input", function(event) {
-  let value = parseFloat(event.target.value);
-  if (value < 5) {
-    event.target.value = 5;
-  } else if (value > 30) {
-    event.target.value = 30;
-  }
-});
+    document.getElementById("mac-input").addEventListener("input", function(event) {
+      let value = parseFloat(event.target.value);
+    
+      // Ensure the value is within the specified range (5-30)
+      if (value < 5) {
+        event.target.value = 5;
+        value = 5;
+      } else if (value > 30) {
+        event.target.value = 30;
+        value = 30;
+      }
+    
+      // Disable the calculate button if the value is out of range or null
+      if (isNaN(value) || value < 5 || value > 30) {
+        calculateButton.disabled = true;
+      } else {
+        calculateButton.disabled = false;
+      }
+    });
 
 // Interpolation function for TRIM based on MAC
 function interpolateTrim(mac, trimData) {
