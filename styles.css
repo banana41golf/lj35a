@@ -139,11 +139,11 @@ button:disabled {
 }
 
 #sync-oat, #sync-elevation {
-  width: 25%; /* Buttons take up 25% of the container width */
-  height: 40px; /* Match input field height */
-  padding: 0; /* Remove extra padding */
-  font-size: 14px; /* Adjust font size */
-  background-color: #00bcd4;
+  width: 12.5%; /* Reduce width to half of the original (was 25%) */
+  height: 30px; /* Keep reduced height */
+  font-size: 12px; /* Keep reduced font size */
+  padding: 0 5px; /* Retain smaller padding */
+  background-color: #00bcd4; /* Retain existing styles */
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -151,6 +151,12 @@ button:disabled {
   transition: background-color 0.3s;
 }
 
+
 #sync-oat:hover, #sync-elevation:hover {
   background-color: #008c9e;
+}
+#oat, #elevation {
+  flex: none; /* Disable flex-grow for these specific inputs */
+  width: 25%; /* Set the width to 50% of the container */
+  height: 40px; /* Keep the consistent height */
 }
