@@ -27,6 +27,12 @@ h1 {
   gap: 10px; /* Space between elements */
 }
 
+.form-airport {
+  display: flex; /* Align input fields and buttons horizontally */
+  align-items: center; /* Vertically align items */
+  gap: 10px; /* Space between elements */
+}
+
 label {
   display: inline-block; /* Ensure labels have a consistent block-like appearance */
   width: 150px; /* Fixed width for all labels */
