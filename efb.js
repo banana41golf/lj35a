@@ -97,24 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize sliders and input values
   setInitialValues();
 
-  // Disable Calc Button based on MAC input
-  document.addEventListener("DOMContentLoaded", function() {
-    const macInput = document.getElementById("mac-input");
-  
-    // Function to check if the MAC input is empty and enable/disable the button
-    function toggleCalculateButton() {
-      if (macInput.value.trim() === "") {
-        calculateButton.disabled = true; // Disable button if MAC field is empty
-      } else {
-        calculateButton.disabled = false; // Enable button if MAC field has a value
-      }
-    }
-    // Initial check on page load
-    toggleCalculateButton();
 
-    // Event listener to check MAC input change
-    macInput.addEventListener("input", toggleCalculateButton);
-  });
 
   // Bilinear Interpolation Logic (used for both V1 and takeoff distance)
   function bilinearInterpolation(data, targetOAT, targetElevation) {
@@ -375,7 +358,6 @@ function interpolateTrim(mac, trimData) {
 
 // Example input from user
 const userMAC = parseInt(document.getElementById("mac-input").value, 10);
-console.log(userMAC);
 const trimResult = interpolateTrim(userMAC, trimData);
 console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
 
