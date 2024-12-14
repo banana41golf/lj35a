@@ -146,7 +146,7 @@ width: 100%;
 }
 
 .output-column label {
-  /* margin-right: 10px; /* Space between label and span */
+  margin-right: 10px; /* Space between label and span */
   font-weight: normal; /* Adjust label font weight if needed */
   font-size: 14px;
   color: #ffffff;
