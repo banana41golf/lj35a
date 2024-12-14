@@ -113,7 +113,7 @@ button:disabled {
 
 .form-group.horizontal label {
   width: 150px; /* Adjust width to fit the layout */
-  margin-right: 10px; /* Space between label and input field */
+  /*margin-right: 10px; /* Space between label and input field */
 
   
 }
