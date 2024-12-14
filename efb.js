@@ -306,6 +306,7 @@ document.addEventListener("DOMContentLoaded", () => {
   calculateButton.addEventListener("click", (event) => {
     event.preventDefault();
 document.getElementById("mlw-flag").innerText = " ";
+document.getElementById("mac-flag").innerText = " ";
     const oat = parseInt(document.getElementById("oat").value, 10);
     const gw = parseInt(gwInput.value, 10);
     const pmac = parseInt(document.getElementById("mac-input").textContent, 10);
@@ -325,6 +326,12 @@ document.getElementById("mlw-flag").innerText = " ";
       return;
     }
 
+        // Check if elevation is valid
+        if (isNaN(pmac)) {
+          document.getElementById("mac-flag").innerText = "Required";
+          return;
+        }
+    
   
 
 document.getElementById("mac-input").addEventListener("input", function(event) {
