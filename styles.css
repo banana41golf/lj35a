@@ -35,7 +35,7 @@ h1 {
 
 label {
   display: inline-block; /* Ensure labels have a consistent block-like appearance */
-  width: 150px; /* Fixed width for all labels */
+  width: 100px; /* Fixed width for all labels */
   text-align: left; /* Align text to the left */
   margin-right: 10px; /* Add spacing between label and input */
 }
@@ -133,6 +133,10 @@ button:disabled {
   margin-bottom: 10px; /* Space between each row */
   font-size: 14px;
   color: #ffffff;
+}
+.output-column span {
+text-align: left;
+width: 100%;
 }
 
 .output-column label {
