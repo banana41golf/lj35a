@@ -13,19 +13,19 @@
     <form id="performance-calculator">
       <!-- Inputs -->
       <div class="form-group horizontal">
-        <label for="zfw">Zero Fuel Weight (ZFW):</label>
+        <label for="zfw">ZFW:</label>
         <input type="number" id="zfw" name="zfw" placeholder="lbs" required />
         <input type="range" id="zfw-slider" min="10350" max="13500" step="50">
       </div>
       
       <div class="form-group horizontal">
-        <label for="fob">Fuel On Board (FOB):</label>
+        <label for="fob">FOB:</label>
         <input type="number" id="fob" name="fob" placeholder="lbs" required />
         <input type="range" id="fob-slider" min="600" max="6240" step="10">
       </div>
       
       <div class="form-group horizontal">
-        <label for="gw">Gross Weight (GW):</label>
+        <label for="gw">GW:</label>
         <input type="text" id="gw" name="gw" placeholder="Calculated Automatically" readonly />
         <small id="gw-warning" style="color: red; display: none;">
           <!-- Warning messages appear here dynamically -->
@@ -33,7 +33,7 @@
       </div>
 <!-- Departure Airport (ICAO) Input Field and Dropdown -->
 <div class="form-group horizontal">
-    <label for="departure-airport">Airport (ICAO):</label>
+    <label for="departure-airport">Airport ICAO:</label>
     <input type="text" id="departure-airport" name="departure-airport" placeholder="Enter ICAO code" autocomplete="off" required />
     <select id="airport-suggestions" size="5" style="display:none;">
         <!-- Dropdown populates here -->
