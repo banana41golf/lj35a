@@ -63,6 +63,7 @@ oatInput.value = temperatureCelsius !== null ? `${temperatureCelsius.toFixed(1)}
     } catch (error) {
       console.error("Failed to fetch METAR data:", error);
       document.getElementById("rawMETAR").innerText = "Unable to fetch METAR data";
+      document.getElementById("sync-oat").disabled = true; // Disable the SYNC OAT button
       document.getElementById("oat").innerText = "N/A";
     }
   }
