@@ -360,8 +360,9 @@ function interpolateTrim(mac, trimData) {
 // MAC and Trim Interpolation
 const userMAC = parseInt(document.getElementById("mac-input").value, 10);
 
+console.log(`usermac = ${userMAC}`);
     // Check if MAC is valid
-    if (userMAC < 5 || userMAC > 30)) {
+    if (userMAC < 5 || userMAC > 30) {
       console.error("MAC is not valid");
       alert("MAC is not valid!");
       return;
