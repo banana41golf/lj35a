@@ -310,6 +310,9 @@ document.getElementById("mlw-flag").innerText = " ";
     const oat = parseInt(document.getElementById("oat").value, 10);
     const gw = parseInt(gwInput.value, 10);
     const pmac = parseInt(document.getElementById("mac-input").textContent, 10);
+    const flapsinput = document.getElementById("flaps-input").value;
+
+    console.log(`Flaps Seting: ${flapsinput}`);
 
     // Get the elevation from the #elevation span (not input)
     const elevationText = document.getElementById("elevation").value;
@@ -367,6 +370,7 @@ function interpolateTrim(mac, trimData) {
 const userMAC = parseInt(document.getElementById("mac-input").value, 10);
 const trimResult = interpolateTrim(userMAC, trimData);
 console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
+
 
 
 
