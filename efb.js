@@ -325,6 +325,12 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Elevation is not valid.");
       return;
     }
+    // Check if oat is valid
+    if (isNaN(oat)) {
+      console.error("OAT is not valid:", oat);
+      alert("OAT is not valid!");
+      return;
+    }
 
   
 
