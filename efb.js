@@ -322,9 +322,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // Check if elevation is valid
     if (isNaN(elevation)) {
       console.error("Elevation is not valid:", elevation);
+      alert("Elevation is not valid.");
       return;
     }
-
+    // Check if MAC is valid
+    if (isNaN(pmac)) {
+      console.error("MAC is not valid", elevation);
+      alert("MAC is not valid!");
+      return;
+    }
     
   
 
