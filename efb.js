@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const gw = zfw + fob;
 
     if (gw > maxGW || gw < minGW) {
-      gwInput.value = gw > maxGW ? `MTOW EXCEEDED` : `Below min (${minGW})!`;
       calculateButton.disabled = true;
       gwWarning.style.display = "block";
       gwWarning.textContent = gw > maxGW
