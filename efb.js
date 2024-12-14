@@ -310,7 +310,7 @@ document.getElementById("mlw-flag").innerText = " ";
     const oat = parseInt(document.getElementById("oat").value, 10);
     const gw = parseInt(gwInput.value, 10);
     const pmac = parseInt(document.getElementById("mac-input").textContent, 10);
-    const flapsinput = document.getElementById("flaps-input").value;
+    const flapsinput = parseInt(document.getElementById("flaps-input").value, 10);
 
     console.log(`Flaps Setting: ${flapsinput}`);
 
@@ -376,7 +376,7 @@ console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
 
 let v1, distance, vr, v2;
 
-if (flapsinput = "8") {
+if (flapsinput === 8) {
     v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
     distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
     vr = interpolateByGW(vrData, gw, "VR");
