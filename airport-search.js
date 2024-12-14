@@ -237,5 +237,34 @@ depName.textContent = cleanedAirportName || "N/A";  // Fallback if name is undef
     airportSuggestions.style.display = "none";
   });
 
+
+    // Add SYNC functionality for OAT
+    document.getElementById("sync-oat").addEventListener("click", () => {
+      const iataCode = document.getElementById("departure-airport").value.trim();
+      if (!iataCode) {
+        alert("Please select an airport first.");
+        return;
+      }
+      fetchMETAR(iataCode); // Re-fetch METAR and update OAT
+    });
+  
+    // Add SYNC functionality for elevation
+    document.getElementById("sync-elevation").addEventListener("click", () => {
+      const iataCode = document.getElementById("departure-airport").value.trim();
+      if (!iataCode) {
+        alert("Please select an airport first.");
+        return;
+      }
+      const selectedAirport = airportsData.find(
+        airport => airport.IATA.replace(/^"|"$/g, '') === iataCode
+      );
+      if (selectedAirport) {
+        const elevation = selectedAirport.Altitude || "N/A"; // Use stored altitude
+        document.getElementById("elevation").value = elevation;
+      } else {
+        alert("Airport not found. Please try again.");
+      }
+    });
+
   loadAirportData(); // Load airport data on page load
 });
