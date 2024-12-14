@@ -376,7 +376,7 @@ console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
 
 let v1, distance, vr, v2;
 
-if (flapsinput === 8) {
+if (flapsinput = "8") {
     v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
     distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
     vr = interpolateByGW(vrData, gw, "VR");
