@@ -109,6 +109,11 @@ button:disabled {
   display: flex;
   align-items: center; /* Vertically center the elements */
   gap: 10px; /* Space between ZFW and FOB */
+  justify-content: space-between;
+}
+.form-group.horizontal span {
+  flex: 1; /* Makes spans take equal space */
+  text-align: left; /* Align text consistently */
 }
 
 .form-group.horizontal label {
