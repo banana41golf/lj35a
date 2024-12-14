@@ -337,6 +337,7 @@ document.getElementById("mac-input").addEventListener("input", function(event) {
   }
 });
 
+
 // Interpolation function for TRIM based on MAC
 function interpolateTrim(mac, trimData) {
   // Sort the trimData based on MAC in ascending order (if it's not sorted)
