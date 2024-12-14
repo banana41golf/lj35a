@@ -62,6 +62,17 @@
 
 <!-- Airport Data -->
       <div class="output-column">
+
+
+        <strong>Airport Information</strong>
+     <p><label for ="runway-select">Select Runway:</label>
+          <select id="runway-select"><option value=""></option></select></p>
+      <label for="runway-length">Runway Length:</label>
+          <span id="runway-length">N/A</span> <!-- Field to display runway length -->
+
+
+<br>
+<!-- comment out input data 
 <strong>
   Input Data
 </strong><br>
@@ -70,12 +81,7 @@
 <label>OAT:</label>
 <span id="oat-formfield">-</span>
 <label>Field Elevation</label>
-<span id="elevation-formfield">-</span><br><br>
-        <strong>Airport Information</strong>
-     <p><label for ="runway-select">Select Runway:</label>
-          <select id="runway-select"><option value=""></option></select></p>
-      <label for="runway-length">Runway Length:</label>
-          <span id="runway-length">N/A</span> <!-- Field to display runway length -->
+<span id="elevation-formfield">-</span> -->
         </div>
 
 
@@ -85,7 +91,7 @@
 
      <p><label for ="flaps">Flaps:</label>
           <select id="flaps">
-            <option value="5">8</option>
+            <option value="8">8</option>
           </select></p><p>
         <label for ="mac-input">% of MAC:</label>
             <input type="number" id="mac-input" name="mac-input" min="5" max="30" step="0.1" placeholder="% of MAC" required /></p>
@@ -108,18 +114,21 @@
 <!-- Landing Performance -->
         <div class ="output-column">
         <strong>Landing Performance</strong>
-                <label for="landingflaps">Flaps:</label> 
-                  <span id="landingflaps">40</span>
+        <p><label for ="landingflaps">Flaps:</label>
+          <select id="landingflaps">
+            <option value="40">40</option>
+          </select></p>                 <p> <label for ="gust-factor">Gust Factor:</label>
+            <select id="gust-factor">
+              <option value="5">5 kts</option>
+              <option value="10">10 kts</option>
+              <option value="15">15 kts</option>
+              <option value="20">20 kts</option>
+            </select></p>
+
                 <label for="vref-output">Vref:</label> 
                   <span id="vref-output">-</span>
 
-                 <p> <label for ="gust-factor">Gust Factor:</label>
-                    <select id="gust-factor">
-                      <option value="5">5 kts</option>
-                      <option value="10">10 kts</option>
-                      <option value="15">15 kts</option>
-                      <option value="20">20 kts</option>
-                    </select></p>
+
                   
                   <label for="vapp-output">Vapp:</label> 
                       <span id="vapp-output">-</span>
