@@ -312,7 +312,7 @@ document.getElementById("mlw-flag").innerText = " ";
     const pmac = parseInt(document.getElementById("mac-input").textContent, 10);
     const flapsinput = document.getElementById("flaps-input").value;
 
-    console.log(`Flaps Seting: ${flapsinput}`);
+    console.log(`Flaps Setting: ${flapsinput}`);
 
     // Get the elevation from the #elevation span (not input)
     const elevationText = document.getElementById("elevation").value;
@@ -372,25 +372,38 @@ const trimResult = interpolateTrim(userMAC, trimData);
 console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
 
 
+// Calculate based on Flaps Setting
+
+if(flapsinput=8){
+    const v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
+    const distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
+    const vr = interpolateByGW(vrData, gw, "VR");
+    const v2 = interpolateByGW(v2Data, gw, "V2");
+} else {
+  const v1 = trilinearInterpolationV1(f20ToData, oat, elevation, gw);
+  const distance = trilinearInterpolationDistance(f20DisData, oat, elevation, gw);
+  const vr = interpolateByGW(f20vrData, gw, "VR");
+  const v2 = interpolateByGW(f20v2Data, gw, "V2");
+}
 
 
     // Calculations Here    
-    const v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
-    const distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
+    //const v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
+    //const distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
     const n1 = bilinearInterpolation(n1Data, oat, elevation);
-    const vr = interpolateByGW(vrData, gw, "VR");
-    const v2 = interpolateByGW(v2Data, gw, "V2");
+    //const vr = interpolateByGW(vrData, gw, "VR");
+    //const v2 = interpolateByGW(v2Data, gw, "V2");
     const vref = interpolateByGW(vrefData, gw, "VREF");
     const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
     const trim = interpolateByGW(trimData, pmac, "TRIM");
 
     // Testing Flaps 20
-    const f20v1 = trilinearInterpolationV1(f20ToData, oat, elevation, gw);
-    const f20distance = trilinearInterpolationDistance(f20DisData, oat, elevation, gw);
-    const f20vr = interpolateByGW(f20vrData, gw, "VR");
-    const f20v2  = interpolateByGW(f20v2Data, gw, "V2");
-    console.log(`Flaps 20 Data, V1: ${f20v1}, Dist: ${f20distance}, VR: ${f20vr}, V2: ${f20v2}`);
+   // const f20v1 = trilinearInterpolationV1(f20ToData, oat, elevation, gw);
+    //const f20distance = trilinearInterpolationDistance(f20DisData, oat, elevation, gw);
+    //const f20vr = interpolateByGW(f20vrData, gw, "VR");
+    //const f20v2  = interpolateByGW(f20v2Data, gw, "V2");
+    //console.log(`Flaps 20 Data, V1: ${f20v1}, Dist: ${f20distance}, VR: ${f20vr}, V2: ${f20v2}`);
 
 
 if(gw > 15300) {
