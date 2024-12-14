@@ -326,11 +326,6 @@ document.getElementById("mac-flag").innerText = " ";
       return;
     }
 
-        // Check if elevation is valid
-        if (isNaN(pmac)) {
-          document.getElementById("mac-flag").innerText = "Required";
-          return;
-        }
     
   
 
