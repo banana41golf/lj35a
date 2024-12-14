@@ -334,14 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
   
 
-document.getElementById("mac-input").addEventListener("input", function(event) {
-  let value = parseFloat(event.target.value);
-  if (value < 5) {
-    event.target.value = 5;
-  } else if (value > 30) {
-    event.target.value = 30;
-  }
-});
+console.log(`${pmac}`);
 
 
 // Interpolation function for TRIM based on MAC
