@@ -96,6 +96,28 @@ oatInput.value = temperatureCelsius !== null ? `${temperatureCelsius.toFixed(1)}
         airportSuggestions.appendChild(option);
       });
 
+      // Close the dropdown if the user clicks outside
+document.addEventListener("click", (event) => {
+  // Check if the click target is outside the input field and dropdown
+  if (
+    event.target !== airportInput &&
+    event.target !== airportSuggestions &&
+    !airportSuggestions.contains(event.target)
+  ) {
+    airportSuggestions.style.display = "none";
+  }
+});
+
+// Bonus: Handle clicks on dropdown options
+airportSuggestions.addEventListener("click", (event) => {
+  const selectedOption = event.target;
+  if (selectedOption.tagName === "OPTION") {
+    airportInput.value = selectedOption.value; // Set the input value to the selected option
+    airportSuggestions.style.display = "none"; // Hide the dropdown
+  }
+});
+
+
       // Load Runway Data
       async function loadRunwaysData(cleanedICAO) {
         const response = await fetch("runways.json");
