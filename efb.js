@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   let n1Data, f8ToData, f8DisData, vrData, v2Data, vrefData, ldaData, factData, trimData;
+  let f20ToData, f20DisData, f20vrData, f20v2Data;
   const zfwSlider = document.getElementById("zfw-slider");
   const zfwInput = document.getElementById("zfw");
   const fobSlider = document.getElementById("fob-slider");
@@ -31,6 +32,10 @@ document.addEventListener("DOMContentLoaded", () => {
     ldaData = await fetch("LDAA_flat.json").then((res) => res.json());
     factData = await fetch("fact.json").then((res) => res.json());
     trimData = await fetch("trim.json").then((res) => res.json());
+    f20ToData = await fetch("F20-TO.json").then((res) => res.json());
+    f20DisData = await fetch("F20-DIS.json").then((res) => res.json());
+    f20vrData = await fetch("VR-20.json").then((res) => res.json());
+    f20v2Data = await fetch("V2-20.json").then((res) => res.json());
   }
 
   // Function to update the Gross Weight (GW) based on ZFW and FOB values
@@ -358,7 +363,7 @@ function interpolateTrim(mac, trimData) {
   return trim;
 }
 
-// Example input from user
+// MAC and Trim Interpolation
 const userMAC = parseInt(document.getElementById("mac-input").value, 10);
 const trimResult = interpolateTrim(userMAC, trimData);
 console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
@@ -376,14 +381,16 @@ console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
     const trim = interpolateByGW(trimData, pmac, "TRIM");
 
-if(gw > 15300) {
-  console.log("MLW EXCEEDED");
-}
+    // Testing Flaps 20
+    const f20v1 = trilinearInterpolationV1(f20ToData, oat, elevation, gw);
+    const f20distance = trilinearInterpolationDistance(f20DisData, oat, elevation, gw);
+    const f20vr = interpolateByGW(f20vrData, gw, "VR");
+    const f20v2  = interpolateByGW(f20v2Data, gw, "V2");
+    console.log(`Flaps 20 Data, V1: ${f20v1}, Dist: ${f20distance}, VR: ${f20vr}, V2: ${f20v2}`);
+
 
 if(gw > 15300) {
-
   document.getElementById("mlw-flag").innerText = "MLW EXCEEDED";
-
 }
 
     //Update HTML forms
@@ -400,13 +407,6 @@ if(gw > 15300) {
     const gustFactor = parseInt(document.getElementById("gust-factor").value);
     const vapp = gustFactor + vref
     document.getElementById("vapp-output").innerText = vapp ? `${Math.round(vapp)} knots` : "N/A";
-
-    // Input values for troubleshooting 
-    // document.getElementById("gw-formfield").innerText = gw;
-    // document.getElementById("oat-formfield").innerText = oat;
-    // document.getElementById("elevation-formfield").innerText = elevation;
-    
-  
 
   });
 
