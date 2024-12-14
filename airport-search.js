@@ -126,6 +126,11 @@ oatInput.value = temperatureCelsius !== null ? `${temperatureCelsius.toFixed(1)}
         // console.log("Runway IDs in populate function:", runwayIDs);
     
         // If the runwayIDs array is populated, proceed to populate the dropdown
+        const rect = airportInput.getBoundingClientRect();
+airportSuggestions.style.top = `${rect.bottom + window.scrollY}px`;
+airportSuggestions.style.left = `${rect.left + window.scrollX}px`;
+airportSuggestions.style.width = `${rect.width}px`;
+
         if (runwayIDs.length > 0) {
             runwayIDs.forEach(runway => {
                 // Check if RWY_ID exists and is an array

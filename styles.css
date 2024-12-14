@@ -180,3 +180,27 @@ width: 100%;
   width: 25%; /* Set the width to 50% of the container */
   height: 40px; /* Keep the consistent height */
 }
+
+#airport-suggestions {
+  position: absolute; /* Position it relative to its container */
+  z-index: 10; /* Ensure it appears above other elements */
+  width: 100%; /* Match the width of the input field */
+  max-height: 150px; /* Set a max height for scrollable suggestions */
+  overflow-y: auto; /* Enable vertical scrolling if needed */
+  border: 1px solid #444; /* Match your theme's border style */
+  border-radius: 4px; /* Add rounded corners */
+  background-color: #2c2c2c; /* Match the input field's background */
+  color: #ffffff; /* Match text color */
+  display: none; /* Keep it hidden initially */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Add a shadow for better visibility */
+}
+
+#airport-suggestions option {
+  padding: 10px; /* Add padding for better readability */
+  cursor: pointer;
+}
+
+#airport-suggestions option:hover {
+  background-color: #008c9e; /* Highlight on hover */
+  color: #ffffff;
+}
