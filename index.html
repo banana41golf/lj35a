@@ -76,8 +76,6 @@
           <select id="runway-select"><option value=""></option></select></p>
       <label for="runway-length">Runway Length:</label>
           <span id="runway-length">N/A</span> <!-- Field to display runway length -->
-        <label for="distance-output">T/O Distance Req'd:</label> 
-            <span id="distance-output">-</span>
         </div>
 
 
@@ -103,6 +101,8 @@
                   <span id="vr-output">-</span>
               <label for="v2-output">V2 Speed:</label> 
                   <span id="v2-output">-</span>
+                  <label for="distance-output">TO Distance:</label> 
+                  <span id="distance-output">-</span>
               </div>
 
 <!-- Landing Performance -->
@@ -123,13 +123,14 @@
                   
                   <label for="vapp-output">Vapp:</label> 
                       <span id="vapp-output">-</span>
-
-            <label for="ldaa-output">Actual Ldg Dist:</label> 
+<P></P>
+                      <strong>Landing Distance</strong>
+            <label for="ldaa-output">Actual:</label> 
                   <span id="ldaa-output">-</span>
-             <label for="fact-output">Factored Ldg Dist:</label> 
-                  <span id="fact-output">-</span>
+             <label for="fact-output">Factored:</label> 
+                  <span id="fact-output">-</span><br>
              
-                  <span id="mlw-flag"></span>           
+                  <span id="mlw-flag" style="color: red; display: none;"></span>           
               </div>
         </div>
 
