@@ -306,7 +306,6 @@ document.addEventListener("DOMContentLoaded", () => {
   calculateButton.addEventListener("click", (event) => {
     event.preventDefault();
 document.getElementById("mlw-flag").innerText = " ";
-document.getElementById("mac-flag").innerText = " ";
     const oat = parseInt(document.getElementById("oat").value, 10);
     const gw = parseInt(gwInput.value, 10);
     const pmac = parseInt(document.getElementById("mac-input").textContent, 10);
