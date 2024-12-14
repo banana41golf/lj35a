@@ -374,16 +374,18 @@ console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
 
 // Calculate based on Flaps Setting
 
-if(flapsinput=8){
-    const v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
-    const distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
-    const vr = interpolateByGW(vrData, gw, "VR");
-    const v2 = interpolateByGW(v2Data, gw, "V2");
+let v1, distance, vr, v2;
+
+if (flapsinput === 8) {
+    v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
+    distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
+    vr = interpolateByGW(vrData, gw, "VR");
+    v2 = interpolateByGW(v2Data, gw, "V2");
 } else {
-  const v1 = trilinearInterpolationV1(f20ToData, oat, elevation, gw);
-  const distance = trilinearInterpolationDistance(f20DisData, oat, elevation, gw);
-  const vr = interpolateByGW(f20vrData, gw, "VR");
-  const v2 = interpolateByGW(f20v2Data, gw, "V2");
+    v1 = trilinearInterpolationV1(f20ToData, oat, elevation, gw);
+    distance = trilinearInterpolationDistance(f20DisData, oat, elevation, gw);
+    vr = interpolateByGW(f20vrData, gw, "VR");
+    v2 = interpolateByGW(f20v2Data, gw, "V2");
 }
 
 
