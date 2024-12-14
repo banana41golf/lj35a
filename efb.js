@@ -400,6 +400,10 @@ if(gw > 15300) {
     const gustFactor = parseInt(document.getElementById("gust-factor").value);
     const vapp = gustFactor + vref
     document.getElementById("vapp-output").innerText = vapp ? `${Math.round(vapp)} knots` : "N/A";
+
+    document.getElementById("gw-formfield").innerText = gw;
+    document.getElementById("oat-formfield").innerText = oat;
+    document.getElementById("elevation-formfield").innerText = elevation;
     
   
 
