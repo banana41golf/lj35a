@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `Gross Weight exceeds MTOW of ${maxGW} lbs!`
         : `Gross Weight is below the minimum limit of ${minGW} lbs!`;
     } else {
-      gwInput.value = gw.toFixed(1);
+      gwInput.value = gw.toFixed(0);
       calculateButton.disabled = false;
       gwWarning.style.display = "none";
     }
