@@ -376,8 +376,8 @@ const userMAC = parseInt(document.getElementById("mac-input").value, 10);
 console.log(`usermac = ${userMAC}`);
     // Check if MAC is valid
     if (userMAC < 5 || userMAC > 30) {
-      console.error("MAC is not valid");
-      alert("MAC is not valid!");
+      console.error("% of MAC must be between 5.0% and 30.0%");
+      alert("% of MAC must be between 5.0% and 30.0%");
       return;
     }
     
