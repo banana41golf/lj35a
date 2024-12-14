@@ -57,6 +57,7 @@ oatInput.value = temperatureCelsius !== null ? `${temperatureCelsius.toFixed(1)}
   // Populate the OAT span with the temperature
         const metarSPAN = document.getElementById("rawMETAR")
         metarSPAN.textContent = rawMessage // Populate with RAW Metar Data
+        document.getElementById("sync-oat").disabled = false;
       } else {
         console.log("Weather data not available");
       }
