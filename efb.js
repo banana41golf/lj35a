@@ -366,6 +366,13 @@ function interpolateTrim(mac, trimData) {
 // MAC and Trim Interpolation
 const userMAC = parseInt(document.getElementById("mac-input").value, 10);
 
+// Check if MAC is within limits (5-30)
+if (isNaN(userMAC)) {
+  console.error("MAC is not valid:", userMAC);
+  alert("%MAC is not valid!");
+  return;
+}
+
 console.log(`usermac = ${userMAC}`);
     // Check if MAC is valid
     if (userMAC < 5 || userMAC > 30) {
