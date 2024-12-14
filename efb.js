@@ -332,11 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    if (isNaN(userMAC)) {
-      console.error("MAC is not valid:", userMAC);
-      alert("%MAC is not valid!");
-      return;
-    }
+
 
 // Interpolation function for TRIM based on MAC
 function interpolateTrim(mac, trimData) {
@@ -371,7 +367,11 @@ function interpolateTrim(mac, trimData) {
 const userMAC = parseInt(document.getElementById("mac-input").value, 10);
 
 // Check if MAC is within limits (5-30)
-
+if (isNaN(userMAC)) {
+  console.error("MAC is not valid:", userMAC);
+  alert("%MAC is not valid!");
+  return;
+}
 
 console.log(`usermac = ${userMAC}`);
     // Check if MAC is valid
