@@ -38,7 +38,7 @@ label {
   display: inline-block; /* Ensure labels have a consistent block-like appearance */
   width: 100px; /* Fixed width for all labels */
   text-align: left; /* Align text to the left */
-  margin-right: 10px; /* Add spacing between label and input */
+  
 }
 
 
