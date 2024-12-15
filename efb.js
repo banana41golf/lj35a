@@ -361,7 +361,121 @@ function trilinearInterpolationV1(data, oat, elevation, gw) {
   return v1AtElevation;
 }
 
+// START DYNAMIC MTOW FUNCTION
+function interpolateMTOW(data, targetOAT, targetElevation) {
 
+  if (!Array.isArray(data) || data.length === 0) {
+      console.error("Invalid or empty data passed to interpolateMTOW.");
+      return NaN;
+  }
+
+  // Step 1: Identify the maximum and minimum OAT values in the dataset
+  const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
+  const maxOAT = Math.max(...oatLevels);
+  const minOAT = Math.min(...oatLevels);
+
+  // Cap targetOAT to the dataset range
+  if (targetOAT > maxOAT) {
+      console.warn(`Target OAT (${targetOAT}°C) exceeds dataset range. Capping to maximum OAT (${maxOAT}°C).`);
+      targetOAT = maxOAT;
+  } else if (targetOAT < minOAT) {
+      console.warn(`Target OAT (${targetOAT}°C) below dataset range. Capping to minimum OAT (${minOAT}°C).`);
+      targetOAT = minOAT;
+  }
+
+  // Step 2: Find the nearest OAT bounds for interpolation
+  let lowerOAT = null, upperOAT = null;
+  for (let i = 0; i < oatLevels.length; i++) {
+      if (oatLevels[i] <= targetOAT) lowerOAT = oatLevels[i];
+      if (oatLevels[i] >= targetOAT) {
+          upperOAT = oatLevels[i];
+          break;
+      }
+  }
+
+
+  if (lowerOAT === upperOAT) {
+      // Exact OAT match; filter data for this OAT
+      const validData = data.filter((item) => item.OAT === lowerOAT);
+      console.log("Valid Data (Exact OAT Match):", validData);
+      return interpolateElevation(validData, targetElevation);
+  }
+
+  // Step 3: Interpolate MTOW for target OAT at each elevation
+  const lowerOATData = data.filter((item) => item.OAT === lowerOAT);
+  const upperOATData = data.filter((item) => item.OAT === upperOAT);
+
+
+  if (lowerOATData.length === 0 || upperOATData.length === 0) {
+      console.warn("Missing data for OAT interpolation. Returning NaN.");
+      return NaN;
+  }
+
+  const interpolatedOATData = [];
+  const elevationLevels = [...new Set(lowerOATData.map((item) => item.elevation))];
+  elevationLevels.forEach((elevation) => {
+      const lowerPoint = lowerOATData.find((item) => item.elevation === elevation);
+      const upperPoint = upperOATData.find((item) => item.elevation === elevation);
+      if (lowerPoint && upperPoint) {
+          const interpolatedMTOW = lowerPoint.MTOW + 
+              ((targetOAT - lowerOAT) * (upperPoint.MTOW - lowerPoint.MTOW)) / 
+              (upperOAT - lowerOAT);
+          interpolatedOATData.push({ elevation, OAT: targetOAT, MTOW: interpolatedMTOW });
+      }
+  });
+
+
+  // Step 4: Interpolate MTOW for target elevation
+  return interpolateElevation(interpolatedOATData, targetElevation);
+  }
+  function interpolateElevation(data, targetElevation) {
+
+
+  // Find the maximum elevation
+  const elevations = [...new Set(data.map((item) => item.elevation))].sort((a, b) => a - b);
+  const maxElevation = Math.max(...elevations);
+
+  // Cap elevation if it exceeds the maximum
+  if (targetElevation > maxElevation) {
+      console.warn(
+          `Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxElevation} ft).`
+      );
+      const cappedData = data.filter((item) => item.elevation === maxElevation);
+      return cappedData[0]?.MTOW || NaN;
+  }
+
+  // Find elevation bounds
+  let lowerElevation = null, upperElevation = null;
+  for (let i = 0; i < elevations.length; i++) {
+      if (elevations[i] <= targetElevation) lowerElevation = elevations[i];
+      if (elevations[i] >= targetElevation) {
+          upperElevation = elevations[i];
+          break;
+      }
+  }
+  console.log("Elevation Bounds for Interpolation:", lowerElevation, upperElevation);
+
+  if (lowerElevation === upperElevation) {
+      // Exact match for elevation
+      const exactMatch = data.find((item) => item.elevation === lowerElevation);
+      return exactMatch?.MTOW || NaN;
+  }
+
+  // Interpolate between elevation bounds
+  const lowerPoint = data.find((item) => item.elevation === lowerElevation);
+  const upperPoint = data.find((item) => item.elevation === upperElevation);
+
+  if (!lowerPoint || !upperPoint) {
+      console.warn("Missing data for elevation interpolation. Returning NaN.");
+      return NaN;
+  }
+
+  const e1 = lowerPoint.elevation, m1 = lowerPoint.MTOW;
+  const e2 = upperPoint.elevation, m2 = upperPoint.MTOW;
+
+  return m1 + ((targetElevation - e1) * (m2 - m1)) / (e2 - e1);
+  }
+// END MTOW INTERPOLATION FUNCTION
   
 // Trilinear Function for TO and LDG Distance
       function trilinearInterpolationDistance(data, oat, elevation, gw) {
@@ -432,7 +546,38 @@ function trilinearInterpolationV1(data, oat, elevation, gw) {
           icon.remove();
         });
       }
-      
+
+  
+// Interpolation function for TRIM based on MAC
+
+function interpolateTrim(mac, trimData) {
+  // Sort the trimData based on MAC in ascending order (if it's not sorted)
+  trimData.sort((a, b) => a.MAC - b.MAC);
+
+  // Find the two points (below and above the input MAC value)
+  let lower = null, upper = null;
+  for (let i = 0; i < trimData.length; i++) {
+    if (trimData[i].MAC <= mac) {
+      lower = trimData[i];
+    }
+    if (trimData[i].MAC >= mac) {
+      upper = trimData[i];
+      break;
+    }
+  }
+
+  // If no interpolation is needed (MAC value is exactly a data point)
+  if (lower === upper) {
+    return lower.TRIM;
+  }
+
+  // Linear interpolation formula
+  const slope = (upper.TRIM - lower.TRIM) / (upper.MAC - lower.MAC);
+  const trim = lower.TRIM + slope * (mac - lower.MAC);
+
+  return trim;
+}
+
       
 // Calculate Button
   calculateButton.addEventListener("click", (event) => {
@@ -469,37 +614,6 @@ function trilinearInterpolationV1(data, oat, elevation, gw) {
     }
 
 
-
-// Interpolation function for TRIM based on MAC
-
-function interpolateTrim(mac, trimData) {
-  // Sort the trimData based on MAC in ascending order (if it's not sorted)
-  trimData.sort((a, b) => a.MAC - b.MAC);
-
-  // Find the two points (below and above the input MAC value)
-  let lower = null, upper = null;
-  for (let i = 0; i < trimData.length; i++) {
-    if (trimData[i].MAC <= mac) {
-      lower = trimData[i];
-    }
-    if (trimData[i].MAC >= mac) {
-      upper = trimData[i];
-      break;
-    }
-  }
-
-  // If no interpolation is needed (MAC value is exactly a data point)
-  if (lower === upper) {
-    return lower.TRIM;
-  }
-
-  // Linear interpolation formula
-  const slope = (upper.TRIM - lower.TRIM) / (upper.MAC - lower.MAC);
-  const trim = lower.TRIM + slope * (mac - lower.MAC);
-
-  return trim;
-}
-
 // MAC and Trim Interpolation
 const userMAC = parseInt(document.getElementById("mac-input").value, 10);
 
@@ -510,7 +624,7 @@ if (isNaN(userMAC)) {
   return;
 }
 
-    // Check if MAC is valid
+// Check if MAC is valid
     if (userMAC < 5 || userMAC > 30) {
       console.error("% of MAC must be between 5.0% and 30.0%");
       alert("% of MAC must be between 5.0% and 30.0%");
@@ -518,125 +632,8 @@ if (isNaN(userMAC)) {
     }
     
 
-const trimResult = interpolateTrim(userMAC, trimData);
 
 
-// START DYNAMIC MTOW FUNCTION
-  function interpolateMTOW(data, targetOAT, targetElevation) {
-
-  if (!Array.isArray(data) || data.length === 0) {
-      console.error("Invalid or empty data passed to interpolateMTOW.");
-      return NaN;
-  }
-
-  // Step 1: Identify the maximum and minimum OAT values in the dataset
-  const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
-  const maxOAT = Math.max(...oatLevels);
-  const minOAT = Math.min(...oatLevels);
-
-  // Cap targetOAT to the dataset range
-  if (targetOAT > maxOAT) {
-      console.warn(`Target OAT (${targetOAT}°C) exceeds dataset range. Capping to maximum OAT (${maxOAT}°C).`);
-      targetOAT = maxOAT;
-  } else if (targetOAT < minOAT) {
-      console.warn(`Target OAT (${targetOAT}°C) below dataset range. Capping to minimum OAT (${minOAT}°C).`);
-      targetOAT = minOAT;
-  }
-
-  // Step 2: Find the nearest OAT bounds for interpolation
-  let lowerOAT = null, upperOAT = null;
-  for (let i = 0; i < oatLevels.length; i++) {
-      if (oatLevels[i] <= targetOAT) lowerOAT = oatLevels[i];
-      if (oatLevels[i] >= targetOAT) {
-          upperOAT = oatLevels[i];
-          break;
-      }
-  }
-
-
-  if (lowerOAT === upperOAT) {
-      // Exact OAT match; filter data for this OAT
-      const validData = data.filter((item) => item.OAT === lowerOAT);
-      console.log("Valid Data (Exact OAT Match):", validData);
-      return interpolateElevation(validData, targetElevation);
-  }
-
-  // Step 3: Interpolate MTOW for target OAT at each elevation
-  const lowerOATData = data.filter((item) => item.OAT === lowerOAT);
-  const upperOATData = data.filter((item) => item.OAT === upperOAT);
-
-
-  if (lowerOATData.length === 0 || upperOATData.length === 0) {
-      console.warn("Missing data for OAT interpolation. Returning NaN.");
-      return NaN;
-  }
-
-  const interpolatedOATData = [];
-  const elevationLevels = [...new Set(lowerOATData.map((item) => item.elevation))];
-  elevationLevels.forEach((elevation) => {
-      const lowerPoint = lowerOATData.find((item) => item.elevation === elevation);
-      const upperPoint = upperOATData.find((item) => item.elevation === elevation);
-      if (lowerPoint && upperPoint) {
-          const interpolatedMTOW = lowerPoint.MTOW + 
-              ((targetOAT - lowerOAT) * (upperPoint.MTOW - lowerPoint.MTOW)) / 
-              (upperOAT - lowerOAT);
-          interpolatedOATData.push({ elevation, OAT: targetOAT, MTOW: interpolatedMTOW });
-      }
-  });
-
-
-  // Step 4: Interpolate MTOW for target elevation
-  return interpolateElevation(interpolatedOATData, targetElevation);
-  }
-
-  function interpolateElevation(data, targetElevation) {
-
-
-  // Find the maximum elevation
-  const elevations = [...new Set(data.map((item) => item.elevation))].sort((a, b) => a - b);
-  const maxElevation = Math.max(...elevations);
-
-  // Cap elevation if it exceeds the maximum
-  if (targetElevation > maxElevation) {
-      console.warn(
-          `Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxElevation} ft).`
-      );
-      const cappedData = data.filter((item) => item.elevation === maxElevation);
-      return cappedData[0]?.MTOW || NaN;
-  }
-
-  // Find elevation bounds
-  let lowerElevation = null, upperElevation = null;
-  for (let i = 0; i < elevations.length; i++) {
-      if (elevations[i] <= targetElevation) lowerElevation = elevations[i];
-      if (elevations[i] >= targetElevation) {
-          upperElevation = elevations[i];
-          break;
-      }
-  }
-  console.log("Elevation Bounds for Interpolation:", lowerElevation, upperElevation);
-
-  if (lowerElevation === upperElevation) {
-      // Exact match for elevation
-      const exactMatch = data.find((item) => item.elevation === lowerElevation);
-      return exactMatch?.MTOW || NaN;
-  }
-
-  // Interpolate between elevation bounds
-  const lowerPoint = data.find((item) => item.elevation === lowerElevation);
-  const upperPoint = data.find((item) => item.elevation === upperElevation);
-
-  if (!lowerPoint || !upperPoint) {
-      console.warn("Missing data for elevation interpolation. Returning NaN.");
-      return NaN;
-  }
-
-  const e1 = lowerPoint.elevation, m1 = lowerPoint.MTOW;
-  const e2 = upperPoint.elevation, m2 = upperPoint.MTOW;
-
-  return m1 + ((targetElevation - e1) * (m2 - m1)) / (e2 - e1);
-  }
-// END MTOW INTERPOLATION FUNCTION
 
 // Update Info Icon to Exclaim Icon Function
 function updateOrInsertInfoIcon(elementId, newTooltip, newIconClass, newIconColor) {
@@ -664,8 +661,6 @@ function updateOrInsertInfoIcon(elementId, newTooltip, newIconClass, newIconColo
   }
 }
 
-
-
 // Calculations Here
 
 let v1, distance, vr, v2;
@@ -692,7 +687,7 @@ if (flapsinput === 8) {
     const vref = interpolateByGW(vrefData, gw, "VREF");
     const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
-    const trim = interpolateByGW(trimData, pmac, "TRIM");
+    const trimResult = interpolateTrim(userMAC, trimData);
 
 // Check if MLW exceeds GW and insert flag if true
 if(gw > maxLW) {
@@ -726,8 +721,6 @@ updateOrInsertInfoIcon(
 );
 }
 
-const testv1 = trilinearInterpolationDistance(f8ToData, oat, elevation, gw);
-console.log(testv1);
 
 // Update RTOW form
     document.getElementById("rtow-input").innerText = rtow ? `${Math.round(rtow)} lbs` : "N/A";
@@ -735,15 +728,6 @@ console.log(testv1);
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(1) : "N/A";
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
     document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
-
-if(isNaN(v1)){
-  document.getElementById("vr-output").innerText = "N/A";
-  document.getElementById("v2-output").innerText = "N/A";
-} else {
-    document.getElementById("vr-output").innerText = vr ? `${Math.round(vr)} knots` : "N/A";
-    document.getElementById("v2-output").innerText = v2 ? `${Math.round(v2)} knots` : "N/A";
-}
-
     document.getElementById("vref-output").innerText = vref ? `${Math.round(vref)} knots` : "N/A";
     document.getElementById("ldaa-output").innerText = ldaa ? `${Math.round(ldaa)} feet` : "N/A";
     document.getElementById("fact-output").innerText = fact ? `${Math.round(fact)} feet` : "N/A";
