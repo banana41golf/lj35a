@@ -425,7 +425,7 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
   // Cap targetElevation to the maximum valid elevation
   if (targetElevation > maxValidElevation) {
       console.warn(
-          `Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxValidElevation} ft).`
+          `Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxValidElevation} ft). Capping to ${maxValidElevation} ft.`
       );
       targetElevation = maxValidElevation;
   }
@@ -440,7 +440,7 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
   }
 
   // Step 5: Find bounds for elevation
-  const elevationLevels = [...new Set(data.map((item) => item.elevation))].sort((a, b) => a - b);
+  const elevationLevels = [...new Set(elevationsWithValidData)].sort((a, b) => a - b); // Use only valid elevations
   let lowerElevation = null, upperElevation = null;
 
   for (let i = 0; i < elevationLevels.length; i++) {
@@ -454,8 +454,8 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
   if (!lowerElevation) lowerElevation = upperElevation;
   if (!upperElevation) upperElevation = lowerElevation;
 
-  const lowerData = data.filter((item) => item.elevation === lowerElevation);
-  const upperData = data.filter((item) => item.elevation === upperElevation);
+  const lowerData = validData.filter((item) => item.elevation === lowerElevation);
+  const upperData = validData.filter((item) => item.elevation === upperElevation);
 
   // Helper function to interpolate MTOW for a specific elevation level
   const interpolateOAT = (dataSet, oat) => {
