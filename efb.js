@@ -113,21 +113,49 @@ document.addEventListener("DOMContentLoaded", () => {
 // Bilinear Interpolation Logic (used for N1 calculation)
 
 function bilinearInterpolation(data, targetOAT, targetElevation) {
-  const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
-
-  // If the elevation exceeds the maximum, cap it
-  const maxElevation = Math.max(...elevationLevels);
-  if (targetElevation > maxElevation) {
-      console.warn(
-          `Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxElevation} ft). Using maximum elevation.`
-      );
-      targetElevation = maxElevation; // Cap the elevation
+  if (!Array.isArray(data) || data.length === 0) {
+      console.error("Invalid or empty data passed to bilinearInterpolation.");
+      return NaN;
   }
 
-  // Handle exact elevation match
+  // Step 1: Identify the valid elevation and OAT ranges in the dataset
+  const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
+  const maxElevation = Math.max(...elevationLevels);
+  const minElevation = Math.min(...elevationLevels);
+
+  const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
+  const maxOAT = Math.max(...oatLevels);
+  const minOAT = Math.min(...oatLevels);
+
+  // Step 2: Cap target values to dataset bounds
+  if (targetElevation > maxElevation) {
+      console.warn(
+          `Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxElevation} ft). Capping to maximum elevation.`
+      );
+      targetElevation = maxElevation;
+  } else if (targetElevation < minElevation) {
+      console.warn(
+          `Target Elevation (${targetElevation} ft) is below minimum valid elevation (${minElevation} ft). Capping to minimum elevation.`
+      );
+      targetElevation = minElevation;
+  }
+
+  if (targetOAT > maxOAT) {
+      console.warn(
+          `Target OAT (${targetOAT}°C) exceeds maximum valid OAT (${maxOAT}°C). Capping to maximum OAT.`
+      );
+      targetOAT = maxOAT;
+  } else if (targetOAT < minOAT) {
+      console.warn(
+          `Target OAT (${targetOAT}°C) is below minimum valid OAT (${minOAT}°C). Capping to minimum OAT.`
+      );
+      targetOAT = minOAT;
+  }
+
+  // Step 3: Handle exact matches for elevation
   if (elevationLevels.includes(targetElevation)) {
       const exactElevationData = data.filter((item) => item.Elevation === targetElevation);
-      return interpolateOAT(exactElevationData, targetOAT, targetElevation);
+      return interpolateOAT(exactElevationData, targetOAT);
   }
 
   let lowerElevation = null, upperElevation = null;
@@ -141,18 +169,32 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
       }
   }
 
-  // Adjust if elevation is outside known levels
-  if (!lowerElevation) lowerElevation = elevationLevels[0];
-  if (!upperElevation) upperElevation = elevationLevels[elevationLevels.length - 1];
+  if (lowerElevation === null || upperElevation === null) {
+      console.error("Failed to find bounding elevations.");
+      return NaN;
+  }
 
   const lowerData = data.filter((item) => item.Elevation === lowerElevation);
   const upperData = data.filter((item) => item.Elevation === upperElevation);
 
-  function interpolateOAT(dataSet, oat, elevation) {
-      const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
+  // Interpolate across OAT for both elevation levels
+  const valueAtLowerElevation = interpolateOAT(lowerData, targetOAT);
+  const valueAtUpperElevation = interpolateOAT(upperData, targetOAT);
 
-      // Find the maximum N1 value for this elevation
-      const maxN1 = Math.max(...dataSet.map((item) => item.N1));
+  if (valueAtLowerElevation === null || valueAtUpperElevation === null) {
+      console.warn("Interpolation failed due to missing data for OAT.");
+      return NaN;
+  }
+
+  // Step 4: Interpolate across elevations
+  const x1 = lowerElevation, y1 = valueAtLowerElevation;
+  const x2 = upperElevation, y2 = valueAtUpperElevation;
+
+  return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
+
+  // Nested function to interpolate across OAT
+  function interpolateOAT(dataSet, oat) {
+      const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
 
       let lower = null, upper = null;
       for (const point of sortedData) {
@@ -163,41 +205,22 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
           }
       }
 
+      if (lower === null || upper === null) {
+          console.warn("Failed to find bounding OAT values.");
+          return lower ? lower.N1 : upper ? upper.N1 : NaN;
+      }
+
       // Handle exact OAT match
-      if (lower && upper && lower.OAT === upper.OAT) {
-          return Math.min(lower.N1, maxN1);
+      if (lower.OAT === upper.OAT) {
+          return lower.N1;
       }
 
-      if (!lower || !upper) {
-          const result = lower ? lower.N1 : upper ? upper.N1 : null;
-          return result !== null ? Math.min(result, maxN1) : null;
-      }
-
+      // Interpolate across OAT
       const x1 = lower.OAT, y1 = lower.N1;
       const x2 = upper.OAT, y2 = upper.N1;
-      const interpolatedValue = y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
-
-      // Cap interpolated value at maxN1
-      return Math.min(interpolatedValue, maxN1);
+      return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
   }
-
-  const valueAtLowerElevation = interpolateOAT(lowerData, targetOAT, lowerElevation);
-  const valueAtUpperElevation = interpolateOAT(upperData, targetOAT, upperElevation);
-
-  if (valueAtLowerElevation === null || valueAtUpperElevation === null) {
-      return null;
-  }
-
-  const x1 = lowerElevation, y1 = valueAtLowerElevation;
-  const x2 = upperElevation, y2 = valueAtUpperElevation;
-
-  const interpolatedElevationValue = y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
-
-  // Cap the final interpolated value at the max for the higher elevation
-  const upperMaxN1 = Math.max(...upperData.map((item) => item.N1));
-  return Math.min(interpolatedElevationValue, upperMaxN1);
 }
-
 
 
 // Interpolate by GW only - used for VR and V2 speeds
