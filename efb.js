@@ -508,6 +508,24 @@ console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
   }
 // END MTOW INTERPOLATION FUNCTION
 
+// Update Info Icon to Exclaim Icon Function
+function updateInfoIconById(elementId, newTooltip, newIconClass) {
+  // Select the info-icon element directly by its ID
+  const infoIconElement = document.getElementById(elementId);
+
+  if (infoIconElement) {
+    // Update the data-tooltip attribute
+    infoIconElement.setAttribute('data-tooltip', newTooltip);
+
+    // Select the <i> child element
+    const iconElement = infoIconElement.querySelector('i');
+    if (iconElement) {
+      // Update the class of the <i> element
+      iconElement.className = newIconClass;
+    }
+  }
+}
+
 // Calculations Here
 
 let v1, distance, vr, v2;
@@ -542,10 +560,19 @@ if(gw > maxLW) {
   document.getElementById("mlw-flag").innerText = `MLW of ${maxLW} pounds exceeded`;
 }
 
-// Update RTOW form
-document.getElementById("rtow-input").innerText = rtow ? `${Math.round(rtow)} lbs` : "N/A"; 
+// Check if GW exceeds calculated RTOW and update flag
 
-    //Update HTML forms
+if(gw > rtow){
+updateInfoIconById(
+  'rtow-icon', 
+  'Warning: GW exceeds the current RTOW limit.', 
+  'fa-solid fa-circle-exclamation'
+);
+}
+
+// Update RTOW form
+    document.getElementById("rtow-input").innerText = rtow ? `${Math.round(rtow)} lbs` : "N/A";
+//Update HTML forms
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(1) : "N/A";
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
     document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
@@ -560,8 +587,7 @@ document.getElementById("rtow-input").innerText = rtow ? `${Math.round(rtow)} lb
     const vapp = gustFactor + vref
     document.getElementById("vapp-output").innerText = vapp ? `${Math.round(vapp)} knots` : "N/A";
 
-  });
+});
 
-
-  loadData();
+loadData();
 });
