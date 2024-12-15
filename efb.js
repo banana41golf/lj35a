@@ -562,20 +562,19 @@ if (flapsinput === 8) {
 // Check if MLW exceeds GW and insert flag if true
 if(gw > maxLW) {
   updateInfoIconById(
-    'mtow-icon', 
-    'Warning: GW exceeds the current MTOW limit.', 
-    'fa-solid fa-circle-exclamation',
+    'mlw-icon', 
+    'Warning: GW exceeds the current MLW limit.', 
+    'fa-solid fa-triangle-exclamation',
     'orange'
   );
 }
 
 // Check if GW exceeds calculated RTOW and update flag
-
 if(gw > rtow){
 updateInfoIconById(
   'rtow-icon', 
   'Warning: GW exceeds the current RTOW limit.', 
-  'fa-solid fa-circle-exclamation',
+  'fa-solid fa-triangle-exclamation',
   'orange'
 );
 }
