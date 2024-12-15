@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load airport data from the airports.json file
   async function loadAirportData() {
-    const response = await fetch("airports.json");
+    const response = await fetch("/assets/data/airports.json");
     airportsData = await response.json();
     //console.log("Loaded airports data:", airportsData); // Log loaded airport data for inspection
   }
@@ -122,7 +122,7 @@ airportSuggestions.addEventListener("click", (event) => {
 
       // Load Runway Data
       async function loadRunwaysData(cleanedICAO) {
-        const response = await fetch("runways.json");
+        const response = await fetch("/assets/data/runways.json");
         const runwaysData = await response.json();
     
         // Find the matching airport based on ICAO (ARPT_ID)

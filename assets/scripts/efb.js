@@ -25,21 +25,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Function to load the JSON data
   async function loadData() {
-    n1Data = await fetch("N1_flat.json").then((res) => res.json());
-    f8ToData = await fetch("F8-TO_flat.json").then((res) => res.json());
-    f8DisData = await fetch("F8-DIS_flat.json").then((res) => res.json());
-    vrData = await fetch("VR_flat.json").then((res) => res.json());
-    v2Data = await fetch("V2_flat.json").then((res) => res.json());
-    vrefData = await fetch("vref.json").then((res) => res.json());
-    ldaData = await fetch("LDAA_flat.json").then((res) => res.json());
-    factData = await fetch("fact.json").then((res) => res.json());
-    trimData = await fetch("trim.json").then((res) => res.json());
-    f20ToData = await fetch("F20-TO.json").then((res) => res.json());
-    f20DisData = await fetch("F20-DIS.json").then((res) => res.json());
-    f20vrData = await fetch("VR-20.json").then((res) => res.json());
-    f20v2Data = await fetch("V2-20.json").then((res) => res.json());
-    f8MTOWdata = await fetch("f8MTOW.json").then((res) => res.json());
-    f20MTOWdata = await fetch("f20MTOW.json").then((res) => res.json());
+    n1Data = await fetch("/assets/data/N1_flat.json").then((res) => res.json());
+    f8ToData = await fetch("/assets/data/F8-TO_flat.json").then((res) => res.json());
+    f8DisData = await fetch("/assets/data/F8-DIS_flat.json").then((res) => res.json());
+    vrData = await fetch("/assets/data/VR_flat.json").then((res) => res.json());
+    v2Data = await fetch("/assets/data/V2_flat.json").then((res) => res.json());
+    vrefData = await fetch("/assets/data/vref.json").then((res) => res.json());
+    ldaData = await fetch("/assets/data/LDAA_flat.json").then((res) => res.json());
+    factData = await fetch("/assets/data/fact.json").then((res) => res.json());
+    trimData = await fetch("/assets/data/trim.json").then((res) => res.json());
+    f20ToData = await fetch("/assets/data/F20-TO.json").then((res) => res.json());
+    f20DisData = await fetch("/assets/data/F20-DIS.json").then((res) => res.json());
+    f20vrData = await fetch("/assets/data/VR-20.json").then((res) => res.json());
+    f20v2Data = await fetch("/assets/data/V2-20.json").then((res) => res.json());
+    f8MTOWdata = await fetch("/assets/data/f8MTOW.json").then((res) => res.json());
+    f20MTOWdata = await fetch("/assets/data/f20MTOW.json").then((res) => res.json());
   }
 
   // Function to update the Gross Weight (GW) based on ZFW and FOB values
