@@ -11,8 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const gwWarning = document.getElementById("gw-warning");
 
  
-
-
   // Define the min and max values for sliders
   const minZFW = 10360;
   const maxZFW = 13500;
@@ -119,16 +117,15 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
   }
 
   // Extract unique sorted elevation and OAT levels from the dataset
-  const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
-  const maxElevation = Math.max(...elevationLevels); // Correctly determine maximum elevation
-  console.log("Max Elevation Derived:", maxElevation); // Debugging line
-  const minElevation = Math.min(...elevationLevels);
-  console.log("All Elevation Levels:", elevationLevels); // Debugging line
+  const availableElevations = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
+  console.log("All Elevation Levels (bilinearInterpolation):", availableElevations); // Debugging log
+  const maxAvailableElevation = Math.max(...availableElevations); // Derive the maximum elevation
+  console.log("Max Elevation Derived (bilinearInterpolation):", maxAvailableElevation); // Debugging log
+  const minAvailableElevation = Math.min(...availableElevations);
 
-
-  const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
-  const maxOAT = Math.max(...oatLevels);
-  const minOAT = Math.min(...oatLevels);
+  const availableOATs = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
+  const maxAvailableOAT = Math.max(...availableOATs);
+  const minAvailableOAT = Math.min(...availableOATs);
 
   // Helper function to get max OAT for a specific elevation
   const getMaxOATForElevation = (elevation) => {
@@ -137,47 +134,52 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
   };
 
   // Ensure target OAT is within the valid range
-  if (targetOAT > maxOAT) {
-    console.warn(`Target OAT (${targetOAT}°C) exceeds maximum valid OAT (${maxOAT}°C).`);
+  if (targetOAT > maxAvailableOAT) {
+    console.warn(`Target OAT (${targetOAT}°C) exceeds maximum valid OAT (${maxAvailableOAT}°C).`);
     return NaN; // Input out of range
   }
-  if (targetOAT < minOAT) {
-    console.warn(`Target OAT (${targetOAT}°C) below minimum valid OAT (${minOAT}°C).`);
+  if (targetOAT < minAvailableOAT) {
+    console.warn(`Target OAT (${targetOAT}°C) below minimum valid OAT (${minAvailableOAT}°C).`);
     return NaN;
   }
 
   // Handle elevations outside the dataset range
-  if (targetElevation > maxElevation) {
-    console.warn(`Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxElevation} ft).`);
+  if (targetElevation > maxAvailableElevation) {
+    console.warn(
+      `Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxAvailableElevation} ft).`
+    );
     return NaN; // Input out of range
   }
-  if (targetElevation < minElevation) {
-    console.warn(`Target Elevation (${targetElevation} ft) below minimum valid elevation (${minElevation} ft).`);
+  if (targetElevation < minAvailableElevation) {
+    console.warn(
+      `Target Elevation (${targetElevation} ft) below minimum valid elevation (${minAvailableElevation} ft).`
+    );
     return NaN;
   }
 
   // Find bounding elevations
-  let lowerElevation = null, upperElevation = null;
+  let lowerBoundElevation = null,
+    upperBoundElevation = null;
 
-  for (let i = 0; i < elevationLevels.length; i++) {
-    if (elevationLevels[i] <= targetElevation) lowerElevation = elevationLevels[i];
-    if (elevationLevels[i] >= targetElevation) {
-      upperElevation = elevationLevels[i];
+  for (let i = 0; i < availableElevations.length; i++) {
+    if (availableElevations[i] <= targetElevation) lowerBoundElevation = availableElevations[i];
+    if (availableElevations[i] >= targetElevation) {
+      upperBoundElevation = availableElevations[i];
       break;
     }
   }
 
   // Ensure bounds are found
-  if (lowerElevation === null || upperElevation === null) {
+  if (lowerBoundElevation === null || upperBoundElevation === null) {
     console.error("Failed to find bounding elevations for interpolation.");
     return NaN;
   }
 
   // Validate the target OAT against the maximum OAT for the bounding elevations
-  const maxOATForLowerElevation = getMaxOATForElevation(lowerElevation);
-  const maxOATForUpperElevation = getMaxOATForElevation(upperElevation);
+  const maxOATForLowerBound = getMaxOATForElevation(lowerBoundElevation);
+  const maxOATForUpperBound = getMaxOATForElevation(upperBoundElevation);
 
-  if (targetOAT > maxOATForLowerElevation || targetOAT > maxOATForUpperElevation) {
+  if (targetOAT > maxOATForLowerBound || targetOAT > maxOATForUpperBound) {
     console.warn(
       `Target OAT (${targetOAT}°C) exceeds the maximum allowable OAT for the elevation range.`
     );
@@ -187,7 +189,8 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
   // Helper function to interpolate N1 for a specific elevation
   const interpolateOAT = (dataSet, oat) => {
     const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
-    let lower = null, upper = null;
+    let lower = null,
+      upper = null;
     for (const point of sortedData) {
       if (point.OAT <= oat) lower = point;
       if (point.OAT >= oat) {
@@ -201,34 +204,37 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
     if (lower.OAT === upper.OAT) {
       return lower.N1;
     }
-    const x1 = lower.OAT, y1 = lower.N1;
-    const x2 = upper.OAT, y2 = upper.N1;
+    const x1 = lower.OAT,
+      y1 = lower.N1;
+    const x2 = upper.OAT,
+      y2 = upper.N1;
     return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
   };
 
   // Interpolate N1 for lower and upper elevations
-  const lowerData = data.filter((item) => item.Elevation === lowerElevation);
-  const upperData = data.filter((item) => item.Elevation === upperElevation);
+  const lowerBoundData = data.filter((item) => item.Elevation === lowerBoundElevation);
+  const upperBoundData = data.filter((item) => item.Elevation === upperBoundElevation);
 
-  const valueAtLowerElevation = interpolateOAT(lowerData, targetOAT);
-  const valueAtUpperElevation = interpolateOAT(upperData, targetOAT);
+  const valueAtLowerBound = interpolateOAT(lowerBoundData, targetOAT);
+  const valueAtUpperBound = interpolateOAT(upperBoundData, targetOAT);
 
-  if (valueAtLowerElevation === null || valueAtUpperElevation === null) {
+  if (valueAtLowerBound === null || valueAtUpperBound === null) {
     console.warn("Interpolation failed due to missing data for OAT.");
     return NaN;
   }
 
   // Perform linear interpolation between elevations
-  if (lowerElevation === upperElevation) {
-    return valueAtLowerElevation; // No need to interpolate if both elevations are the same
+  if (lowerBoundElevation === upperBoundElevation) {
+    return valueAtLowerBound; // No need to interpolate if both elevations are the same
   }
 
-  const x1 = lowerElevation, y1 = valueAtLowerElevation;
-  const x2 = upperElevation, y2 = valueAtUpperElevation;
+  const x1 = lowerBoundElevation,
+    y1 = valueAtLowerBound;
+  const x2 = upperBoundElevation,
+    y2 = valueAtUpperBound;
 
   return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
 }
-
 
 
 
