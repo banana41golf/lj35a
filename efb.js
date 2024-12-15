@@ -121,7 +121,10 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
   // Extract unique sorted elevation and OAT levels from the dataset
   const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
   const maxElevation = Math.max(...elevationLevels); // Correctly determine maximum elevation
+  console.log("Max Elevation Derived:", maxElevation); // Debugging line
   const minElevation = Math.min(...elevationLevels);
+  console.log("All Elevation Levels:", elevationLevels); // Debugging line
+
 
   const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
   const maxOAT = Math.max(...oatLevels);
