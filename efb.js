@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const maxFOB = 6240;
   const maxGW = 18300;
   const minGW = 0;
+  const maxLW = 18300;
 
 
   // Function to load the JSON data
@@ -543,7 +544,7 @@ if (flapsinput === 8) {
     //console.log(`Flaps 20 Data, V1: ${f20v1}, Dist: ${f20distance}, VR: ${f20vr}, V2: ${f20v2}`);
 
 
-if(gw > 15300) {
+if(gw > maxLW) {
   document.getElementById("mlw-flag").innerText = "MLW EXCEEDED";
 }
 
