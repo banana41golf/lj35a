@@ -115,6 +115,15 @@ document.addEventListener("DOMContentLoaded", () => {
 function bilinearInterpolation(data, targetOAT, targetElevation) {
   const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
 
+  // If the elevation exceeds the maximum, cap it
+  const maxElevation = Math.max(...elevationLevels);
+  if (targetElevation > maxElevation) {
+      console.warn(
+          `Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxElevation} ft). Using maximum elevation.`
+      );
+      targetElevation = maxElevation; // Cap the elevation
+  }
+
   // Handle exact elevation match
   if (elevationLevels.includes(targetElevation)) {
       const exactElevationData = data.filter((item) => item.Elevation === targetElevation);
