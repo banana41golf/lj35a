@@ -574,7 +574,6 @@ if (flapsinput === 8) {
 
 // Calculations for N1, VREF, LDR and TRIM
     const n1 = bilinearInterpolation(n1Data, oat, elevation);
-
     const vref = interpolateByGW(vrefData, gw, "VREF");
     const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
@@ -616,8 +615,7 @@ updateOrInsertInfoIcon(
     document.getElementById("rtow-input").innerText = rtow ? `${Math.round(rtow)} lbs` : "N/A";
 //Update HTML forms
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(1) : "N/A";
-    console.log("n1Data:", n1Data);
-console.log("OAT:", targetOAT, "Elevation:", targetElevation);
+
 
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
     document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
