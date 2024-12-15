@@ -330,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //Reset i elements
     // Reset all dynamically created info icons
       resetAllInfoIcons();
-      console.log('Icons reset. Starting new calculation...');
+
     
 
     // Get the elevation from the #elevation span (not input)
@@ -394,7 +394,6 @@ if (isNaN(userMAC)) {
   return;
 }
 
-console.log(`usermac = ${userMAC}`);
     // Check if MAC is valid
     if (userMAC < 5 || userMAC > 30) {
       console.error("% of MAC must be between 5.0% and 30.0%");
@@ -404,12 +403,10 @@ console.log(`usermac = ${userMAC}`);
     
 
 const trimResult = interpolateTrim(userMAC, trimData);
-console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
+
 
 // START DYNAMIC MTOW FUNCTION
   function interpolateMTOW(data, targetOAT, targetElevation) {
-  console.log("Full Dataset:", data);
-  console.log("Target OAT:", targetOAT, "Target Elevation:", targetElevation);
 
   if (!Array.isArray(data) || data.length === 0) {
       console.error("Invalid or empty data passed to interpolateMTOW.");
@@ -439,7 +436,7 @@ console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
           break;
       }
   }
-  console.log("OAT Bounds for Interpolation:", lowerOAT, upperOAT);
+
 
   if (lowerOAT === upperOAT) {
       // Exact OAT match; filter data for this OAT
@@ -451,8 +448,7 @@ console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
   // Step 3: Interpolate MTOW for target OAT at each elevation
   const lowerOATData = data.filter((item) => item.OAT === lowerOAT);
   const upperOATData = data.filter((item) => item.OAT === upperOAT);
-  console.log("Lower OAT Data:", lowerOATData);
-  console.log("Upper OAT Data:", upperOATData);
+
 
   if (lowerOATData.length === 0 || upperOATData.length === 0) {
       console.warn("Missing data for OAT interpolation. Returning NaN.");
@@ -471,14 +467,14 @@ console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
           interpolatedOATData.push({ elevation, OAT: targetOAT, MTOW: interpolatedMTOW });
       }
   });
-  console.log("Interpolated Data for Target OAT:", interpolatedOATData);
+
 
   // Step 4: Interpolate MTOW for target elevation
   return interpolateElevation(interpolatedOATData, targetElevation);
   }
 
   function interpolateElevation(data, targetElevation) {
-  console.log("Data for Elevation Interpolation:", data);
+
 
   // Find the maximum elevation
   const elevations = [...new Set(data.map((item) => item.elevation))].sort((a, b) => a - b);
@@ -565,19 +561,20 @@ if (flapsinput === 8) {
     vr = interpolateByGW(vrData, gw, "VR");
     v2 = interpolateByGW(v2Data, gw, "V2");
     rtow = interpolateMTOW(f8MTOWdata, oat, elevation);
-    console.log(`RTOW for Flaps ${flapsinput} = ${rtow}`);
+
 } else {
     v1 = trilinearInterpolationV1(f20ToData, oat, elevation, gw);
     distance = trilinearInterpolationDistance(f20DisData, oat, elevation, gw);
     vr = interpolateByGW(f20vrData, gw, "VR");
     v2 = interpolateByGW(f20v2Data, gw, "V2");
     rtow = interpolateMTOW(f20MTOWdata, oat, elevation);
-    console.log(`RTOW for Flaps ${flapsinput} = ${rtow}`);
+
 }
 
 
 // Calculations for N1, VREF, LDR and TRIM
     const n1 = bilinearInterpolation(n1Data, oat, elevation);
+
     const vref = interpolateByGW(vrefData, gw, "VREF");
     const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
@@ -619,6 +616,9 @@ updateOrInsertInfoIcon(
     document.getElementById("rtow-input").innerText = rtow ? `${Math.round(rtow)} lbs` : "N/A";
 //Update HTML forms
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(1) : "N/A";
+    console.log("n1Data:", n1Data);
+console.log("OAT:", targetOAT, "Elevation:", targetElevation);
+
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
     document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
     document.getElementById("vr-output").innerText = vr ? `${Math.round(vr)} knots` : "N/A";
