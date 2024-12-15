@@ -315,6 +315,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const pmac = parseInt(document.getElementById("mac-input").textContent, 10);
     const flapsinput = parseInt(document.getElementById("flaps-input").value, 10);
 
+    //Reset i elements
+    // Reset all dynamically created info icons
+      resetAllInfoIcons();
+      console.log('Icons reset. Starting new calculation...');
+    
+
     // Get the elevation from the #elevation span (not input)
     const elevationText = document.getElementById("elevation").value;
     const elevation = parseInt(elevationText, 10); // Convert to number
