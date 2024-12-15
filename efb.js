@@ -120,7 +120,7 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
 
   // Extract unique sorted elevation and OAT levels from the dataset
   const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
-  const maxElevation = Math.max(...elevationLevels);
+  const maxElevation = Math.max(...elevationLevels); // Correctly determine maximum elevation
   const minElevation = Math.min(...elevationLevels);
 
   const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
@@ -132,6 +132,16 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
     const elevationData = data.filter((item) => item.Elevation === elevation);
     return Math.max(...elevationData.map((item) => item.OAT));
   };
+
+  // Ensure target OAT is within the valid range
+  if (targetOAT > maxOAT) {
+    console.warn(`Target OAT (${targetOAT}°C) exceeds maximum valid OAT (${maxOAT}°C).`);
+    return NaN; // Input out of range
+  }
+  if (targetOAT < minOAT) {
+    console.warn(`Target OAT (${targetOAT}°C) below minimum valid OAT (${minOAT}°C).`);
+    return NaN;
+  }
 
   // Handle elevations outside the dataset range
   if (targetElevation > maxElevation) {
@@ -215,6 +225,7 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
 
   return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
 }
+
 
 
 
