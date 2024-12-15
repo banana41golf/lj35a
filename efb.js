@@ -545,7 +545,7 @@ if (flapsinput === 8) {
 
 
 if(gw > maxLW) {
-  document.getElementById("mlw-flag").innerText = "MLW EXCEEDED";
+  document.getElementById("mlw-flag").innerText = `MLW of ${maxLW} pounds exceeded`;
 }
 
     //Update HTML forms
