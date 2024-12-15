@@ -561,7 +561,12 @@ if (flapsinput === 8) {
 
 // Check if MLW exceeds GW and insert flag if true
 if(gw > maxLW) {
-  document.getElementById("mlw-flag").innerText = `MLW of ${maxLW} pounds exceeded`;
+  updateInfoIconById(
+    'mtow-icon', 
+    'Warning: GW exceeds the current MTOW limit.', 
+    'fa-solid fa-circle-exclamation',
+    'orange'
+  );
 }
 
 // Check if GW exceeds calculated RTOW and update flag
@@ -571,7 +576,7 @@ updateInfoIconById(
   'rtow-icon', 
   'Warning: GW exceeds the current RTOW limit.', 
   'fa-solid fa-circle-exclamation',
-  'red'
+  'orange'
 );
 }
 
