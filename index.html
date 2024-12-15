@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
   <title>Learjet 35A Performance Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 </head>
 <body>
   <div class="container">
@@ -13,19 +15,34 @@
     <form id="performance-calculator">
       <!-- Inputs -->
       <div class="form-group horizontal">
-        <label for="zfw">ZFW:</label>
+        <label for="zfw">ZFW:  
+          
+          <span class="info-icon" data-tooltip="Zero Fuel Weight (ZFW) is the total aircraft weight, excluding usable fuel in lbs.">
+            <i class="fa-solid fa-circle-info"></i>
+        
+        </label>
         <input type="number" id="zfw" name="zfw" placeholder="lbs" required />
         <input type="range" id="zfw-slider" min="10350" max="13500" step="50">
       </div>
       
       <div class="form-group horizontal">
-        <label for="fob">FOB:</label>
+        <label for="fob">FOB:
+
+          <span class="info-icon" data-tooltip="Fuel on Board (FOB) is the total weight of usable fuel in lbs.">
+            <i class="fa-solid fa-circle-info"></i>
+
+        </label>
         <input type="number" id="fob" name="fob" placeholder="lbs" required />
         <input type="range" id="fob-slider" min="600" max="6240" step="10">
       </div>
       
       <div class="form-group horizontal">
-        <label for="gw">GW:</label>
+        <label for="gw">GW:
+
+          <span class="info-icon" data-tooltip="Gross Weight (GW) is the total aircraft weight in lbs.">
+            <i class="fa-solid fa-circle-info"></i>
+
+        </label>
         <input type="text" id="gw" name="gw" placeholder="Calculated Automatically" readonly />
         <small id="gw-warning" style="color: red; display: none;">
           <!-- Warning messages appear here dynamically -->
@@ -44,15 +61,24 @@
 <div class="form-group horizontal"><label for="rawMETAR">METAR:</label><span id="rawMETAR" style="color: #ffffff; font-size: 1rem; font-weight: normal;"></span></div>
 
         <div class="form-group">
-          <label for="elevation">Field Elevation:</label>
+          <label for="elevation">Field Elevation:
+
+            <span class="info-icon" data-tooltip="Field Elevation is the height of the airport above sea level, measured in feet.">
+              <i class="fa-solid fa-circle-info"></i>
+
+          </label>
           <input type="number" id="elevation"></span>
-          <button type="button" id="sync-elevation">SYNC</button>
+          <button type="button" id="sync-elevation">REFRESH</button>
         </div>
 
           <div class="form-group">
-          <label for="oat">OAT:</label>
+          <label for="oat">OAT:
+            <span class="info-icon" data-tooltip="Outside Air Temperature (OAT) is the ambient air temperature at the airport in °C.">
+              <i class="fa-solid fa-circle-info"></i>
+
+          </label>
           <input type="number" id="oat">
-          <button type="button" id="sync-oat">SYNC</button>
+          <button type="button" id="sync-oat">REFRESH</button>
 
         </div>
 
@@ -72,16 +98,24 @@
       <p>
         <label>MTOW:</label>
         <span id="structural-mtow">18300 lbs</span>
+        <span class="info-icon" data-tooltip="Maximum Takeoff Weight (MTOW) is the highest weight at which the aircraft is certified for takeoff.">
+          <i class="fa-solid fa-circle-info"></i>
       </p>
       <p>
         <label>RTOW:</label>
         <span id="rtow-input">-</span>
+        <span class="info-icon" data-tooltip="Regulated Takeoff Weight (RTOW) is the maximum allowable weight for the current takeoff conditions.">
+          <i class="fa-solid fa-circle-info"></i>
       </p>
       <p>
         <label>MLW:</label>
         <span id="mlw-input">15300 lbs</span>
+        <span class="info-icon" data-tooltip="Maximum Landing Weight (MLW) is the highest weight at which the aircraft is certified to land.">
+          <i class="fa-solid fa-circle-info"></i>
       </p>
 </div>
+
+
 
 
 <!-- Takeoff Performance -->

@@ -204,3 +204,46 @@ width: 100%;
   background-color: #008c9e; /* Highlight on hover */
   color: #ffffff;
 }
+
+/* Information Icon */
+/* Information Icon Container */
+.info-icon {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 5px;
+  cursor: help;
+}
+
+/* Icon Styling */
+.info-icon i {
+  color: #00bcd4;
+  font-size: 16px; /* Adjust the size of the icon */
+  transition: color 0.2s ease-in-out;
+}
+
+.info-icon:hover i {
+  color: #008c9e; /* Change color on hover */
+}
+
+/* Tooltip Styles */
+.info-icon::after {
+  content: attr(data-tooltip); /* Tooltip text from data-tooltip attribute */
+  position: absolute;
+  bottom: 120%; /* Position tooltip above the icon */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: none; /* Hidden by default */
+  white-space: nowrap;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add shadow for visibility */
+}
+
+.info-icon:hover::after {
+  display: block; /* Show tooltip on hover */
+}
