@@ -726,6 +726,9 @@ updateOrInsertInfoIcon(
 );
 }
 
+const testv1 = trilinearInterpolationDistance(f8ToData, oat, elevation, gw);
+console.log(testv1);
+
 // Update RTOW form
     document.getElementById("rtow-input").innerText = rtow ? `${Math.round(rtow)} lbs` : "N/A";
 //Update HTML forms
