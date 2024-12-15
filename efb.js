@@ -509,7 +509,7 @@ console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
 // END MTOW INTERPOLATION FUNCTION
 
 // Update Info Icon to Exclaim Icon Function
-function updateInfoIconById(elementId, newTooltip, newIconClass) {
+function updateInfoIconById(elementId, newTooltip, newIconClass, newIconColor) {
   // Select the info-icon element directly by its ID
   const infoIconElement = document.getElementById(elementId);
 
@@ -522,9 +522,13 @@ function updateInfoIconById(elementId, newTooltip, newIconClass) {
     if (iconElement) {
       // Update the class of the <i> element
       iconElement.className = newIconClass;
+
+      // Update the color of the icon
+      iconElement.style.color = newIconColor;
     }
   }
 }
+
 
 // Calculations Here
 
@@ -567,6 +571,7 @@ updateInfoIconById(
   'rtow-icon', 
   'Warning: GW exceeds the current RTOW limit.', 
   'fa-solid fa-circle-exclamation'
+  'red' // new color for the icon
 );
 }
 
