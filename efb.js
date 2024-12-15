@@ -509,25 +509,31 @@ console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
 // END MTOW INTERPOLATION FUNCTION
 
 // Update Info Icon to Exclaim Icon Function
-function updateInfoIconById(elementId, newTooltip, newIconClass, newIconColor) {
-  // Select the info-icon element directly by its ID
+function updateOrInsertInfoIcon(elementId, newTooltip, newIconClass, newIconColor) {
+  // Select the info-icon element by its ID
   const infoIconElement = document.getElementById(elementId);
 
   if (infoIconElement) {
     // Update the data-tooltip attribute
     infoIconElement.setAttribute('data-tooltip', newTooltip);
 
-    // Select the <i> child element
-    const iconElement = infoIconElement.querySelector('i');
-    if (iconElement) {
-      // Update the class of the <i> element
-      iconElement.className = newIconClass;
+    // Check if an <i> element already exists
+    let iconElement = infoIconElement.querySelector('i');
 
-      // Update the color of the icon
-      iconElement.style.color = newIconColor;
+    if (!iconElement) {
+      // Create a new <i> element if it doesn't exist
+      iconElement = document.createElement('i');
+      infoIconElement.appendChild(iconElement); // Append the new icon
     }
+
+    // Update the class of the <i> element
+    iconElement.className = newIconClass;
+
+    // Update the color of the icon
+    iconElement.style.color = newIconColor;
   }
 }
+
 
 
 // Calculations Here
@@ -561,7 +567,7 @@ if (flapsinput === 8) {
 
 // Check if MLW exceeds GW and insert flag if true
 if(gw > maxLW) {
-  updateInfoIconById(
+  updateOrInsertInfoIcon(
     'mlw-icon', 
     'Warning: GW exceeds the current MLW limit.', 
     'fa-solid fa-triangle-exclamation',
@@ -571,7 +577,7 @@ if(gw > maxLW) {
 
 // Check if GW exceeds calculated RTOW and update flag
 if(gw > rtow){
-updateInfoIconById(
+  updateOrInsertInfoIcon(
   'rtow-icon', 
   'Warning: GW exceeds the current RTOW limit.', 
   'fa-solid fa-triangle-exclamation',
