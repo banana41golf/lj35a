@@ -114,11 +114,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function bilinearInterpolation(data, targetOAT, targetElevation) {
   if (!Array.isArray(data) || data.length === 0) {
-      console.error("Invalid or empty data passed to bilinearInterpolation.");
-      return NaN;
+    console.error("Invalid or empty data passed to bilinearInterpolation.");
+    return NaN;
   }
 
-  // Step 1: Identify the valid elevation and OAT ranges in the dataset
   const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
   const maxElevation = Math.max(...elevationLevels);
   const minElevation = Math.min(...elevationLevels);
@@ -127,100 +126,89 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
   const maxOAT = Math.max(...oatLevels);
   const minOAT = Math.min(...oatLevels);
 
-  // Step 2: Cap target values to dataset bounds
   if (targetElevation > maxElevation) {
-      console.warn(
-          `Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxElevation} ft). Capping to maximum elevation.`
-      );
-      targetElevation = maxElevation;
+    targetElevation = maxElevation;
   } else if (targetElevation < minElevation) {
-      console.warn(
-          `Target Elevation (${targetElevation} ft) is below minimum valid elevation (${minElevation} ft). Capping to minimum elevation.`
-      );
-      targetElevation = minElevation;
+    targetElevation = minElevation;
   }
 
   if (targetOAT > maxOAT) {
-      console.warn(
-          `Target OAT (${targetOAT}°C) exceeds maximum valid OAT (${maxOAT}°C). Capping to maximum OAT.`
-      );
-      targetOAT = maxOAT;
+    targetOAT = maxOAT;
   } else if (targetOAT < minOAT) {
-      console.warn(
-          `Target OAT (${targetOAT}°C) is below minimum valid OAT (${minOAT}°C). Capping to minimum OAT.`
-      );
-      targetOAT = minOAT;
+    targetOAT = minOAT;
   }
 
-  // Step 3: Handle exact matches for elevation
+  const getMaxN1ForElevation = (elevation) => {
+    const elevationData = data.filter((item) => item.Elevation === elevation);
+    return Math.max(...elevationData.map((item) => item.N1));
+  };
+
   if (elevationLevels.includes(targetElevation)) {
-      const exactElevationData = data.filter((item) => item.Elevation === targetElevation);
-      return interpolateOAT(exactElevationData, targetOAT);
+    const exactElevationData = data.filter((item) => item.Elevation === targetElevation);
+    const interpolatedValue = interpolateOAT(exactElevationData, targetOAT);
+    const maxN1 = getMaxN1ForElevation(targetElevation);
+    return Math.min(interpolatedValue, maxN1);
   }
 
   let lowerElevation = null, upperElevation = null;
 
-  // Find bounding elevations
   for (let i = 0; i < elevationLevels.length; i++) {
-      if (elevationLevels[i] <= targetElevation) lowerElevation = elevationLevels[i];
-      if (elevationLevels[i] >= targetElevation) {
-          upperElevation = elevationLevels[i];
-          break;
-      }
+    if (elevationLevels[i] <= targetElevation) lowerElevation = elevationLevels[i];
+    if (elevationLevels[i] >= targetElevation) {
+      upperElevation = elevationLevels[i];
+      break;
+    }
   }
 
   if (lowerElevation === null || upperElevation === null) {
-      console.error("Failed to find bounding elevations.");
-      return NaN;
+    console.error("Failed to find bounding elevations.");
+    return NaN;
   }
 
   const lowerData = data.filter((item) => item.Elevation === lowerElevation);
   const upperData = data.filter((item) => item.Elevation === upperElevation);
 
-  // Interpolate across OAT for both elevation levels
   const valueAtLowerElevation = interpolateOAT(lowerData, targetOAT);
   const valueAtUpperElevation = interpolateOAT(upperData, targetOAT);
 
   if (valueAtLowerElevation === null || valueAtUpperElevation === null) {
-      console.warn("Interpolation failed due to missing data for OAT.");
-      return NaN;
+    console.warn("Interpolation failed due to missing data for OAT.");
+    return NaN;
   }
 
-  // Step 4: Interpolate across elevations
   const x1 = lowerElevation, y1 = valueAtLowerElevation;
   const x2 = upperElevation, y2 = valueAtUpperElevation;
 
-  return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
+  const interpolatedValue = y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
+  const maxN1ForTargetElevation = Math.max(
+    getMaxN1ForElevation(lowerElevation),
+    getMaxN1ForElevation(upperElevation)
+  );
 
-  // Nested function to interpolate across OAT
+  return Math.min(interpolatedValue, maxN1ForTargetElevation);
+
   function interpolateOAT(dataSet, oat) {
-      const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
-
-      let lower = null, upper = null;
-      for (const point of sortedData) {
-          if (point.OAT <= oat) lower = point;
-          if (point.OAT >= oat) {
-              upper = point;
-              break;
-          }
+    const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
+    let lower = null, upper = null;
+    for (const point of sortedData) {
+      if (point.OAT <= oat) lower = point;
+      if (point.OAT >= oat) {
+        upper = point;
+        break;
       }
-
-      if (lower === null || upper === null) {
-          console.warn("Failed to find bounding OAT values.");
-          return lower ? lower.N1 : upper ? upper.N1 : NaN;
-      }
-
-      // Handle exact OAT match
-      if (lower.OAT === upper.OAT) {
-          return lower.N1;
-      }
-
-      // Interpolate across OAT
-      const x1 = lower.OAT, y1 = lower.N1;
-      const x2 = upper.OAT, y2 = upper.N1;
-      return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
+    }
+    if (lower === null || upper === null) {
+      return lower ? lower.N1 : upper ? upper.N1 : NaN;
+    }
+    if (lower.OAT === upper.OAT) {
+      return lower.N1;
+    }
+    const x1 = lower.OAT, y1 = lower.N1;
+    const x2 = upper.OAT, y2 = upper.N1;
+    return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
   }
 }
+
 
 
 // Interpolate by GW only - used for VR and V2 speeds
