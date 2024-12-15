@@ -132,10 +132,22 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
     targetElevation = minElevation;
   }
 
-  if (targetOAT > maxOAT) {
-    targetOAT = maxOAT;
-  } else if (targetOAT < minOAT) {
-    targetOAT = minOAT;
+  // Get maximum OAT for the target elevation
+  const getMaxOATForElevation = (elevation) => {
+    const elevationData = data.filter((item) => item.Elevation === elevation);
+    return Math.max(...elevationData.map((item) => item.OAT));
+  };
+
+  const maxOATForTargetElevation = elevationLevels.includes(targetElevation)
+    ? getMaxOATForElevation(targetElevation)
+    : Math.max(
+        getMaxOATForElevation(elevationLevels.find((e) => e <= targetElevation) || minElevation),
+        getMaxOATForElevation(elevationLevels.find((e) => e >= targetElevation) || maxElevation)
+      );
+
+  if (targetOAT > maxOATForTargetElevation) {
+    console.warn(`Target OAT (${targetOAT}°C) exceeds maximum valid OAT (${maxOATForTargetElevation}°C) for elevation ${targetElevation} ft.`);
+    return NaN; // Invalid input
   }
 
   const getMaxN1ForElevation = (elevation) => {
@@ -208,7 +220,6 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
     return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
   }
 }
-
 
 
 // Interpolate by GW only - used for VR and V2 speeds
