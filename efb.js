@@ -732,8 +732,15 @@ updateOrInsertInfoIcon(
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(1) : "N/A";
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
     document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
+
+if(isNaN(v1)){
+  document.getElementById("vr-output").innerText = "N/A";
+  document.getElementById("v2-output").innerText = "N/A";
+} else {
     document.getElementById("vr-output").innerText = vr ? `${Math.round(vr)} knots` : "N/A";
     document.getElementById("v2-output").innerText = v2 ? `${Math.round(v2)} knots` : "N/A";
+}
+
     document.getElementById("vref-output").innerText = vref ? `${Math.round(vref)} knots` : "N/A";
     document.getElementById("ldaa-output").innerText = ldaa ? `${Math.round(ldaa)} feet` : "N/A";
     document.getElementById("fact-output").innerText = fact ? `${Math.round(fact)} feet` : "N/A";
