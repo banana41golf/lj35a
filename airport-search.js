@@ -58,6 +58,8 @@ oatInput.value = temperatureCelsius !== null ? `${temperatureCelsius.toFixed(1)}
         const metarSPAN = document.getElementById("rawMETAR")
         metarSPAN.textContent = rawMessage // Populate with RAW Metar Data
         document.getElementById("sync-oat").disabled = false;
+        document.getElementById("sync-oat").style.cursor = "pointer";
+        document.getElementById("sync-oat").style.backgroundColor = "#00bcd4";
       } else {
         console.log("Weather data not available");
       }
@@ -65,6 +67,8 @@ oatInput.value = temperatureCelsius !== null ? `${temperatureCelsius.toFixed(1)}
       console.error("Failed to fetch METAR data:", error);
       document.getElementById("rawMETAR").innerText = "Unable to fetch METAR data";
       document.getElementById("sync-oat").disabled = true; // Disable the SYNC OAT button
+      document.getElementById("sync-oat").style.cursor = "not-allowed";
+      document.getElementById("sync-oat").style.backgroundColor = "gray";
       document.getElementById("oat").innerText = "N/A";
     }
   }
