@@ -127,15 +127,11 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
   const maxOAT = Math.max(...oatLevels);
   const minOAT = Math.min(...oatLevels);
 
-  // Ensure target OAT is within the valid range
-  if (targetOAT > maxOAT) {
-    console.warn(`Target OAT (${targetOAT}°C) exceeds maximum valid OAT (${maxOAT}°C).`);
-    return NaN; // Input out of range
-  }
-  if (targetOAT < minOAT) {
-    console.warn(`Target OAT (${targetOAT}°C) below minimum valid OAT (${minOAT}°C).`);
-    return NaN;
-  }
+  // Helper function to get max OAT for a specific elevation
+  const getMaxOATForElevation = (elevation) => {
+    const elevationData = data.filter((item) => item.Elevation === elevation);
+    return Math.max(...elevationData.map((item) => item.OAT));
+  };
 
   // Handle elevations outside the dataset range
   if (targetElevation > maxElevation) {
@@ -161,6 +157,17 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
   // Ensure bounds are found
   if (lowerElevation === null || upperElevation === null) {
     console.error("Failed to find bounding elevations for interpolation.");
+    return NaN;
+  }
+
+  // Validate the target OAT against the maximum OAT for the bounding elevations
+  const maxOATForLowerElevation = getMaxOATForElevation(lowerElevation);
+  const maxOATForUpperElevation = getMaxOATForElevation(upperElevation);
+
+  if (targetOAT > maxOATForLowerElevation || targetOAT > maxOATForUpperElevation) {
+    console.warn(
+      `Target OAT (${targetOAT}°C) exceeds the maximum allowable OAT for the elevation range.`
+    );
     return NaN;
   }
 
