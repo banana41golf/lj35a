@@ -388,8 +388,8 @@ console.log(`usermac = ${userMAC}`);
 const trimResult = interpolateTrim(userMAC, trimData);
 console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
 
-// Function to interpolate MTOW based on OAT and Elevation
-function interpolateMTOW(data, targetOAT, targetElevation) {
+// START DYNAMIC MTOW FUNCTION
+  function interpolateMTOW(data, targetOAT, targetElevation) {
   console.log("Full Dataset:", data);
   console.log("Target OAT:", targetOAT, "Target Elevation:", targetElevation);
 
@@ -457,9 +457,9 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
 
   // Step 4: Interpolate MTOW for target elevation
   return interpolateElevation(interpolatedOATData, targetElevation);
-}
+  }
 
-function interpolateElevation(data, targetElevation) {
+  function interpolateElevation(data, targetElevation) {
   console.log("Data for Elevation Interpolation:", data);
 
   // Find the maximum elevation
@@ -505,27 +505,28 @@ function interpolateElevation(data, targetElevation) {
   const e2 = upperPoint.elevation, m2 = upperPoint.MTOW;
 
   return m1 + ((targetElevation - e1) * (m2 - m1)) / (e2 - e1);
-}
-
+  }
 // END MTOW INTERPOLATION FUNCTION
 
-// Calculate based on Flaps Setting
+// Calculations Here
 
 let v1, distance, vr, v2;
 
+// Check if Flaps 8 or 20 and pull data set accordingly
 if (flapsinput === 8) {
     v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
     distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
     vr = interpolateByGW(vrData, gw, "VR");
     v2 = interpolateByGW(v2Data, gw, "V2");
     rtow = interpolateMTOW(f8MTOWdata, oat, elevation);
-    console.log(rtow);
+    console.log(`RTOW for Flaps ${flapsinput} = ${rtow}`);
 } else {
     v1 = trilinearInterpolationV1(f20ToData, oat, elevation, gw);
     distance = trilinearInterpolationDistance(f20DisData, oat, elevation, gw);
     vr = interpolateByGW(f20vrData, gw, "VR");
     v2 = interpolateByGW(f20v2Data, gw, "V2");
     rtow = interpolateMTOW(f20MTOWdata, oat, elevation);
+    console.log(`RTOW for Flaps ${flapsinput} = ${rtow}`);
 }
 
 
@@ -540,14 +541,7 @@ if (flapsinput === 8) {
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
     const trim = interpolateByGW(trimData, pmac, "TRIM");
 
-    // Testing Flaps 20
-   // const f20v1 = trilinearInterpolationV1(f20ToData, oat, elevation, gw);
-    //const f20distance = trilinearInterpolationDistance(f20DisData, oat, elevation, gw);
-    //const f20vr = interpolateByGW(f20vrData, gw, "VR");
-    //const f20v2  = interpolateByGW(f20v2Data, gw, "V2");
-    //console.log(`Flaps 20 Data, V1: ${f20v1}, Dist: ${f20distance}, VR: ${f20vr}, V2: ${f20v2}`);
-
-
+// Check if MLW exceeds GW and insert flag if true
 if(gw > maxLW) {
   document.getElementById("mlw-flag").innerText = `MLW of ${maxLW} pounds exceeded`;
 }
