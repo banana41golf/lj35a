@@ -542,6 +542,9 @@ if(gw > maxLW) {
   document.getElementById("mlw-flag").innerText = `MLW of ${maxLW} pounds exceeded`;
 }
 
+// Update RTOW form
+document.getElementById("rtow-input").innerText = rtow ? `${Math.round(rtow)} feet` : "N/A"; 
+
     //Update HTML forms
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(1) : "N/A";
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
