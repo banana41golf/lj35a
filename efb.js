@@ -605,6 +605,12 @@ if(gw > rtow){
   'fa-solid fa-triangle-exclamation',
   'orange'
 );
+updateOrInsertInfoIcon(
+  'rtow-icon', 
+  'Warning: GW exceeds the current RTOW limit.', 
+  'fa-solid fa-triangle-exclamation',
+  'orange'
+);
 }
 
 // Update RTOW form
