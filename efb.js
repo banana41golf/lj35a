@@ -110,64 +110,76 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-  // Bilinear Interpolation Logic (used for both V1 and takeoff distance)
-  function bilinearInterpolation(data, targetOAT, targetElevation) {
-    const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
+// Bilinear Interpolation Logic (used for N1 calculation)
 
-    let lowerElevation = null, upperElevation = null;
+function bilinearInterpolation(data, targetOAT, targetElevation) {
+  const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
 
-    // Adjusting elevation logic to find the closest bounds
-    for (let i = 0; i < elevationLevels.length; i++) {
+  // Handle exact elevation match
+  if (elevationLevels.includes(targetElevation)) {
+      const exactElevationData = data.filter((item) => item.Elevation === targetElevation);
+      return interpolateOAT(exactElevationData, targetOAT);
+  }
+
+  let lowerElevation = null, upperElevation = null;
+
+  // Find bounding elevations
+  for (let i = 0; i < elevationLevels.length; i++) {
       if (elevationLevels[i] <= targetElevation) lowerElevation = elevationLevels[i];
       if (elevationLevels[i] >= targetElevation) {
-        upperElevation = elevationLevels[i];
-        break;
+          upperElevation = elevationLevels[i];
+          break;
       }
-    }
+  }
 
-    // Adjust if the elevation falls outside known levels (like targetElevation = 15)
-    if (!lowerElevation) lowerElevation = elevationLevels[0];
-    if (!upperElevation) upperElevation = elevationLevels[elevationLevels.length - 1];
+  // Adjust if elevation is outside known levels
+  if (!lowerElevation) lowerElevation = elevationLevels[0];
+  if (!upperElevation) upperElevation = elevationLevels[elevationLevels.length - 1];
 
-    const lowerData = data.filter((item) => item.Elevation === lowerElevation);
-    const upperData = data.filter((item) => item.Elevation === upperElevation);
+  const lowerData = data.filter((item) => item.Elevation === lowerElevation);
+  const upperData = data.filter((item) => item.Elevation === upperElevation);
 
-    function interpolateOAT(dataSet, oat) {
+  function interpolateOAT(dataSet, oat) {
       const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
 
       let lower = null, upper = null;
       for (const point of sortedData) {
-        if (point.OAT <= oat) lower = point;
-        if (point.OAT >= oat) {
-          upper = point;
-          break;
-        }
+          if (point.OAT <= oat) lower = point;
+          if (point.OAT >= oat) {
+              upper = point;
+              break;
+          }
       }
 
-      if (!lower || !upper || lower.OAT === upper.OAT) {
-        return lower ? lower.N1 || lower.V1 || lower.Distance : upper ? upper.N1 || upper.V1 || upper.Distance : null;
+      // Handle exact OAT match
+      if (lower && upper && lower.OAT === upper.OAT) {
+          return lower.N1 || lower.V1 || lower.Distance;
+      }
+
+      if (!lower || !upper) {
+          return lower ? lower.N1 || lower.V1 || lower.Distance : upper ? upper.N1 || upper.V1 || upper.Distance : null;
       }
 
       const x1 = lower.OAT, y1 = lower.N1 || lower.V1 || lower.Distance;
       const x2 = upper.OAT, y2 = upper.N1 || upper.V1 || upper.Distance;
       return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
-    }
-
-    const valueAtLowerElevation = interpolateOAT(lowerData, targetOAT);
-    const valueAtUpperElevation = interpolateOAT(upperData, targetOAT);
-
-    if (valueAtLowerElevation === null || valueAtUpperElevation === null) {
-      return null;
-    }
-
-    const x1 = lowerElevation, y1 = valueAtLowerElevation;
-    const x2 = upperElevation, y2 = valueAtUpperElevation;
-
-    return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
   }
 
+  const valueAtLowerElevation = interpolateOAT(lowerData, targetOAT);
+  const valueAtUpperElevation = interpolateOAT(upperData, targetOAT);
+
+  if (valueAtLowerElevation === null || valueAtUpperElevation === null) {
+      return null;
+  }
+
+  const x1 = lowerElevation, y1 = valueAtLowerElevation;
+  const x2 = upperElevation, y2 = valueAtUpperElevation;
+
+  return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
+}
 
 
+// Interpolate by GW only - used for VR and V2 speeds
   function interpolateByGW(data, targetGW, key) {
     const sortedData = data.sort((a, b) => a.GW - b.GW);
 
@@ -189,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return y1 + ((targetGW - x1) * (y2 - y1)) / (x2 - x1);
   }
 
-      // Trilinear Function for V1
+// Trilinear Function for V1
       function trilinearInterpolationV1(data, oat, elevation, gw) {
         const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
         const gwLevels = [...new Set(data.map((item) => item.GW))].sort((a, b) => a - b);
@@ -246,7 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return v1;
       }
   
-      // Trilinear Function for TO and LDG Distance
+// Trilinear Function for TO and LDG Distance
       function trilinearInterpolationDistance(data, oat, elevation, gw) {
         const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
         const gwLevels = [...new Set(data.map((item) => item.GW))].sort((a, b) => a - b);
@@ -305,7 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return distance;
       }
 
-      //Function to remove all i elements
+//Function to remove all i elements
       function resetAllInfoIcons() {
         // Select all <i> elements within elements having the class 'info-icon'
         const allIcons = document.querySelectorAll('.info-icon i');
@@ -317,8 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       
       
-  // Calculate Button
-
+// Calculate Button
   calculateButton.addEventListener("click", (event) => {
     event.preventDefault();
     document.getElementById("mlw-flag").innerText = " ";
