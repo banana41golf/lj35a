@@ -670,21 +670,7 @@ if(gw > maxLW) {
   );
 }
 
-// Check if GW exceeds calculated RTOW and update flag
-if(gw > rtow){
-  updateOrInsertInfoIcon(
-  'toperf-icon', 
-  'Warning: GW exceeds the current RTOW limit.', 
-  'fa-solid fa-triangle-exclamation',
-  'orange'
-);
-updateOrInsertInfoIcon(
-  'rtow-icon', 
-  'Warning: GW exceeds the current RTOW limit.', 
-  'fa-solid fa-triangle-exclamation',
-  'orange'
-);
-}
+
 
 
 // Calculations Here
@@ -729,6 +715,22 @@ if (flapsinput === 8) {
     const gustFactor = parseInt(document.getElementById("gust-factor").value);
     const vapp = gustFactor + vref
     document.getElementById("vapp-output").innerText = vapp ? `${Math.round(vapp)} knots` : "N/A";
+
+// Check if GW exceeds calculated RTOW and update flag
+if(gw > rtow){
+  updateOrInsertInfoIcon(
+  'toperf-icon', 
+  'Warning: GW exceeds the current RTOW limit.', 
+  'fa-solid fa-triangle-exclamation',
+  'orange'
+);
+updateOrInsertInfoIcon(
+  'rtow-icon', 
+  'Warning: GW exceeds the current RTOW limit.', 
+  'fa-solid fa-triangle-exclamation',
+  'orange'
+);
+}
 
 });
 
