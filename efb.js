@@ -387,7 +387,6 @@ const trimResult = interpolateTrim(userMAC, trimData);
 console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
 
 // Function to interpolate MTOW based on OAT and Elevation
-
 function interpolateMTOW(data, targetOAT, targetElevation) {
   console.log("Data for MTOW Interpolation:", data);
   console.log("Target OAT:", targetOAT, "Target Elevation:", targetElevation);
@@ -397,16 +396,7 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
       return NaN;
   }
 
-  // Step 1: Check for an exact match in the dataset
-  const exactMatch = data.find(
-      (item) => item.OAT === targetOAT && item.elevation === targetElevation
-  );
-  if (exactMatch) {
-      console.log("Exact match found:", exactMatch.MTOW);
-      return exactMatch.MTOW;
-  }
-
-  // Step 2: Identify the maximum and minimum OAT values in the dataset
+  // Step 1: Identify the maximum and minimum OAT values in the dataset
   const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
   const maxOAT = Math.max(...oatLevels);
   const minOAT = Math.min(...oatLevels);
@@ -420,25 +410,32 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
       targetOAT = minOAT;
   }
 
-  // Step 3: Filter data for the given OAT
+  // Step 2: Filter data for valid OAT
   const validData = data.filter((item) => item.OAT <= targetOAT);
   if (validData.length === 0) {
       console.warn(`No valid data for OAT ${targetOAT}.`);
       return NaN;
   }
 
-  // Step 4: Find the maximum elevation with valid data for the given OAT
+  // Step 3: Find the maximum elevation with valid data for the given OAT
   const elevationsWithValidData = validData.map((item) => item.elevation);
   const maxValidElevation = Math.max(...elevationsWithValidData);
 
+  // Cap targetElevation to the maximum valid elevation
   if (targetElevation > maxValidElevation) {
-      // Cap MTOW at the maximum valid elevation for the given OAT
-      const cappedData = validData.filter((item) => item.elevation === maxValidElevation);
-      const cappedMTOW = cappedData[0]?.MTOW; // Directly use MTOW at max elevation
       console.warn(
-          `Elevation ${targetElevation} exceeds maximum valid range (${maxValidElevation} ft). Capping MTOW to ${cappedMTOW} lbs.`
+          `Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxValidElevation} ft).`
       );
-      return cappedMTOW;
+      targetElevation = maxValidElevation;
+  }
+
+  // Step 4: Check for an exact match in the dataset
+  const exactMatch = data.find(
+      (item) => item.OAT === targetOAT && item.elevation === targetElevation
+  );
+  if (exactMatch) {
+      console.log("Exact match found:", exactMatch.MTOW);
+      return exactMatch.MTOW;
   }
 
   // Step 5: Find bounds for elevation
