@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     f20DisData = await fetch("F20-DIS.json").then((res) => res.json());
     f20vrData = await fetch("VR-20.json").then((res) => res.json());
     f20v2Data = await fetch("V2-20.json").then((res) => res.json());
-    f8MTOWdata = await fetch("F8MTOW.json").then((res) => res.json());
+    f8MTOWdata = await fetch("f8MTOW.json").then((res) => res.json());
     f20MTOWdata = await fetch("f20MTOW.json").then((res) => res.json());
   }
 
