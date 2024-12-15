@@ -543,7 +543,7 @@ if(gw > maxLW) {
 }
 
 // Update RTOW form
-document.getElementById("rtow-input").innerText = rtow ? `${Math.round(rtow)} feet` : "N/A"; 
+document.getElementById("rtow-input").innerText = rtow ? `${Math.round(rtow)} pounds` : "N/A"; 
 
     //Update HTML forms
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(1) : "N/A";
