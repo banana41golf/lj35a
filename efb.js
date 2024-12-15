@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (gw > maxGW || gw < minGW) {
       calculateButton.disabled = true;
+      calculateButton.style.cursor = "not-allowed";
       gwWarning.style.display = "block";
       gwWarning.textContent = gw > maxGW
         ? `Gross Weight exceeds MTOW of ${maxGW} lbs!`
@@ -57,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       gwInput.value = gw.toFixed(0);
       calculateButton.disabled = false;
+      calculateButton.style.cursor = "pointer"; // Reset to pointer or default
       gwWarning.style.display = "none";
     }
   };
