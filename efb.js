@@ -303,7 +303,17 @@ document.addEventListener("DOMContentLoaded", () => {
         return distance;
       }
 
-
+      //Function to remove all i elements
+      function resetAllInfoIcons() {
+        // Select all <i> elements within elements having the class 'info-icon'
+        const allIcons = document.querySelectorAll('.info-icon i');
+      
+        // Loop through and remove each <i> element
+        allIcons.forEach(icon => {
+          icon.remove();
+        });
+      }
+      
       
   // Calculate Button
 
