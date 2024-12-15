@@ -15,34 +15,19 @@
     <form id="performance-calculator">
       <!-- Inputs -->
       <div class="form-group horizontal">
-        <label for="zfw">ZFW:  
-          
-          <span class="info-icon" data-tooltip="Zero Fuel Weight (ZFW) is the total aircraft weight, excluding usable fuel in lbs.">
-            <i class="fa-solid fa-circle-info"></i>
-        
-        </label>
+        <label for="zfw">ZFW:</label>
         <input type="number" id="zfw" name="zfw" placeholder="lbs" required />
         <input type="range" id="zfw-slider" min="10350" max="13500" step="50">
       </div>
       
       <div class="form-group horizontal">
-        <label for="fob">FOB:
-
-          <span class="info-icon" data-tooltip="Fuel on Board (FOB) is the total weight of usable fuel in lbs.">
-            <i class="fa-solid fa-circle-info"></i>
-
-        </label>
+        <label for="fob">FOB:</label>
         <input type="number" id="fob" name="fob" placeholder="lbs" required />
         <input type="range" id="fob-slider" min="600" max="6240" step="10">
       </div>
       
       <div class="form-group horizontal">
-        <label for="gw">GW:
-
-          <span class="info-icon" data-tooltip="Gross Weight (GW) is the total aircraft weight in lbs.">
-            <i class="fa-solid fa-circle-info"></i>
-
-        </label>
+        <label for="gw">GW:</label>
         <input type="text" id="gw" name="gw" placeholder="Calculated Automatically" readonly />
         <small id="gw-warning" style="color: red; display: none;">
           <!-- Warning messages appear here dynamically -->
@@ -61,22 +46,13 @@
 <div class="form-group horizontal"><label for="rawMETAR">METAR:</label><span id="rawMETAR" style="color: #ffffff; font-size: 1rem; font-weight: normal;"></span></div>
 
         <div class="form-group">
-          <label for="elevation">Field Elevation:
-
-            <span class="info-icon" data-tooltip="Field Elevation is the height of the airport above sea level, measured in feet.">
-              <i class="fa-solid fa-circle-info"></i>
-
-          </label>
+          <label for="elevation">Field Elevation:</label>
           <input type="number" id="elevation"></span>
           <button type="button" id="sync-elevation">REFRESH</button>
         </div>
 
           <div class="form-group">
-          <label for="oat">OAT:
-            <span class="info-icon" data-tooltip="Outside Air Temperature (OAT) is the ambient air temperature at the airport in °C.">
-              <i class="fa-solid fa-circle-info"></i>
-
-          </label>
+          <label for="oat">OAT:</label>
           <input type="number" id="oat">
           <button type="button" id="sync-oat">REFRESH</button>
 
