@@ -337,7 +337,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // Interpolation function for TRIM based on MAC
-// START MTOW INTERPOLATION FUNCTION
+
+function interpolateTrim(mac, trimData) {
+  // Sort the trimData based on MAC in ascending order (if it's not sorted)
+  trimData.sort((a, b) => a.MAC - b.MAC);
+
+  // Find the two points (below and above the input MAC value)
+  let lower = null, upper = null;
+  for (let i = 0; i < trimData.length; i++) {
+    if (trimData[i].MAC <= mac) {
+      lower = trimData[i];
+    }
+    if (trimData[i].MAC >= mac) {
+      upper = trimData[i];
+      break;
+    }
+  }
+
+  // If no interpolation is needed (MAC value is exactly a data point)
+  if (lower === upper) {
+    return lower.TRIM;
+  }
+
+  // Linear interpolation formula
+  const slope = (upper.TRIM - lower.TRIM) / (upper.MAC - lower.MAC);
+  const trim = lower.TRIM + slope * (mac - lower.MAC);
+
+  return trim;
+}
+
+// MAC and Trim Interpolation
+const userMAC = parseInt(document.getElementById("mac-input").value, 10);
+
+// Check if MAC is within limits (5-30)
+if (isNaN(userMAC)) {
+  console.error("MAC is not valid:", userMAC);
+  alert("%MAC is not valid!");
+  return;
+}
+
+console.log(`usermac = ${userMAC}`);
+    // Check if MAC is valid
+    if (userMAC < 5 || userMAC > 30) {
+      console.error("% of MAC must be between 5.0% and 30.0%");
+      alert("% of MAC must be between 5.0% and 30.0%");
+      return;
+    }
+    
+
+const trimResult = interpolateTrim(userMAC, trimData);
+console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
+
+// Function to interpolate MTOW based on OAT and Elevation
 function interpolateMTOW(data, targetOAT, targetElevation) {
   console.log("Full Dataset:", data);
   console.log("Target OAT:", targetOAT, "Target Elevation:", targetElevation);
@@ -455,7 +506,6 @@ function interpolateElevation(data, targetElevation) {
 
   return m1 + ((targetElevation - e1) * (m2 - m1)) / (e2 - e1);
 }
-
 
 // END MTOW INTERPOLATION FUNCTION
 
