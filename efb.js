@@ -396,41 +396,11 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
       return NaN;
   }
 
-  // Ensure the correct interpolateOAT function is used
-  const interpolateOATForMTOW = (dataSet, oat) => {
-      console.log("DataSet for OAT interpolation:", dataSet);
-
-      const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
-      let lower = null, upper = null;
-
-      for (const point of sortedData) {
-          if (point.OAT <= oat) lower = point;
-          if (point.OAT >= oat) {
-              upper = point;
-              break;
-          }
-      }
-
-      if (!lower && !upper) {
-          console.warn("No data points found for OAT:", oat);
-          return NaN;
-      }
-
-      if (!lower) return upper.MTOW;
-      if (!upper) return lower.MTOW;
-
-      const x1 = lower.OAT, y1 = lower.MTOW;
-      const x2 = upper.OAT, y2 = upper.MTOW;
-
-      console.log("Interpolation Inputs for OAT:", { x1, y1, x2, y2 });
-
-      return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
-  };
-
   const elevationLevels = [...new Set(data.map((item) => item.elevation))].sort((a, b) => a - b);
 
   let lowerElevation = null, upperElevation = null;
 
+  // Find bounds for elevation
   for (let i = 0; i < elevationLevels.length; i++) {
       if (elevationLevels[i] <= targetElevation) lowerElevation = elevationLevels[i];
       if (elevationLevels[i] >= targetElevation) {
@@ -445,8 +415,35 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
   const lowerData = data.filter((item) => item.elevation === lowerElevation);
   const upperData = data.filter((item) => item.elevation === upperElevation);
 
-  const lowerMTOW = interpolateOATForMTOW(lowerData, targetOAT);
-  const upperMTOW = interpolateOATForMTOW(upperData, targetOAT);
+  const interpolateOAT = (dataSet, oat) => {
+      const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
+      let lower = null, upper = null;
+
+      for (const point of sortedData) {
+          if (point.OAT <= oat) lower = point;
+          if (point.OAT >= oat) {
+              upper = point;
+              break;
+          }
+      }
+
+      if (!lower && !upper) return NaN;
+      if (!lower) return upper.MTOW;
+      if (!upper) return lower.MTOW;
+
+      const x1 = lower.OAT, y1 = lower.MTOW;
+      const x2 = upper.OAT, y2 = upper.MTOW;
+
+      return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
+  };
+
+  const lowerMTOW = interpolateOAT(lowerData, targetOAT);
+  const upperMTOW = interpolateOAT(upperData, targetOAT);
+
+  if (lowerElevation === upperElevation) {
+      // Elevation does not require interpolation
+      return lowerMTOW;
+  }
 
   if (lowerMTOW === null || upperMTOW === null) {
       console.warn("Interpolation failed. Returning NaN.");
@@ -458,6 +455,7 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
 
   return m1 + ((targetElevation - e1) * (m2 - m1)) / (e2 - e1);
 }
+
 
 // Calculate based on Flaps Setting
 
