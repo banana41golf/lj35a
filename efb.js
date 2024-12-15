@@ -570,8 +570,8 @@ if(gw > rtow){
 updateInfoIconById(
   'rtow-icon', 
   'Warning: GW exceeds the current RTOW limit.', 
-  'fa-solid fa-circle-exclamation'
-  'red' // new color for the icon
+  'fa-solid fa-circle-exclamation',
+  'red'
 );
 }
 
