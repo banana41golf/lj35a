@@ -589,12 +589,18 @@ if(gw > maxLW) {
     'fa-solid fa-triangle-exclamation',
     'orange'
   );
+  updateOrInsertInfoIcon(
+    'ldgperf-icon', 
+    'Warning: GW exceeds the current MLW limit.', 
+    'fa-solid fa-triangle-exclamation',
+    'orange'
+  );
 }
 
 // Check if GW exceeds calculated RTOW and update flag
 if(gw > rtow){
   updateOrInsertInfoIcon(
-  'rtow-icon', 
+  'toperf-icon', 
   'Warning: GW exceeds the current RTOW limit.', 
   'fa-solid fa-triangle-exclamation',
   'orange'
