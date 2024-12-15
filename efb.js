@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const maxFOB = 6240;
   const maxGW = 18300;
   const minGW = 0;
-  const maxLW = 18300;
+  const maxLW = 15300;
 
 
   // Function to load the JSON data
