@@ -396,26 +396,7 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
       return NaN;
   }
 
-  const elevationLevels = [...new Set(data.map((item) => item.elevation))].sort((a, b) => a - b);
-  const maxElevation = Math.max(...elevationLevels);
-
-  let lowerElevation = null, upperElevation = null;
-
-  // Find bounds for elevation
-  for (let i = 0; i < elevationLevels.length; i++) {
-      if (elevationLevels[i] <= targetElevation) lowerElevation = elevationLevels[i];
-      if (elevationLevels[i] >= targetElevation) {
-          upperElevation = elevationLevels[i];
-          break;
-      }
-  }
-
-  if (!lowerElevation) lowerElevation = upperElevation;
-  if (!upperElevation) upperElevation = lowerElevation;
-
-  const lowerData = data.filter((item) => item.elevation === lowerElevation);
-  const upperData = data.filter((item) => item.elevation === upperElevation);
-
+  // Helper function to interpolate MTOW for a specific elevation level
   const interpolateOAT = (dataSet, oat) => {
       const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
       let lower = null, upper = null;
@@ -438,15 +419,42 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
       return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
   };
 
+  // Step 1: Filter the data for the highest elevation with valid MTOW at the target OAT
+  const elevationsWithValidData = data
+      .filter((item) => item.OAT === targetOAT || item.OAT < targetOAT)
+      .map((item) => item.elevation);
+
+  const maxValidElevation = Math.max(...elevationsWithValidData);
+
+  if (targetElevation > maxValidElevation) {
+      console.warn(
+          `Elevation exceeds maximum valid range. Capping MTOW to the maximum valid value at ${maxValidElevation} feet.`
+      );
+
+      const cappedData = data.filter((item) => item.elevation === maxValidElevation);
+      return interpolateOAT(cappedData, targetOAT);
+  }
+
+  // Step 2: Perform interpolation as usual
+  const elevationLevels = [...new Set(data.map((item) => item.elevation))].sort((a, b) => a - b);
+  let lowerElevation = null, upperElevation = null;
+
+  for (let i = 0; i < elevationLevels.length; i++) {
+      if (elevationLevels[i] <= targetElevation) lowerElevation = elevationLevels[i];
+      if (elevationLevels[i] >= targetElevation) {
+          upperElevation = elevationLevels[i];
+          break;
+      }
+  }
+
+  if (!lowerElevation) lowerElevation = upperElevation;
+  if (!upperElevation) upperElevation = lowerElevation;
+
+  const lowerData = data.filter((item) => item.elevation === lowerElevation);
+  const upperData = data.filter((item) => item.elevation === upperElevation);
+
   const lowerMTOW = interpolateOAT(lowerData, targetOAT);
   const upperMTOW = interpolateOAT(upperData, targetOAT);
-
-  // Handle cases where elevation exceeds the maximum valid elevation
-  if (targetElevation > maxElevation) {
-      const maxElevationMTOW = interpolateOAT(data.filter((item) => item.elevation === maxElevation), targetOAT);
-      console.warn(`Elevation exceeds maximum valid range. Capping MTOW to ${maxElevationMTOW} lbs.`);
-      return maxElevationMTOW;
-  }
 
   if (lowerMTOW === null || upperMTOW === null) {
       console.warn("Interpolation failed. Returning NaN.");
@@ -454,7 +462,6 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
   }
 
   if (lowerElevation === upperElevation) {
-      // Elevation does not require interpolation
       return lowerMTOW;
   }
 
