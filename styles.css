@@ -244,6 +244,12 @@ width: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add shadow for visibility */
 }
 
+strong {
+  display: inline-flex; /* Align with inline elements like icons */
+  align-items: center; /* Align text and icons vertically */
+  gap: 5px; /* Add spacing between the strong text and info-icon */
+}
+
 .info-icon:hover::after {
   display: block; /* Show tooltip on hover */
 }
