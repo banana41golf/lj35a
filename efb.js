@@ -118,6 +118,7 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
     return NaN;
   }
 
+  // Extract unique sorted elevation and OAT levels from the dataset
   const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
   const maxElevation = Math.max(...elevationLevels);
   const minElevation = Math.min(...elevationLevels);
@@ -126,42 +127,27 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
   const maxOAT = Math.max(...oatLevels);
   const minOAT = Math.min(...oatLevels);
 
+  // Ensure target OAT is within the valid range
+  if (targetOAT > maxOAT) {
+    console.warn(`Target OAT (${targetOAT}°C) exceeds maximum valid OAT (${maxOAT}°C).`);
+    return NaN; // Input out of range
+  }
+  if (targetOAT < minOAT) {
+    console.warn(`Target OAT (${targetOAT}°C) below minimum valid OAT (${minOAT}°C).`);
+    return NaN;
+  }
+
+  // Handle elevations outside the dataset range
   if (targetElevation > maxElevation) {
-    targetElevation = maxElevation;
-  } else if (targetElevation < minElevation) {
-    targetElevation = minElevation;
+    console.warn(`Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxElevation} ft).`);
+    return NaN; // Input out of range
+  }
+  if (targetElevation < minElevation) {
+    console.warn(`Target Elevation (${targetElevation} ft) below minimum valid elevation (${minElevation} ft).`);
+    return NaN;
   }
 
-  // Get maximum OAT for the target elevation
-  const getMaxOATForElevation = (elevation) => {
-    const elevationData = data.filter((item) => item.Elevation === elevation);
-    return Math.max(...elevationData.map((item) => item.OAT));
-  };
-
-  const maxOATForTargetElevation = elevationLevels.includes(targetElevation)
-    ? getMaxOATForElevation(targetElevation)
-    : Math.max(
-        getMaxOATForElevation(elevationLevels.find((e) => e <= targetElevation) || minElevation),
-        getMaxOATForElevation(elevationLevels.find((e) => e >= targetElevation) || maxElevation)
-      );
-
-  if (targetOAT > maxOATForTargetElevation) {
-    console.warn(`Target OAT (${targetOAT}°C) exceeds maximum valid OAT (${maxOATForTargetElevation}°C) for elevation ${targetElevation} ft.`);
-    return NaN; // Invalid input
-  }
-
-  const getMaxN1ForElevation = (elevation) => {
-    const elevationData = data.filter((item) => item.Elevation === elevation);
-    return Math.max(...elevationData.map((item) => item.N1));
-  };
-
-  if (elevationLevels.includes(targetElevation)) {
-    const exactElevationData = data.filter((item) => item.Elevation === targetElevation);
-    const interpolatedValue = interpolateOAT(exactElevationData, targetOAT);
-    const maxN1 = getMaxN1ForElevation(targetElevation);
-    return Math.min(interpolatedValue, maxN1);
-  }
-
+  // Find bounding elevations
   let lowerElevation = null, upperElevation = null;
 
   for (let i = 0; i < elevationLevels.length; i++) {
@@ -172,34 +158,14 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
     }
   }
 
+  // Ensure bounds are found
   if (lowerElevation === null || upperElevation === null) {
-    console.error("Failed to find bounding elevations.");
+    console.error("Failed to find bounding elevations for interpolation.");
     return NaN;
   }
 
-  const lowerData = data.filter((item) => item.Elevation === lowerElevation);
-  const upperData = data.filter((item) => item.Elevation === upperElevation);
-
-  const valueAtLowerElevation = interpolateOAT(lowerData, targetOAT);
-  const valueAtUpperElevation = interpolateOAT(upperData, targetOAT);
-
-  if (valueAtLowerElevation === null || valueAtUpperElevation === null) {
-    console.warn("Interpolation failed due to missing data for OAT.");
-    return NaN;
-  }
-
-  const x1 = lowerElevation, y1 = valueAtLowerElevation;
-  const x2 = upperElevation, y2 = valueAtUpperElevation;
-
-  const interpolatedValue = y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
-  const maxN1ForTargetElevation = Math.max(
-    getMaxN1ForElevation(lowerElevation),
-    getMaxN1ForElevation(upperElevation)
-  );
-
-  return Math.min(interpolatedValue, maxN1ForTargetElevation);
-
-  function interpolateOAT(dataSet, oat) {
+  // Helper function to interpolate N1 for a specific elevation
+  const interpolateOAT = (dataSet, oat) => {
     const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
     let lower = null, upper = null;
     for (const point of sortedData) {
@@ -218,8 +184,31 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
     const x1 = lower.OAT, y1 = lower.N1;
     const x2 = upper.OAT, y2 = upper.N1;
     return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
+  };
+
+  // Interpolate N1 for lower and upper elevations
+  const lowerData = data.filter((item) => item.Elevation === lowerElevation);
+  const upperData = data.filter((item) => item.Elevation === upperElevation);
+
+  const valueAtLowerElevation = interpolateOAT(lowerData, targetOAT);
+  const valueAtUpperElevation = interpolateOAT(upperData, targetOAT);
+
+  if (valueAtLowerElevation === null || valueAtUpperElevation === null) {
+    console.warn("Interpolation failed due to missing data for OAT.");
+    return NaN;
   }
+
+  // Perform linear interpolation between elevations
+  if (lowerElevation === upperElevation) {
+    return valueAtLowerElevation; // No need to interpolate if both elevations are the same
+  }
+
+  const x1 = lowerElevation, y1 = valueAtLowerElevation;
+  const x2 = upperElevation, y2 = valueAtUpperElevation;
+
+  return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
 }
+
 
 
 // Interpolate by GW only - used for VR and V2 speeds
@@ -622,7 +611,6 @@ if (flapsinput === 8) {
     vr = interpolateByGW(f20vrData, gw, "VR");
     v2 = interpolateByGW(f20v2Data, gw, "V2");
     rtow = interpolateMTOW(f20MTOWdata, oat, elevation);
-
 }
 
 
@@ -669,8 +657,6 @@ updateOrInsertInfoIcon(
     document.getElementById("rtow-input").innerText = rtow ? `${Math.round(rtow)} lbs` : "N/A";
 //Update HTML forms
     document.getElementById("n1-output").innerText = n1 ? n1.toFixed(1) : "N/A";
-
-
     document.getElementById("distance-output").innerText = distance ? `${Math.round(distance)} ft` : "N/A";
     document.getElementById("v1-output").innerText = v1 ? `${Math.round(v1)} knots` : "N/A";
     document.getElementById("vr-output").innerText = vr ? `${Math.round(vr)} knots` : "N/A";
