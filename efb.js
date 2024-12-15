@@ -61,7 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
   
-
   // Set initial values for sliders and input fields
   const setInitialValues = () => {
     zfwSlider.value = minZFW;
@@ -103,13 +102,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Initialize sliders and input values
+// Initialize sliders and input values
   setInitialValues();
 
 
 
-// Bilinear Interpolation Logic (used for N1 calculation)
+// Interpolation Functions
 
+// Bilinear Interpolation for N1
 function bilinearInterpolation(data, targetOAT, targetElevation) {
   if (!Array.isArray(data) || data.length === 0) {
     console.error("Invalid or empty data passed to bilinearInterpolation.");
@@ -234,9 +234,7 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
     y2 = valueAtUpperBound;
 
   return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
-}
-
-
+  }
 
 // Interpolate by GW only - used for VR and V2 speeds
   function interpolateByGW(data, targetGW, key) {
@@ -260,8 +258,7 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
     return y1 + ((targetGW - x1) * (y2 - y1)) / (x2 - x1);
   }
 
-//TriLinear Function for V1
-
+// Trilinear Function for V1
 function trilinearInterpolationV1(data, oat, elevation, gw) {
   console.log(`Inputs -> OAT: ${oat}, Elevation: ${elevation}, GW: ${gw}`);
 
@@ -359,9 +356,9 @@ function trilinearInterpolationV1(data, oat, elevation, gw) {
 
   console.log("Final interpolated V1 value:", v1AtElevation);
   return v1AtElevation;
-}
+  }
 
-// START DYNAMIC MTOW FUNCTION
+// Dynamic MTOW/RTOW Calculation
 function interpolateMTOW(data, targetOAT, targetElevation) {
 
   if (!Array.isArray(data) || data.length === 0) {
@@ -475,10 +472,9 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
 
   return m1 + ((targetElevation - e1) * (m2 - m1)) / (e2 - e1);
   }
-// END MTOW INTERPOLATION FUNCTION
   
 // Trilinear Function for TO and LDG Distance
-      function trilinearInterpolationDistance(data, oat, elevation, gw) {
+  function trilinearInterpolationDistance(data, oat, elevation, gw) {
         const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
         const gwLevels = [...new Set(data.map((item) => item.GW))].sort((a, b) => a - b);
         const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
@@ -534,23 +530,10 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
       
         const distance = interpolateValue(lowerElevationData, upperElevationData, lowerOAT, upperOAT);
         return distance;
-      }
+  }
 
-//Function to remove all i elements
-      function resetAllInfoIcons() {
-        // Select all <i> elements within elements having the class 'info-icon'
-        const allIcons = document.querySelectorAll('.info-icon i');
-      
-        // Loop through and remove each <i> element
-        allIcons.forEach(icon => {
-          icon.remove();
-        });
-      }
-
-  
 // Interpolation function for TRIM based on MAC
-
-function interpolateTrim(mac, trimData) {
+  function interpolateTrim(mac, trimData) {
   // Sort the trimData based on MAC in ascending order (if it's not sorted)
   trimData.sort((a, b) => a.MAC - b.MAC);
 
@@ -576,7 +559,20 @@ function interpolateTrim(mac, trimData) {
   const trim = lower.TRIM + slope * (mac - lower.MAC);
 
   return trim;
-}
+  }
+//Function to remove all i elements
+  function resetAllInfoIcons() {
+        // Select all <i> elements within elements having the class 'info-icon'
+        const allIcons = document.querySelectorAll('.info-icon i');
+      
+        // Loop through and remove each <i> element
+        allIcons.forEach(icon => {
+          icon.remove();
+        });
+  }
+
+  
+
 
       
 // Calculate Button
@@ -632,9 +628,6 @@ if (isNaN(userMAC)) {
     }
     
 
-
-
-
 // Update Info Icon to Exclaim Icon Function
 function updateOrInsertInfoIcon(elementId, newTooltip, newIconClass, newIconColor) {
   // Select the info-icon element by its ID
@@ -660,34 +653,6 @@ function updateOrInsertInfoIcon(elementId, newTooltip, newIconClass, newIconColo
     iconElement.style.color = newIconColor;
   }
 }
-
-// Calculations Here
-
-let v1, distance, vr, v2;
-
-// Check if Flaps 8 or 20 and pull data set accordingly
-if (flapsinput === 8) {
-    v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
-    distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
-    vr = interpolateByGW(vrData, gw, "VR");
-    v2 = interpolateByGW(v2Data, gw, "V2");
-    rtow = interpolateMTOW(f8MTOWdata, oat, elevation);
-
-} else {
-    v1 = trilinearInterpolationV1(f20ToData, oat, elevation, gw);
-    distance = trilinearInterpolationDistance(f20DisData, oat, elevation, gw);
-    vr = interpolateByGW(f20vrData, gw, "VR");
-    v2 = interpolateByGW(f20v2Data, gw, "V2");
-    rtow = interpolateMTOW(f20MTOWdata, oat, elevation);
-}
-
-
-// Calculations for N1, VREF, LDR and TRIM
-    const n1 = bilinearInterpolation(n1Data, oat, elevation);
-    const vref = interpolateByGW(vrefData, gw, "VREF");
-    const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
-    const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
-    const trimResult = interpolateTrim(userMAC, trimData);
 
 // Check if MLW exceeds GW and insert flag if true
 if(gw > maxLW) {
@@ -721,6 +686,34 @@ updateOrInsertInfoIcon(
 );
 }
 
+
+// Calculations Here
+
+let v1, distance, vr, v2;
+
+// Check if Flaps 8 or 20 and pull data set accordingly
+if (flapsinput === 8) {
+    v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
+    distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
+    vr = interpolateByGW(vrData, gw, "VR");
+    v2 = interpolateByGW(v2Data, gw, "V2");
+    rtow = interpolateMTOW(f8MTOWdata, oat, elevation);
+
+} else {
+    v1 = trilinearInterpolationV1(f20ToData, oat, elevation, gw);
+    distance = trilinearInterpolationDistance(f20DisData, oat, elevation, gw);
+    vr = interpolateByGW(f20vrData, gw, "VR");
+    v2 = interpolateByGW(f20v2Data, gw, "V2");
+    rtow = interpolateMTOW(f20MTOWdata, oat, elevation);
+}
+
+
+// Calculations for N1, VREF, LDR and TRIM
+    const n1 = bilinearInterpolation(n1Data, oat, elevation);
+    const vref = interpolateByGW(vrefData, gw, "VREF");
+    const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
+    const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
+    const trimResult = interpolateTrim(userMAC, trimData);
 
 // Update RTOW form
     document.getElementById("rtow-input").innerText = rtow ? `${Math.round(rtow)} lbs` : "N/A";
