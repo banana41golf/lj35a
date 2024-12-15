@@ -389,7 +389,7 @@ console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
 
 // Function to interpolate MTOW based on OAT and Elevation
 function interpolateMTOW(data, targetOAT, targetElevation) {
-  console.log("Data for MTOW Interpolation:", data);
+  console.log("Full Dataset:", data);
   console.log("Target OAT:", targetOAT, "Target Elevation:", targetElevation);
 
   if (!Array.isArray(data) || data.length === 0) {
@@ -413,6 +413,8 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
 
   // Step 2: Filter data for valid OAT
   const validData = data.filter((item) => item.OAT <= targetOAT);
+  console.log("Valid Data (Filtered by OAT):", validData);
+
   if (validData.length === 0) {
       console.warn(`No valid data for OAT ${targetOAT}.`);
       return NaN;
@@ -421,29 +423,20 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
   // Step 3: Find the maximum elevation with valid data for the given OAT
   const elevationsWithValidData = validData.map((item) => item.elevation);
   const maxValidElevation = Math.max(...elevationsWithValidData);
+  console.log("Max Valid Elevation:", maxValidElevation);
 
-  // Step 4: Enforce elevation cap
+  // Enforce elevation cap
   if (targetElevation > maxValidElevation) {
       console.warn(
           `Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxValidElevation} ft).`
       );
-      // Directly return the MTOW at maxValidElevation for the given OAT
       const cappedData = validData.filter((item) => item.elevation === maxValidElevation);
-      const cappedMTOW = cappedData[0]?.MTOW; // Directly use MTOW at max elevation
-      return cappedMTOW;
+      console.log("Capped Data (Elevation = MaxValidElevation):", cappedData);
+      return cappedData[0]?.MTOW || NaN;
   }
 
-  // Step 5: Check for an exact match in the dataset
-  const exactMatch = data.find(
-      (item) => item.OAT === targetOAT && item.elevation === targetElevation
-  );
-  if (exactMatch) {
-      console.log("Exact match found:", exactMatch.MTOW);
-      return exactMatch.MTOW;
-  }
-
-  // Step 6: Find bounds for elevation
-  const elevationLevels = elevationsWithValidData.sort((a, b) => a - b); // Use only valid elevations
+  // Step 4: Find bounds for elevation
+  const elevationLevels = elevationsWithValidData.sort((a, b) => a - b); // Only valid elevations
   let lowerElevation = null, upperElevation = null;
 
   for (let i = 0; i < elevationLevels.length; i++) {
@@ -454,11 +447,15 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
       }
   }
 
+  console.log("Lower Elevation:", lowerElevation, "Upper Elevation:", upperElevation);
+
   if (!lowerElevation) lowerElevation = upperElevation;
   if (!upperElevation) upperElevation = lowerElevation;
 
   const lowerData = validData.filter((item) => item.elevation === lowerElevation);
   const upperData = validData.filter((item) => item.elevation === upperElevation);
+  console.log("Lower Data:", lowerData);
+  console.log("Upper Data:", upperData);
 
   // Helper function to interpolate MTOW for a specific elevation level
   const interpolateOAT = (dataSet, oat) => {
@@ -473,6 +470,8 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
           }
       }
 
+      console.log("Interpolation Bounds:", lower, upper);
+
       if (!lower && !upper) return null; // No valid data
       if (!lower) return upper.MTOW;
       if (!upper) return lower.MTOW;
@@ -483,9 +482,10 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
       return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
   };
 
-  // Step 7: Interpolate MTOW for each elevation level
+  // Step 5: Interpolate MTOW for each elevation level
   const lowerMTOW = interpolateOAT(lowerData, targetOAT);
   const upperMTOW = interpolateOAT(upperData, targetOAT);
+  console.log("Lower MTOW:", lowerMTOW, "Upper MTOW:", upperMTOW);
 
   if (lowerMTOW === null && upperMTOW === null) {
       console.warn("No valid MTOW data for given inputs.");
@@ -500,9 +500,10 @@ function interpolateMTOW(data, targetOAT, targetElevation) {
   if (lowerMTOW === null) return upperMTOW;
   if (upperMTOW === null) return lowerMTOW;
 
-  // Step 8: Interpolate between elevations
+  // Step 6: Interpolate between elevations
   const e1 = lowerElevation, m1 = lowerMTOW;
   const e2 = upperElevation, m2 = upperMTOW;
+  console.log("Elevation Interpolation Inputs:", { e1, m1, e2, m2 });
 
   return m1 + ((targetElevation - e1) * (m2 - m1)) / (e2 - e1);
 }
