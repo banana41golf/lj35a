@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   let n1Data, f8ToData, f8DisData, vrData, v2Data, vrefData, ldaData, factData, trimData;
   let f20ToData, f20DisData, f20vrData, f20v2Data;
+  let f8MTOWdata, f20MTOWdata;
   const zfwSlider = document.getElementById("zfw-slider");
   const zfwInput = document.getElementById("zfw");
   const fobSlider = document.getElementById("fob-slider");
@@ -36,6 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
     f20DisData = await fetch("F20-DIS.json").then((res) => res.json());
     f20vrData = await fetch("VR-20.json").then((res) => res.json());
     f20v2Data = await fetch("V2-20.json").then((res) => res.json());
+    f8MTOWdata = await fetch("F8MTOW.json").then((res) => res.json());
+    f20MTOWdata = await fetch("f20MTOW.json").then((res) => res.json());
   }
 
   // Function to update the Gross Weight (GW) based on ZFW and FOB values
@@ -311,8 +314,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const pmac = parseInt(document.getElementById("mac-input").textContent, 10);
     const flapsinput = parseInt(document.getElementById("flaps-input").value, 10);
 
-    console.log(`Flaps Setting: ${flapsinput}`);
-
     // Get the elevation from the #elevation span (not input)
     const elevationText = document.getElementById("elevation").value;
     const elevation = parseInt(elevationText, 10); // Convert to number
@@ -385,6 +386,68 @@ console.log(`usermac = ${userMAC}`);
 const trimResult = interpolateTrim(userMAC, trimData);
 console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
 
+// Function to interpolate MTOW based on OAT and Elevation
+function interpolateMTOW(data, targetOAT, targetElevation) {
+    // Filter the data to separate by elevation
+    const elevationLevels = [...new Set(data.map((item) => item.elevation))].sort((a, b) => a - b);
+
+    let lowerElevation = null, upperElevation = null;
+
+    // Find bounds for elevation
+    for (let i = 0; i < elevationLevels.length; i++) {
+        if (elevationLevels[i] <= targetElevation) lowerElevation = elevationLevels[i];
+        if (elevationLevels[i] >= targetElevation) {
+            upperElevation = elevationLevels[i];
+            break;
+        }
+    }
+
+    // Handle cases where elevation is outside the known range
+    if (!lowerElevation) lowerElevation = upperElevation;
+    if (!upperElevation) upperElevation = lowerElevation;
+
+    // Filter data for the relevant elevation levels
+    const lowerData = data.filter((item) => item.elevation === lowerElevation);
+    const upperData = data.filter((item) => item.elevation === upperElevation);
+
+    // Helper function to interpolate OAT for a specific elevation level
+    function interpolateOAT(dataSet, oat) {
+        const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
+        let lower = null, upper = null;
+
+        // Find bounds for OAT
+        for (const point of sortedData) {
+            if (point.OAT <= oat) lower = point;
+            if (point.OAT >= oat) {
+                upper = point;
+                break;
+            }
+        }
+
+        // Handle cases where OAT is outside the known range
+        if (!lower) return upper ? upper.MTOW : null;
+        if (!upper) return lower ? lower.MTOW : null;
+
+        // Linear interpolation for OAT
+        const x1 = lower.OAT, y1 = lower.MTOW;
+        const x2 = upper.OAT, y2 = upper.MTOW;
+        return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
+    }
+
+    // Interpolate MTOW for the lower and upper elevation levels
+    const lowerMTOW = interpolateOAT(lowerData, targetOAT);
+    const upperMTOW = interpolateOAT(upperData, targetOAT);
+
+    // Handle edge cases where interpolation fails
+    if (lowerMTOW === null || upperMTOW === null) {
+        return lowerMTOW || upperMTOW;
+    }
+
+    // Final linear interpolation between elevation levels
+    const e1 = lowerElevation, m1 = lowerMTOW;
+    const e2 = upperElevation, m2 = upperMTOW;
+    return m1 + ((targetElevation - e1) * (m2 - m1)) / (e2 - e1);
+}
 
 // Calculate based on Flaps Setting
 
@@ -395,11 +458,14 @@ if (flapsinput === 8) {
     distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
     vr = interpolateByGW(vrData, gw, "VR");
     v2 = interpolateByGW(v2Data, gw, "V2");
+    rtow = interpolateMTOW(f8MTOWdata, oat, elevation);
+    console.log(rtow);
 } else {
     v1 = trilinearInterpolationV1(f20ToData, oat, elevation, gw);
     distance = trilinearInterpolationDistance(f20DisData, oat, elevation, gw);
     vr = interpolateByGW(f20vrData, gw, "VR");
     v2 = interpolateByGW(f20v2Data, gw, "V2");
+    rtow = interpolateMTOW(f20MTOWdata, oat, elevation);
 }
 
 

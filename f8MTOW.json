@@ -1,0 +1,312 @@
+[
+  {
+    "elevation": 10000,
+    "OAT": -18,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 10000,
+    "OAT": -7,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 10000,
+    "OAT": 4,
+    "MTOW": 17750
+  },
+  {
+    "elevation": 10000,
+    "OAT": 16,
+    "MTOW": 16800
+  },
+  {
+    "elevation": 10000,
+    "OAT": 27,
+    "MTOW": 14850
+  },
+  {
+    "elevation": 9000,
+    "OAT": -18,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 9000,
+    "OAT": -7,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 9000,
+    "OAT": 4,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 9000,
+    "OAT": 16,
+    "MTOW": 17400
+  },
+  {
+    "elevation": 9000,
+    "OAT": 27,
+    "MTOW": 15400
+  },
+  {
+    "elevation": 8000,
+    "OAT": -18,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 8000,
+    "OAT": -7,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 8000,
+    "OAT": 4,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 8000,
+    "OAT": 16,
+    "MTOW": 17950
+  },
+  {
+    "elevation": 8000,
+    "OAT": 27,
+    "MTOW": 16050
+  },
+  {
+    "elevation": 7000,
+    "OAT": -18,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 7000,
+    "OAT": -7,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 7000,
+    "OAT": 4,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 7000,
+    "OAT": 16,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 7000,
+    "OAT": 27,
+    "MTOW": 16600
+  },
+  {
+    "elevation": 6000,
+    "OAT": -18,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 6000,
+    "OAT": -7,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 6000,
+    "OAT": 4,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 6000,
+    "OAT": 16,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 6000,
+    "OAT": 27,
+    "MTOW": 17300
+  },
+  {
+    "elevation": 6000,
+    "OAT": 38,
+    "MTOW": 15050
+  },
+  {
+    "elevation": 5000,
+    "OAT": -18,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 5000,
+    "OAT": -7,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 5000,
+    "OAT": 4,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 5000,
+    "OAT": 16,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 5000,
+    "OAT": 27,
+    "MTOW": 17900
+  },
+  {
+    "elevation": 5000,
+    "OAT": 38,
+    "MTOW": 15600
+  },
+  {
+    "elevation": 4000,
+    "OAT": -18,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 4000,
+    "OAT": -7,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 4000,
+    "OAT": 4,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 4000,
+    "OAT": 16,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 4000,
+    "OAT": 27,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 4000,
+    "OAT": 38,
+    "MTOW": 16200
+  },
+  {
+    "elevation": 3000,
+    "OAT": -18,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 3000,
+    "OAT": -7,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 3000,
+    "OAT": 4,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 3000,
+    "OAT": 16,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 3000,
+    "OAT": 27,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 3000,
+    "OAT": 38,
+    "MTOW": 16800
+  },
+  {
+    "elevation": 2000,
+    "OAT": -18,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 2000,
+    "OAT": -7,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 2000,
+    "OAT": 4,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 2000,
+    "OAT": 16,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 2000,
+    "OAT": 27,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 2000,
+    "OAT": 38,
+    "MTOW": 17400
+  },
+  {
+    "elevation": 1000,
+    "OAT": -18,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 1000,
+    "OAT": -7,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 1000,
+    "OAT": 4,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 1000,
+    "OAT": 16,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 1000,
+    "OAT": 27,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 1000,
+    "OAT": 38,
+    "MTOW": 18100
+  },
+  {
+    "elevation": 0,
+    "OAT": -18,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 0,
+    "OAT": -7,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 0,
+    "OAT": 4,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 0,
+    "OAT": 16,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 0,
+    "OAT": 27,
+    "MTOW": 18300
+  },
+  {
+    "elevation": 0,
+    "OAT": 38,
+    "MTOW": 18300
+  }
+]
