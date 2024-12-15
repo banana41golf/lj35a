@@ -263,68 +263,104 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
 //TriLinear Function for V1
 
 function trilinearInterpolationV1(data, oat, elevation, gw) {
-  // Check for exact match first
+  console.log(`Inputs -> OAT: ${oat}, Elevation: ${elevation}, GW: ${gw}`);
+
+  // Check for exact match
   const exactMatch = data.find(
       (item) =>
           item.Elevation === elevation &&
           item.OAT === oat &&
           item.GW === gw
   );
+
   if (exactMatch) {
+      console.log("Exact match found:", exactMatch);
       return exactMatch.V1; // Return the exact value if found
   }
 
+  console.log("No exact match. Proceeding with interpolation...");
+
+  // Extract unique levels
   const elevationLevels = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
   const gwLevels = [...new Set(data.map((item) => item.GW))].sort((a, b) => a - b);
   const oatLevels = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
 
-  let lowerElevation = null, upperElevation = null;
-  let lowerGW = null, upperGW = null;
-  let lowerOAT = null, upperOAT = null;
+  console.log("Elevation levels:", elevationLevels);
+  console.log("GW levels:", gwLevels);
+  console.log("OAT levels:", oatLevels);
 
-  // Elevation interpolation
-  for (let i = 0; i < elevationLevels.length; i++) {
-      if (elevationLevels[i] <= elevation) lowerElevation = elevationLevels[i];
-      if (elevationLevels[i] >= elevation) {
-          upperElevation = elevationLevels[i];
-          break;
+  // Determine bounds for interpolation
+  const findBounds = (levels, target) => {
+      let lower = null, upper = null;
+      for (let i = 0; i < levels.length; i++) {
+          if (levels[i] <= target) lower = levels[i];
+          if (levels[i] >= target) {
+              upper = levels[i];
+              break;
+          }
       }
-  }
-
-  // GW interpolation
-  for (let i = 0; i < gwLevels.length; i++) {
-      if (gwLevels[i] <= gw) lowerGW = gwLevels[i];
-      if (gwLevels[i] >= gw) {
-          upperGW = gwLevels[i];
-          break;
-      }
-  }
-
-  // OAT interpolation
-  for (let i = 0; i < oatLevels.length; i++) {
-      if (oatLevels[i] <= oat) lowerOAT = oatLevels[i];
-      if (oatLevels[i] >= oat) {
-          upperOAT = oatLevels[i];
-          break;
-      }
-  }
-
-  // Get relevant data points
-  const lowerElevationData = data.filter((item) => item.Elevation === lowerElevation);
-  const upperElevationData = data.filter((item) => item.Elevation === upperElevation);
-  const interpolateValue = (lowerData, upperData, lowerValue, upperValue) => {
-      const lower = lowerData.find((item) => item.OAT === lowerValue && item.GW === lowerGW);
-      const upper = upperData.find((item) => item.OAT === upperValue && item.GW === upperGW);
-
-      if (!lower || !upper) return null;
-
-      return lower.V1 + ((upper.V1 - lower.V1) / (upper.OAT - lower.OAT)) * (oat - lower.OAT);
+      return { lower, upper };
   };
 
-  const v1LowerElevation = interpolateValue(lowerElevationData, upperElevationData, lowerOAT, upperOAT);
+  const elevationBounds = findBounds(elevationLevels, elevation);
+  const gwBounds = findBounds(gwLevels, gw);
+  const oatBounds = findBounds(oatLevels, oat);
 
-  return v1LowerElevation || null;
+  console.log("Elevation bounds:", elevationBounds);
+  console.log("GW bounds:", gwBounds);
+  console.log("OAT bounds:", oatBounds);
+
+  // If any bounds are missing, return NaN
+  if (!elevationBounds.lower || !elevationBounds.upper ||
+      !gwBounds.lower || !gwBounds.upper ||
+      !oatBounds.lower || !oatBounds.upper) {
+      console.warn("Bounds are missing for interpolation.");
+      return NaN;
+  }
+
+  // Get relevant data points for interpolation
+  const filterData = (items, key, lower, upper) =>
+      items.filter((item) => item[key] === lower || item[key] === upper);
+
+  const elevationData = filterData(data, "Elevation", elevationBounds.lower, elevationBounds.upper);
+  const gwData = filterData(elevationData, "GW", gwBounds.lower, gwBounds.upper);
+  const oatData = filterData(gwData, "OAT", oatBounds.lower, oatBounds.upper);
+
+  console.log("Filtered data for interpolation:", oatData);
+
+  // Perform trilinear interpolation if all required points are present
+  const interpolate = (lowerData, upperData, lowerValue, upperValue, target) => {
+      if (!lowerData || !upperData || lowerValue === upperValue) {
+          return lowerData ? lowerData.V1 : upperData ? upperData.V1 : NaN;
+      }
+      const [x1, y1] = [lowerValue, lowerData.V1];
+      const [x2, y2] = [upperValue, upperData.V1];
+      return y1 + ((target - x1) * (y2 - y1)) / (x2 - x1);
+  };
+
+  // Interpolate for each dimension
+  const lowerGWData = oatData.find((item) => item.GW === gwBounds.lower);
+  const upperGWData = oatData.find((item) => item.GW === gwBounds.upper);
+  const v1AtLowerGW = interpolate(lowerGWData, upperGWData, gwBounds.lower, gwBounds.upper, gw);
+
+  if (isNaN(v1AtLowerGW)) {
+      console.warn("Interpolation failed at GW dimension.");
+      return NaN;
+  }
+
+  const lowerElevationData = oatData.find((item) => item.Elevation === elevationBounds.lower);
+  const upperElevationData = oatData.find((item) => item.Elevation === elevationBounds.upper);
+  const v1AtElevation = interpolate(lowerElevationData, upperElevationData, elevationBounds.lower, elevationBounds.upper, elevation);
+
+  if (isNaN(v1AtElevation)) {
+      console.warn("Interpolation failed at Elevation dimension.");
+      return NaN;
+  }
+
+  console.log("Final interpolated V1 value:", v1AtElevation);
+  return v1AtElevation;
 }
+
 
   
 // Trilinear Function for TO and LDG Distance
