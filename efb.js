@@ -118,7 +118,7 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
   // Handle exact elevation match
   if (elevationLevels.includes(targetElevation)) {
       const exactElevationData = data.filter((item) => item.Elevation === targetElevation);
-      return interpolateOAT(exactElevationData, targetOAT);
+      return interpolateOAT(exactElevationData, targetOAT, targetElevation);
   }
 
   let lowerElevation = null, upperElevation = null;
@@ -139,8 +139,11 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
   const lowerData = data.filter((item) => item.Elevation === lowerElevation);
   const upperData = data.filter((item) => item.Elevation === upperElevation);
 
-  function interpolateOAT(dataSet, oat) {
+  function interpolateOAT(dataSet, oat, elevation) {
       const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
+
+      // Find the maximum N1 value for this elevation
+      const maxN1 = Math.max(...dataSet.map((item) => item.N1));
 
       let lower = null, upper = null;
       for (const point of sortedData) {
@@ -153,20 +156,24 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
 
       // Handle exact OAT match
       if (lower && upper && lower.OAT === upper.OAT) {
-          return lower.N1 || lower.V1 || lower.Distance;
+          return Math.min(lower.N1, maxN1);
       }
 
       if (!lower || !upper) {
-          return lower ? lower.N1 || lower.V1 || lower.Distance : upper ? upper.N1 || upper.V1 || upper.Distance : null;
+          const result = lower ? lower.N1 : upper ? upper.N1 : null;
+          return result !== null ? Math.min(result, maxN1) : null;
       }
 
-      const x1 = lower.OAT, y1 = lower.N1 || lower.V1 || lower.Distance;
-      const x2 = upper.OAT, y2 = upper.N1 || upper.V1 || upper.Distance;
-      return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
+      const x1 = lower.OAT, y1 = lower.N1;
+      const x2 = upper.OAT, y2 = upper.N1;
+      const interpolatedValue = y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
+
+      // Cap interpolated value at maxN1
+      return Math.min(interpolatedValue, maxN1);
   }
 
-  const valueAtLowerElevation = interpolateOAT(lowerData, targetOAT);
-  const valueAtUpperElevation = interpolateOAT(upperData, targetOAT);
+  const valueAtLowerElevation = interpolateOAT(lowerData, targetOAT, lowerElevation);
+  const valueAtUpperElevation = interpolateOAT(upperData, targetOAT, upperElevation);
 
   if (valueAtLowerElevation === null || valueAtUpperElevation === null) {
       return null;
@@ -175,8 +182,13 @@ function bilinearInterpolation(data, targetOAT, targetElevation) {
   const x1 = lowerElevation, y1 = valueAtLowerElevation;
   const x2 = upperElevation, y2 = valueAtUpperElevation;
 
-  return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
+  const interpolatedElevationValue = y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
+
+  // Cap the final interpolated value at the max for the higher elevation
+  const upperMaxN1 = Math.max(...upperData.map((item) => item.N1));
+  return Math.min(interpolatedElevationValue, upperMaxN1);
 }
+
 
 
 // Interpolate by GW only - used for VR and V2 speeds
