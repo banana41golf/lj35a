@@ -530,12 +530,8 @@ if (flapsinput === 8) {
 }
 
 
-    // Calculations Here    
-    //const v1 = trilinearInterpolationV1(f8ToData, oat, elevation, gw);
-    //const distance = trilinearInterpolationDistance(f8DisData, oat, elevation, gw);
+// Calculations for N1, VREF, LDR and TRIM
     const n1 = bilinearInterpolation(n1Data, oat, elevation);
-    //const vr = interpolateByGW(vrData, gw, "VR");
-    //const v2 = interpolateByGW(v2Data, gw, "V2");
     const vref = interpolateByGW(vrefData, gw, "VREF");
     const ldaa = trilinearInterpolationDistance(ldaData, oat, elevation, gw);
     const fact = trilinearInterpolationDistance(factData, oat, elevation, gw);
