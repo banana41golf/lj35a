@@ -388,65 +388,75 @@ console.log("Interpolated TRIM value for MAC = " + userMAC + ": " + trimResult);
 
 // Function to interpolate MTOW based on OAT and Elevation
 function interpolateMTOW(data, targetOAT, targetElevation) {
-    // Filter the data to separate by elevation
-    const elevationLevels = [...new Set(data.map((item) => item.elevation))].sort((a, b) => a - b);
+  console.log("Data for MTOW Interpolation:", data);
+  console.log("Target OAT:", targetOAT, "Target Elevation:", targetElevation);
 
-    let lowerElevation = null, upperElevation = null;
+  if (!Array.isArray(data) || data.length === 0) {
+      console.error("Invalid or empty data passed to interpolateMTOW.");
+      return NaN;
+  }
 
-    // Find bounds for elevation
-    for (let i = 0; i < elevationLevels.length; i++) {
-        if (elevationLevels[i] <= targetElevation) lowerElevation = elevationLevels[i];
-        if (elevationLevels[i] >= targetElevation) {
-            upperElevation = elevationLevels[i];
-            break;
-        }
-    }
+  // Ensure the correct interpolateOAT function is used
+  const interpolateOATForMTOW = (dataSet, oat) => {
+      console.log("DataSet for OAT interpolation:", dataSet);
 
-    // Handle cases where elevation is outside the known range
-    if (!lowerElevation) lowerElevation = upperElevation;
-    if (!upperElevation) upperElevation = lowerElevation;
+      const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
+      let lower = null, upper = null;
 
-    // Filter data for the relevant elevation levels
-    const lowerData = data.filter((item) => item.elevation === lowerElevation);
-    const upperData = data.filter((item) => item.elevation === upperElevation);
+      for (const point of sortedData) {
+          if (point.OAT <= oat) lower = point;
+          if (point.OAT >= oat) {
+              upper = point;
+              break;
+          }
+      }
 
-    // Helper function to interpolate OAT for a specific elevation level
-    function interpolateOAT(dataSet, oat) {
-        const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
-        let lower = null, upper = null;
+      if (!lower && !upper) {
+          console.warn("No data points found for OAT:", oat);
+          return NaN;
+      }
 
-        // Find bounds for OAT
-        for (const point of sortedData) {
-            if (point.OAT <= oat) lower = point;
-            if (point.OAT >= oat) {
-                upper = point;
-                break;
-            }
-        }
+      if (!lower) return upper.MTOW;
+      if (!upper) return lower.MTOW;
 
-        // Handle cases where OAT is outside the known range
-        if (!lower) return upper ? upper.MTOW : null;
-        if (!upper) return lower ? lower.MTOW : null;
+      const x1 = lower.OAT, y1 = lower.MTOW;
+      const x2 = upper.OAT, y2 = upper.MTOW;
 
-        // Linear interpolation for OAT
-        const x1 = lower.OAT, y1 = lower.MTOW;
-        const x2 = upper.OAT, y2 = upper.MTOW;
-        return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
-    }
+      console.log("Interpolation Inputs for OAT:", { x1, y1, x2, y2 });
 
-    // Interpolate MTOW for the lower and upper elevation levels
-    const lowerMTOW = interpolateOAT(lowerData, targetOAT);
-    const upperMTOW = interpolateOAT(upperData, targetOAT);
+      return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
+  };
 
-    // Handle edge cases where interpolation fails
-    if (lowerMTOW === null || upperMTOW === null) {
-        return lowerMTOW || upperMTOW;
-    }
+  const elevationLevels = [...new Set(data.map((item) => item.elevation))].sort((a, b) => a - b);
 
-    // Final linear interpolation between elevation levels
-    const e1 = lowerElevation, m1 = lowerMTOW;
-    const e2 = upperElevation, m2 = upperMTOW;
-    return m1 + ((targetElevation - e1) * (m2 - m1)) / (e2 - e1);
+  let lowerElevation = null, upperElevation = null;
+
+  for (let i = 0; i < elevationLevels.length; i++) {
+      if (elevationLevels[i] <= targetElevation) lowerElevation = elevationLevels[i];
+      if (elevationLevels[i] >= targetElevation) {
+          upperElevation = elevationLevels[i];
+          break;
+      }
+  }
+
+  if (!lowerElevation) lowerElevation = upperElevation;
+  if (!upperElevation) upperElevation = lowerElevation;
+
+  const lowerData = data.filter((item) => item.elevation === lowerElevation);
+  const upperData = data.filter((item) => item.elevation === upperElevation);
+
+  const lowerMTOW = interpolateOATForMTOW(lowerData, targetOAT);
+  const upperMTOW = interpolateOATForMTOW(upperData, targetOAT);
+
+  if (lowerMTOW === null || upperMTOW === null) {
+      console.warn("Interpolation failed. Returning NaN.");
+      return NaN;
+  }
+
+  const e1 = lowerElevation, m1 = lowerMTOW;
+  const e2 = upperElevation, m2 = upperMTOW;
+
+  return m1 + ((targetElevation - e1) * (m2 - m1)) / (e2 - e1);
 }
 
 // Calculate based on Flaps Setting
