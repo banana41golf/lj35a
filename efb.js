@@ -110,131 +110,112 @@ document.addEventListener("DOMContentLoaded", () => {
 // Interpolation Functions
 
 // Bilinear Interpolation for N1
-function bilinearInterpolation(data, targetOAT, targetElevation) {
-  if (!Array.isArray(data) || data.length === 0) {
-    console.error("Invalid or empty data passed to bilinearInterpolation.");
-    return NaN;
+function trilinearInterpolationV1(dataSet, inputOAT, inputElevation, inputGW) {
+  console.log(`Inputs -> OAT: ${inputOAT}, Elevation: ${inputElevation}, GW: ${inputGW}`);
+
+  // Find exact match if available
+  const exactMatch = dataSet.find(
+      (entry) =>
+          entry.Elevation === inputElevation &&
+          entry.OAT === inputOAT &&
+          entry.GW === inputGW
+  );
+
+  if (exactMatch) {
+      console.log("Exact match found:", exactMatch);
+      return exactMatch.V1; // Return the exact value if found
   }
 
-  // Extract unique sorted elevation and OAT levels from the dataset
-  const availableElevations = [...new Set(data.map((item) => item.Elevation))].sort((a, b) => a - b);
-  console.log("All Elevation Levels (bilinearInterpolation):", availableElevations); // Debugging log
-  const maxAvailableElevation = Math.max(...availableElevations); // Derive the maximum elevation
-  console.log("Max Elevation Derived (bilinearInterpolation):", maxAvailableElevation); // Debugging log
-  const minAvailableElevation = Math.min(...availableElevations);
+  console.log("No exact match found. Proceeding with interpolation...");
 
-  const availableOATs = [...new Set(data.map((item) => item.OAT))].sort((a, b) => a - b);
-  const maxAvailableOAT = Math.max(...availableOATs);
-  const minAvailableOAT = Math.min(...availableOATs);
+  // Extract unique levels for interpolation
+  const elevationLevels = [...new Set(dataSet.map((entry) => entry.Elevation))].sort((a, b) => a - b);
+  const gwLevels = [...new Set(dataSet.map((entry) => entry.GW))].sort((a, b) => a - b);
+  const oatLevels = [...new Set(dataSet.map((entry) => entry.OAT))].sort((a, b) => a - b);
 
-  // Helper function to get max OAT for a specific elevation
-  const getMaxOATForElevation = (elevation) => {
-    const elevationData = data.filter((item) => item.Elevation === elevation);
-    return Math.max(...elevationData.map((item) => item.OAT));
-  };
+  console.log("Elevation levels:", elevationLevels);
+  console.log("GW levels:", gwLevels);
+  console.log("OAT levels:", oatLevels);
 
-  // Ensure target OAT is within the valid range
-  if (targetOAT > maxAvailableOAT) {
-    console.warn(`Target OAT (${targetOAT}°C) exceeds maximum valid OAT (${maxAvailableOAT}°C).`);
-    return NaN; // Input out of range
-  }
-  if (targetOAT < minAvailableOAT) {
-    console.warn(`Target OAT (${targetOAT}°C) below minimum valid OAT (${minAvailableOAT}°C).`);
-    return NaN;
-  }
-
-  // Handle elevations outside the dataset range
-  if (targetElevation > maxAvailableElevation) {
-    console.warn(
-      `Target Elevation (${targetElevation} ft) exceeds maximum valid elevation (${maxAvailableElevation} ft).`
-    );
-    return NaN; // Input out of range
-  }
-  if (targetElevation < minAvailableElevation) {
-    console.warn(
-      `Target Elevation (${targetElevation} ft) below minimum valid elevation (${minAvailableElevation} ft).`
-    );
-    return NaN;
-  }
-
-  // Find bounding elevations
-  let lowerBoundElevation = null,
-    upperBoundElevation = null;
-
-  for (let i = 0; i < availableElevations.length; i++) {
-    if (availableElevations[i] <= targetElevation) lowerBoundElevation = availableElevations[i];
-    if (availableElevations[i] >= targetElevation) {
-      upperBoundElevation = availableElevations[i];
-      break;
-    }
-  }
-
-  // Ensure bounds are found
-  if (lowerBoundElevation === null || upperBoundElevation === null) {
-    console.error("Failed to find bounding elevations for interpolation.");
-    return NaN;
-  }
-
-  // Validate the target OAT against the maximum OAT for the bounding elevations
-  const maxOATForLowerBound = getMaxOATForElevation(lowerBoundElevation);
-  const maxOATForUpperBound = getMaxOATForElevation(upperBoundElevation);
-
-  if (targetOAT > maxOATForLowerBound || targetOAT > maxOATForUpperBound) {
-    console.warn(
-      `Target OAT (${targetOAT}°C) exceeds the maximum allowable OAT for the elevation range.`
-    );
-    return NaN;
-  }
-
-  // Helper function to interpolate N1 for a specific elevation
-  const interpolateOAT = (dataSet, oat) => {
-    const sortedData = dataSet.sort((a, b) => a.OAT - b.OAT);
-    let lower = null,
-      upper = null;
-    for (const point of sortedData) {
-      if (point.OAT <= oat) lower = point;
-      if (point.OAT >= oat) {
-        upper = point;
-        break;
+  // Helper function to determine bounds for a given value
+  const findBoundsForTarget = (levels, targetValue) => {
+      let lowerBound = null, upperBound = null;
+      for (let i = 0; i < levels.length; i++) {
+          if (levels[i] <= targetValue) lowerBound = levels[i];
+          if (levels[i] >= targetValue) {
+              upperBound = levels[i];
+              break;
+          }
       }
-    }
-    if (lower === null || upper === null) {
-      return lower ? lower.N1 : upper ? upper.N1 : NaN;
-    }
-    if (lower.OAT === upper.OAT) {
-      return lower.N1;
-    }
-    const x1 = lower.OAT,
-      y1 = lower.N1;
-    const x2 = upper.OAT,
-      y2 = upper.N1;
-    return y1 + ((oat - x1) * (y2 - y1)) / (x2 - x1);
+      return { lowerBound, upperBound };
   };
 
-  // Interpolate N1 for lower and upper elevations
-  const lowerBoundData = data.filter((item) => item.Elevation === lowerBoundElevation);
-  const upperBoundData = data.filter((item) => item.Elevation === upperBoundElevation);
+  const elevationBounds = findBoundsForTarget(elevationLevels, inputElevation);
+  const gwBounds = findBoundsForTarget(gwLevels, inputGW);
+  const oatBounds = findBoundsForTarget(oatLevels, inputOAT);
 
-  const valueAtLowerBound = interpolateOAT(lowerBoundData, targetOAT);
-  const valueAtUpperBound = interpolateOAT(upperBoundData, targetOAT);
+  console.log("Elevation bounds:", elevationBounds);
+  console.log("GW bounds:", gwBounds);
+  console.log("OAT bounds:", oatBounds);
 
-  if (valueAtLowerBound === null || valueAtUpperBound === null) {
-    console.warn("Interpolation failed due to missing data for OAT.");
-    return NaN;
+  // Check if all required bounds are available
+  if (!elevationBounds.lowerBound || !elevationBounds.upperBound ||
+      !gwBounds.lowerBound || !gwBounds.upperBound ||
+      !oatBounds.lowerBound || !oatBounds.upperBound) {
+      console.warn("Bounds are missing for interpolation.");
+      return NaN;
   }
 
-  // Perform linear interpolation between elevations
-  if (lowerBoundElevation === upperBoundElevation) {
-    return valueAtLowerBound; // No need to interpolate if both elevations are the same
+  // Filter relevant data points for interpolation
+  const filterEntries = (entries, key, lower, upper) =>
+      entries.filter((entry) => entry[key] === lower || entry[key] === upper);
+
+  const elevationFiltered = filterEntries(dataSet, "Elevation", elevationBounds.lowerBound, elevationBounds.upperBound);
+  const gwFiltered = filterEntries(elevationFiltered, "GW", gwBounds.lowerBound, gwBounds.upperBound);
+  const finalFilteredData = filterEntries(gwFiltered, "OAT", oatBounds.lowerBound, oatBounds.upperBound);
+
+  console.log("Filtered data for interpolation:", finalFilteredData);
+
+  // Perform interpolation across dimensions
+  const interpolateValue = (lowData, highData, lowKey, highKey, targetKey) => {
+      if (!lowData || !highData || lowKey === highKey) {
+          return lowData ? lowData.V1 : highData ? highData.V1 : NaN;
+      }
+      const [x1, y1] = [lowKey, lowData.V1];
+      const [x2, y2] = [highKey, highData.V1];
+      return y1 + ((targetKey - x1) * (y2 - y1)) / (x2 - x1);
+  };
+
+  const gwLowerData = finalFilteredData.find((entry) => entry.GW === gwBounds.lowerBound);
+  const gwUpperData = finalFilteredData.find((entry) => entry.GW === gwBounds.upperBound);
+  const interpolatedGW = interpolateValue(gwLowerData, gwUpperData, gwBounds.lowerBound, gwBounds.upperBound, inputGW);
+
+  if (isNaN(interpolatedGW)) {
+      console.warn("Interpolation failed at GW dimension.");
+      return NaN;
   }
 
-  const x1 = lowerBoundElevation,
-    y1 = valueAtLowerBound;
-  const x2 = upperBoundElevation,
-    y2 = valueAtUpperBound;
+  const elevationLowerData = finalFilteredData.find((entry) => entry.Elevation === elevationBounds.lowerBound);
+  const elevationUpperData = finalFilteredData.find((entry) => entry.Elevation === elevationBounds.upperBound);
+  const interpolatedElevation = interpolateValue(elevationLowerData, elevationUpperData, elevationBounds.lowerBound, elevationBounds.upperBound, inputElevation);
 
-  return y1 + ((targetElevation - x1) * (y2 - y1)) / (x2 - x1);
+  if (isNaN(interpolatedElevation)) {
+      console.warn("Interpolation failed at Elevation dimension.");
+      return NaN;
   }
+
+  const oatLowerData = finalFilteredData.find((entry) => entry.OAT === oatBounds.lowerBound);
+  const oatUpperData = finalFilteredData.find((entry) => entry.OAT === oatBounds.upperBound);
+  const interpolatedOAT = interpolateValue(oatLowerData, oatUpperData, oatBounds.lowerBound, oatBounds.upperBound, inputOAT);
+
+  if (isNaN(interpolatedOAT)) {
+      console.warn("Interpolation failed at OAT dimension.");
+      return NaN;
+  }
+
+  console.log("Final interpolated V1 value:", interpolatedOAT);
+  return interpolatedOAT;
+}
 
 // Interpolate by GW only - used for VR and V2 speeds
   function interpolateByGW(data, targetGW, key) {
@@ -710,7 +691,7 @@ if (flapsinput === 8) {
     document.getElementById("vref-output").innerText = vref ? `${Math.round(vref)} knots` : "N/A";
     document.getElementById("ldaa-output").innerText = ldaa ? `${Math.round(ldaa)} feet` : "N/A";
     document.getElementById("fact-output").innerText = fact ? `${Math.round(fact)} feet` : "N/A";
-    document.getElementById("trim-output").innerText = trimResult ? trimResult.toFixed(1) : "N/A";
+    document.getElementById("trim-output").innerText = trimResult ? trimRes ult.toFixed(1) : "N/A";
 // Calculate and populate Vapp (Vref + Gust Factor)
     const gustFactor = parseInt(document.getElementById("gust-factor").value);
     const vapp = gustFactor + vref
