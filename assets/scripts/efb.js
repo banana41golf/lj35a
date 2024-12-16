@@ -1,13 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-
-
 const data = {};
 (async function loadData() {
   const filePaths = {
-    n1Data: "../data/N1_flat.json",
-    f8ToData: "../data/F8-TO_flat.json",
-    f8DisData: "../data/F8-DIS_flat.json",
+    n1Data: "../lj35a/assets/data/N1_flat.json",
+    f8ToData: "../lj35a/assets/data/F8-TO_flat.json",
+    f8DisData: "../lj35a/assets/data/F8-DIS_flat.json",
     vrData: "../data/VR_flat.json",
     v2Data: "../data/V2_flat.json",
     vrefData: "../data/vref.json",
