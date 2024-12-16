@@ -1,0 +1,258 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.container {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 15px;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+  text-align: center;
+  color: #00bcd4;
+  margin: 10px;
+
+}
+
+.form-group {
+  display: flex; /* Align input fields and buttons horizontally */
+  align-items: center; /* Vertically align items */
+  gap: 10px; /* Space between elements */
+
+}
+
+.form-airport {
+  display: flex; /* Align input fields and buttons horizontally */
+  align-items: center; /* Vertically align items */
+  gap: 10px; /* Space between elements */
+}
+
+label {
+  display: inline-block; /* Ensure labels have a consistent block-like appearance */
+  width: 100px; /* Fixed width for all labels */
+  text-align: left; /* Align text to the left */
+  
+}
+
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background-color: #2c2c2c;
+  color: #ffffff;
+  font-size: 14px;
+  box-sizing: border-box; /* Prevent overflow */
+}
+
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #00bcd4;
+}
+
+.form-output {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: #262626;
+  padding: 10px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px; /* Space between the columns */
+}
+
+.output-column {
+  width: 48%; /* Adjust this width to give the columns more space */
+  padding: 10px; /* Optional: add padding for more space inside the columns */
+  box-sizing: border-box; /* Ensures padding is included in the element's total width */
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #00bcd4;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #008c9e;
+}
+
+button:focus {
+  outline: none;
+}
+
+button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Apply flexbox only to fields with class "horizontal" */
+.form-group.horizontal {
+  display: flex;
+  align-items: center; /* Vertically center the elements */
+  gap: 10px; /* Space between ZFW and FOB */
+  justify-content: space-between;
+}
+.form-group.horizontal span {
+  flex: 1; /* Makes spans take equal space */
+  text-align: left; /* Align text consistently */
+}
+
+.form-group.horizontal label {
+  width: 100px; /* Adjust width to fit the layout */
+  /*margin-right: 10px; /* Space between label and input field */
+
+  
+}
+
+.form-group.horizontal input[type="number"],
+.form-group.horizontal input[type="range"] {
+  width: 48%; /* Make the input fields take up about half of the space each */
+}
+
+
+
+
+
+
+.output-column p {
+  display: flex;
+  align-items: center; /* Vertically align the label and span */
+  margin-bottom: 10px; /* Space between each row */
+  font-size: 14px;
+  color: #ffffff;
+}
+.output-column span {
+text-align: left;
+width: 100%;
+}
+
+.output-column label {
+  margin-right: 10px; /* Space between label and span */
+  font-weight: normal; /* Adjust label font weight if needed */
+  font-size: 14px;
+  color: #ffffff;
+}
+
+
+#oat, #elevation {
+  flex: 1; /* Let the input field take up the remaining space */
+  height: 40px; /* Ensure consistent height */
+}
+
+#sync-oat, #sync-elevation {
+  width: 12.5%; /* Reduce width to half of the original (was 25%) */
+  height: 30px; /* Keep reduced height */
+  font-size: 12px; /* Keep reduced font size */
+  padding: 0 5px; /* Retain smaller padding */
+  background-color: #00bcd4; /* Retain existing styles */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+
+#sync-oat:hover, #sync-elevation:hover {
+  background-color: #008c9e;
+}
+#oat, #elevation {
+  flex: none; /* Disable flex-grow for these specific inputs */
+  width: 25%; /* Set the width to 50% of the container */
+  height: 40px; /* Keep the consistent height */
+}
+
+#airport-suggestions {
+  position: absolute; /* Position it relative to its container */
+  z-index: 10; /* Ensure it appears above other elements */
+  width: 100%; /* Match the width of the input field */
+  max-height: 150px; /* Set a max height for scrollable suggestions */
+  overflow-y: auto; /* Enable vertical scrolling if needed */
+  border: 1px solid #444; /* Match your theme's border style */
+  border-radius: 4px; /* Add rounded corners */
+  background-color: #2c2c2c; /* Match the input field's background */
+  color: #ffffff; /* Match text color */
+  display: none; /* Keep it hidden initially */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Add a shadow for better visibility */
+}
+
+#airport-suggestions option {
+  padding: 10px; /* Add padding for better readability */
+  cursor: pointer;
+}
+
+#airport-suggestions option:hover {
+  background-color: #008c9e; /* Highlight on hover */
+  color: #ffffff;
+}
+
+/* Information Icon */
+/* Information Icon Container */
+.info-icon {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 5px;
+  cursor: help;
+}
+
+/* Icon Styling */
+.info-icon i {
+  color: #00bcd4;
+  font-size: 16px; /* Adjust the size of the icon */
+  transition: color 0.2s ease-in-out;
+}
+
+.info-icon:hover i {
+  color: #008c9e; /* Change color on hover */
+}
+
+/* Tooltip Styles */
+.info-icon::after {
+  content: attr(data-tooltip); /* Tooltip text from data-tooltip attribute */
+  position: absolute;
+  bottom: 120%; /* Position tooltip above the icon */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: none; /* Hidden by default */
+  white-space: nowrap;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add shadow for visibility */
+}
+
+strong {
+  display: inline-flex; /* Align with inline elements like icons */
+  align-items: center; /* Align text and icons vertically */
+  gap: 5px; /* Add spacing between the strong text and info-icon */
+}
+
+.info-icon:hover::after {
+  display: block; /* Show tooltip on hover */
+}
+.info-icon i {
+  transition: color 0.3s ease-in-out;
+}
