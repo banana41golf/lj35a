@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="shortcut icon" type="image/x-icon" href="\lj35a\assets\images\favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="\assets\images\favicon.ico">
   <title>Learjet 35A Performance Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="\lj35a\assets\styles\styles.css">
+  <link rel="stylesheet" href="\assets\styles\styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
 </head>
@@ -36,7 +36,7 @@
 <!-- Departure Airport (ICAO) Input Field and Dropdown -->
 <div class="form-group horizontal">
     <label for="departure-airport">Airport ICAO:</label>
-    <input type="text" id="departure-airport" name="departure-airport" placeholder="Enter ICAO code" autocomplete="off" required />
+    <input type="text" id="departure-airport" name="departure-airport" placeholder="Enter ICAO code" autocomplete="off" />
     <select id="airport-suggestions" size="5" style="display:none;">
         <!-- Dropdown populates here -->
     </select>
@@ -80,13 +80,13 @@
       <p>
         <label>RTOW:</label>
         <span id="rtow-input">-</span>
-        <span class="info-icon" id="rtow-icon" data-tooltip="Regulated Takeoff Weight (RTOW) is the maximum allowable weight for the current takeoff conditions.">
+        <span class="info-icon" id="rtow-icon" data-tooltip="Warning: GW exceeds RTOW.">
         </span>
       </p>
       <p>
         <label>MLW:</label>
         <span id="mlw-input">15300 lbs</span>
-        <span class="info-icon" id="mlw-icon" data-tooltip="Maximum Landing Weight (MLW) is the highest weight at which the aircraft is certified to land.">
+        <span class="info-icon" id="mlw-icon" data-tooltip="Warning: GW exceeds the current MLW limit.">
           </span>
       </p>
 </div>
@@ -96,17 +96,19 @@
 
 <!-- Takeoff Performance -->
         <div class ="output-column">
-        <strong>Takeoff Performance <span class="info-icon" id="toperf-icon" data-tooltip=""> </span></strong>
-
+        <strong>Takeoff Performance <span class="info-icon" id="toperf-icon" data-tooltip="Warning: GW exceeds RTOW."> </span></strong>
      <p><label for ="flaps-input">Flaps:</label>
           <select id="flaps-input">
             <option value="8">8</option>
             <option value="20">20</option>
-          </select></p><p>
-        <label for ="mac-input">% of MAC:</label>
-            <input type="number" id="mac-input" name="mac-input" min="5" max="30" step="0.1" placeholder="5.0 - 30.0" required /></p>
+          </select></p>
+          <p> <label for ="mac-input">% of MAC:</label>
+          <input type="number" id="mac-input" name="mac-input" min="5" max="30" step="0.1" placeholder="5.0 - 30.0" required /></p>
+
           <label for="trim-output">Stab Trim:</label>
               <span id="trim-output">-</span>
+
+
               <label for="n1-output">Takeoff N1:</label>
                   <span id="n1-output">-</span>
               <label for="v1-output">V1 Speed:</label> 
@@ -121,9 +123,9 @@
 
 <!-- Landing Performance -->
         <div class ="output-column">
-        <strong>Landing Performance <span class="info-icon" id="ldgperf-icon" data-tooltip=""> </span></strong>
+        <strong>Landing Performance <span class="info-icon" id="ldgperf-icon" data-tooltip="Warning: GW exceeds the current MLW limit."> </span></strong>
 
-        <p><label for ="landingflaps">Flaps:</label>
+        <p> <label for ="landingflaps">Flaps:</label>
           <select id="landingflaps">
             <option value="40">40</option>
           </select></p>                 <p> <label for ="gust-factor">Gust Factor:</label>
@@ -159,8 +161,9 @@
 </div>
 
 <!-- Javascript -->
-<script src="\lj35a\assets\scripts\efb.js"></script>
-<script src="\lj35a\assets\scripts\airport-search.js"></script>
+<script src="\assets\scripts\efb.js"></script>
+<script src="\assets\scripts\form.js"></script>
+<script src="\assets\scripts\airport-search.js"></script>
 
 </body>
 </html>

@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load airport data from the airports.json file
   async function loadAirportData() {
-    const response = await fetch("airports.json");
+    const response = await fetch(`/assets/data/airport_data/airports.json`);
     airportsData = await response.json();
     //console.log("Loaded airports data:", airportsData); // Log loaded airport data for inspection
   }
@@ -126,7 +126,7 @@ airportSuggestions.addEventListener("click", (event) => {
 
       // Load Runway Data
       async function loadRunwaysData(cleanedICAO) {
-        const response = await fetch("runways.json");
+        const response = await fetch(`/assets/data/airport_data/runways.json`);
         const runwaysData = await response.json();
     
         // Find the matching airport based on ICAO (ARPT_ID)
@@ -189,7 +189,7 @@ document.getElementById("runway-select").addEventListener("change", (event) => {
   // Display the runway length if a matching runway is found
   const runwayLengthField = document.getElementById("runway-length");
   if (selectedRunway) {
-      runwayLengthField.textContent = `${selectedRunway.RWY_LEN} feet`;  // Set the runway length
+      runwayLengthField.textContent = selectedRunway.RWY_LEN;  // Set the runway length
   } else {
       runwayLengthField.textContent = "Runway length not available.";  // Fallback if no match
   }
