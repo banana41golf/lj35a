@@ -6,23 +6,23 @@ document.addEventListener("DOMContentLoaded", () => {
 // Load JSONS
     async function loadData() {
         //Takeoff Data
-        n1Data = await fetch("/assets/data/takeoff_perf/TO_N1.json").then((res) => res.json());
-        f8ToData = await fetch("/assets/data/takeoff_perf/TO_F8-V1.json").then((res) => res.json());
-        f8DisData = await fetch("/assets/data/takeoff_perf/TO_F8-DIS.json").then((res) => res.json());
-        vrData = await fetch("/assets/data/takeoff_perf/TO_F8-VR.json").then((res) => res.json());
-        v2Data = await fetch("/assets/data/takeoff_perf/TO_F8-V2.json").then((res) => res.json());
-        trimData = await fetch("/assets/data/takeoff_perf/TO_TRIM.json").then((res) => res.json());
-        f20ToData = await fetch("/assets/data/takeoff_perf/TO_F20-V1.json").then((res) => res.json());
-        f20DisData = await fetch("/assets/data/takeoff_perf/TO_F20-DIS.json").then((res) => res.json());
-        f20vrData = await fetch("/assets/data/takeoff_perf/TO_F20-VR.json").then((res) => res.json());
-        f20v2Data = await fetch("/assets/data/takeoff_perf/TO_F20-V2.json").then((res) => res.json());
-        f8MTOWdata = await fetch("/assets/data/takeoff_perf/TO_F8-MTOW.json").then((res) => res.json());
-        f20MTOWdata = await fetch("/assets/data/takeoff_perf/TO_F20-MTOW.json").then((res) => res.json());
+        n1Data = await fetch("./assets/data/takeoff_perf/TO_N1.json").then((res) => res.json());
+        f8ToData = await fetch("./assets/data/takeoff_perf/TO_F8-V1.json").then((res) => res.json());
+        f8DisData = await fetch("./assets/data/takeoff_perf/TO_F8-DIS.json").then((res) => res.json());
+        vrData = await fetch("./assets/data/takeoff_perf/TO_F8-VR.json").then((res) => res.json());
+        v2Data = await fetch("./assets/data/takeoff_perf/TO_F8-V2.json").then((res) => res.json());
+        trimData = await fetch("./assets/data/takeoff_perf/TO_TRIM.json").then((res) => res.json());
+        f20ToData = await fetch("./assets/data/takeoff_perf/TO_F20-V1.json").then((res) => res.json());
+        f20DisData = await fetch("./assets/data/takeoff_perf/TO_F20-DIS.json").then((res) => res.json());
+        f20vrData = await fetch("./assets/data/takeoff_perf/TO_F20-VR.json").then((res) => res.json());
+        f20v2Data = await fetch("./assets/data/takeoff_perf/TO_F20-V2.json").then((res) => res.json());
+        f8MTOWdata = await fetch("./assets/data/takeoff_perf/TO_F8-MTOW.json").then((res) => res.json());
+        f20MTOWdata = await fetch("./assets/data/takeoff_perf/TO_F20-MTOW.json").then((res) => res.json());
 
         //Landing Data
-        ldaData = await fetch("/assets/data/landing_perf/LDG_F40-LDR.json").then((res) => res.json());
-        factData = await fetch("/assets/data/landing_perf/LDG_F40-FACT.json").then((res) => res.json());
-        vrefData = await fetch("/assets/data/landing_perf/LDG_F40-VREF.json").then((res) => res.json());
+        ldaData = await fetch("./assets/data/landing_perf/LDG_F40-LDR.json").then((res) => res.json());
+        factData = await fetch("./assets/data/landing_perf/LDG_F40-FACT.json").then((res) => res.json());
+        vrefData = await fetch("./assets/data/landing_perf/LDG_F40-VREF.json").then((res) => res.json());
         }
         loadData();
         
